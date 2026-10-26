@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Polymarket odds: search live prediction market prices (free) | PennyData</title>
+<meta name="description" content="Search Polymarket and see live odds for any topic, such as the 2026 midterms. Yes-price, volume and end date in a table, with CSV download. Free, runs in your browser.">
+<link rel="canonical" href="https://project1dev.github.io/pennydata-site/polymarket-odds-viewer/">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header><a class="brand" href="../">PennyData</a><nav aria-label="Tools"><a href="../whois-dns-lookup/">WHOIS/DNS</a><a href="../image-extractor/">Images</a><a href="../contact-finder/">Contacts</a><a href="../polymarket-odds-viewer/" aria-current="page">Odds</a><a href="../hn-who-is-hiring-search/">Jobs</a></nav></header>
+<main id="main">
+<h1>Polymarket odds: search live prediction market prices</h1>
+<p class="lead">Type a topic and see what Polymarket traders currently price it at. The "Yes" price is the market's probability, so 0.62 means 62%.</p>
+<label for="q">Topic</label>
+<input id="q" type="text" value="midterms" placeholder="senate, bitcoin, fed rate" spellcheck="false">
+<button id="run">Show odds</button><button id="csv" class="secondary" disabled>Download CSV</button>
+<p id="status" class="status" role="status" aria-live="polite"></p>
+<div class="table-wrap"><table id="pm" hidden><thead><tr><th scope="col">Market</th><th scope="col">Outcome</th><th scope="col">Odds</th><th scope="col">Volume (USD)</th><th scope="col">Ends</th></tr></thead><tbody></tbody></table></div>
+<h2>How it works</h2>
+<p>Your browser asks Polymarket's public Gamma API directly (search results, current prices); nothing goes through our servers. Prices are a snapshot of what the page loaded, not trading advice. Free use is limited to 60 searches per hour per browser.</p>
+<div class="bulk"><strong>Need odds for hundreds of markets, on a schedule?</strong> The bulk version exports markets with prices, volume, liquidity and end dates, filtered by topic or tag: <a href="https://apify.com/pennydata/polymarket-markets-scraper">Polymarket Markets Scraper on Apify</a>.</div>
+</main>
+<footer>
+<p><strong>Privacy:</strong> no analytics, no cookies; the free-use counter stays in your browser's local storage. Your search term is sent from your browser to gamma-api.polymarket.com.</p>
+<p>I built this and earn from runs of the bulk version. Written with AI assistance (Claude).</p>
+</footer>
+<script src="../common.js"></script>
+<script>
+var limit = pdLimit('polymarket', 60, 3600e3), rows = [];
+function parse(s) { try { return JSON.parse(s); } catch (e) { return []; } }
+document.getElementById('run').onclick = function () {
+  var st = document.getElementById('status'), q = document.getElementById('q').value.trim(), btn = this;
+  if (!q) { st.textContent = 'Enter a topic first.'; return; }
+  if (!limit.use(1)) { st.textContent = 'Free limit reached (60 searches per hour in this browser). Try again later or use the bulk version below.'; return; }
+  btn.disabled = true; st.textContent = 'Searching...';
+  fetch('https://gamma-api.polymarket.com/public-search?limit_per_type=15&events_status=active&q=' + encodeURIComponent(q))
+    .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function (d) {
+      rows = [];
+      (d.events || []).forEach(function (ev) {
+        (ev.markets || []).forEach(function (m) {
+          if (m.closed) return;
+          var o = parse(m.outcomes), p = parse(m.outcomePrices);
+          if (!o.length || !p.length) return;
+          var name = m.groupItemTitle ? ev.title + ': ' + m.groupItemTitle : (m.question || ev.title);
+          rows.push([name, o[0], (parseFloat(p[0]) * 100).toFixed(1) + '%', Math.round(parseFloat(m.volume || 0)), (m.endDate || ev.endDate || '').slice(0, 10)]);
+        });
+      });
+      var tb = document.querySelector('#pm tbody');
+      tb.innerHTML = rows.slice(0, 200).map(function (r) {
+        return '<tr>' + r.map(function (c, i) { return '<td>' + pdEsc(i === 3 ? Number(c).toLocaleString('en-US') : c) + '</td>'; }).join('') + '</tr>';
+      }).join('');
+      document.getElementById('pm').hidden = !rows.length;
+      document.getElementById('csv').disabled = !rows.length;
+      st.textContent = rows.length ? rows.length + ' open market(s) found for "' + q + '". Odds = price of the first outcome (usually Yes).' : 'No open markets found for "' + q + '".';
+    })
+    .catch(function (e) { st.textContent = 'Could not reach Polymarket: ' + e.message; })
+    .then(function () { btn.disabled = false; });
+};
+document.getElementById('q').onkeydown = function (e) { if (e.key === 'Enter') document.getElementById('run').click(); };
+document.getElementById('csv').onclick = function () { pdDownload('polymarket-odds.csv', pdCsv([['market', 'outcome', 'odds', 'volume_usd', 'ends']].concat(rows))); };
+</script>
+</body>
+</html>
