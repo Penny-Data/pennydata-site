@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<url><loc>https://project1dev.github.io/pennydata-site/</loc></url>
-<url><loc>https://project1dev.github.io/pennydata-site/whois-dns-lookup/</loc></url>
-<url><loc>https://project1dev.github.io/pennydata-site/image-extractor/</loc></url>
-<url><loc>https://project1dev.github.io/pennydata-site/contact-finder/</loc></url>
-<url><loc>https://project1dev.github.io/pennydata-site/polymarket-odds-viewer/</loc></url>
-<url><loc>https://project1dev.github.io/pennydata-site/hn-who-is-hiring-search/</loc></url>
+<url><loc>https://penny-data.github.io/pennydata-site/</loc><lastmod>2026-10-26</lastmod></url>
+<url><loc>https://penny-data.github.io/pennydata-site/whois-dns-lookup/</loc><lastmod>2026-10-26</lastmod></url>
+<url><loc>https://penny-data.github.io/pennydata-site/image-extractor/</loc><lastmod>2026-10-26</lastmod></url>
+<url><loc>https://penny-data.github.io/pennydata-site/contact-finder/</loc><lastmod>2026-10-26</lastmod></url>
+<url><loc>https://penny-data.github.io/pennydata-site/polymarket-odds-viewer/</loc><lastmod>2026-10-26</lastmod></url>
+<url><loc>https://penny-data.github.io/pennydata-site/hn-who-is-hiring-search/</loc><lastmod>2026-10-26</lastmod></url>
+<url><loc>https://penny-data.github.io/pennydata-site/email-domain-checker/</loc><lastmod>2026-10-26</lastmod></url>
+<url><loc>https://penny-data.github.io/pennydata-site/meta-tag-previewer/</loc><lastmod>2026-10-26</lastmod></url>
 </urlset>

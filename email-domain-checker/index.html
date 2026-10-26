@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SPF, DKIM and DMARC checker | PennyData</title>
+<meta name="description" content="Check a domain's MX, SPF, DKIM and DMARC records in your browser. Plain-English verdicts, exact fixes and CSV export. Free, no account.">
+<link rel="canonical" href="https://penny-data.github.io/pennydata-site/email-domain-checker/">
+<meta name="theme-color" content="#C8692B">
+<meta property="og:type" content="website"><meta property="og:site_name" content="PennyData"><meta property="og:title" content="SPF, DKIM and DMARC checker | PennyData"><meta property="og:description" content="Check a domain&#x27;s MX, SPF, DKIM and DMARC records in your browser. Plain-English verdicts, exact fixes and CSV export. Free, no account."><meta property="og:url" content="https://penny-data.github.io/pennydata-site/email-domain-checker/"><meta property="og:image" content="https://penny-data.github.io/pennydata-site/og/email-domain-checker.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Email domain checker, a free PennyData tool">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="SPF, DKIM and DMARC checker | PennyData"><meta name="twitter:description" content="Check a domain&#x27;s MX, SPF, DKIM and DMARC records in your browser. Plain-English verdicts, exact fixes and CSV export. Free, no account."><meta name="twitter:image" content="https://penny-data.github.io/pennydata-site/og/email-domain-checker.png">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+
+
+<link rel="stylesheet" href="../style.css"><script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "sameAs": ["https://apify.com/pennydata"], "@id": "https://penny-data.github.io/pennydata-site/#org", "name": "PennyData", "url": "https://penny-data.github.io/pennydata-site/", "logo": "https://penny-data.github.io/pennydata-site/favicon.svg"}, {"@type": "WebSite", "@id": "https://penny-data.github.io/pennydata-site/#website", "url": "https://penny-data.github.io/pennydata-site/", "name": "PennyData", "publisher": {"@id": "https://penny-data.github.io/pennydata-site/#org"}}, {"@type": "WebApplication", "dateModified": "2026-10-26", "name": "PennyData Email Domain Checker", "url": "https://penny-data.github.io/pennydata-site/email-domain-checker/", "description": "Check a domain's MX, SPF, DKIM and DMARC records in your browser. Plain-English verdicts, exact fixes and CSV export. Free, no account.", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "browserRequirements": "Requires JavaScript", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "isAccessibleForFree": true, "@id": "https://penny-data.github.io/pennydata-site/email-domain-checker/#app", "isPartOf": {"@id": "https://penny-data.github.io/pennydata-site/#website"}, "publisher": {"@id": "https://penny-data.github.io/pennydata-site/#org"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Tools", "item": "https://penny-data.github.io/pennydata-site/"}, {"@type": "ListItem", "position": 2, "name": "Email domain checker", "item": "https://penny-data.github.io/pennydata-site/email-domain-checker/"}]}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What does this email domain checker look at?", "acceptedAnswer": {"@type": "Answer", "text": "It reads the public DNS records that decide whether your email is trusted: MX (where mail is delivered), SPF (which servers may send), DKIM (the signing key, for 10 common selectors plus one you choose) and DMARC (what receivers should do when checks fail). It also notes two optional extras, MTA-STS and BIMI."}}, {"@type": "Question", "name": "Why does it say DKIM was not seen when my email is signed?", "acceptedAnswer": {"@type": "Answer", "text": "DKIM keys live at a selector name that the sender chooses, such as google or selector1, and DNS cannot list all selectors for a domain. The tool tries ten common ones. If your provider uses another, open a real email from your domain, find s= in the DKIM-Signature header, type that into the selector box and check again."}}, {"@type": "Question", "name": "What is the SPF limit of 10 DNS lookups?", "acceptedAnswer": {"@type": "Answer", "text": "SPF allows at most 10 lookups caused by include, a, mx, ptr, exists and redirect, counted through every nested include. Past 10, receivers return a permanent error and SPF fails. The tool follows your includes and shows the count so you can trim before you add another service."}}, {"@type": "Question", "name": "Which DMARC policy should I use?", "acceptedAnswer": {"@type": "Answer", "text": "Start with p=none and an rua address to collect reports without affecting delivery. When the reports show only legitimate senders passing, move to p=quarantine and then p=reject. If you check a subdomain, receivers that find no DMARC record there use the parent domain's policy, so check the parent too."}}, {"@type": "Question", "name": "Do I really need SPF, DKIM and DMARC?", "acceptedAnswer": {"@type": "Answer", "text": "For most domains that send email, yes. Google and Yahoo have required SPF, DKIM and a DMARC policy from bulk senders (about 5,000 or more messages a day to personal Gmail accounts) since February 2024, and smaller senders see better inbox placement with all three."}}]}]}</script>
+<style>
+/* email-domain-checker only */
+.ec-grid{display:block}.ec-sel{margin-top:16px;max-width:320px}
+@media(max-width:620px){.ec-grid{grid-template-columns:1fr}}
+.ec-grid label{font-size:.95rem}
+.ec-card{padding:0;overflow:hidden}
+.ec-card>header{padding:16px 18px;border-bottom:1.5px solid var(--edge);background:var(--cu-wash)}
+.ec-card>.rnote{margin:14px 18px}
+.ec-tiles{list-style:none;margin:0;padding:16px 18px 6px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.ec-t{border:1.5px solid var(--edge);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;background:var(--surface)}
+.ec-t span{font:800 .72rem/1 var(--mono);letter-spacing:.08em;color:var(--muted)}
+.ec-t b{font-size:1.02rem}
+.ec-t.ec-ok{border-color:var(--ok);background:var(--ok-bg)}.ec-t.ec-ok b{color:var(--ok)}
+.ec-t.ec-warn{border-color:var(--warn);background:var(--warn-bg)}.ec-t.ec-warn b{color:var(--warn)}
+.ec-t.ec-bad{border-color:var(--bad);background:var(--bad-bg)}.ec-t.ec-bad b{color:var(--bad)}
+@media(max-width:520px){.ec-tiles{grid-template-columns:repeat(2,1fr)}}
+.ec-list{padding:10px 18px 16px;display:grid;gap:12px}
+.ec-chk{border:1.5px solid var(--edge);border-left-width:8px;border-radius:12px;padding:12px 14px;background:var(--surface)}
+.ec-chk.ec-ok{border-left-color:var(--ok)}.ec-chk.ec-warn{border-left-color:var(--warn)}.ec-chk.ec-bad{border-left-color:var(--bad)}.ec-chk.ec-info{border-left-color:var(--muted)}
+.ec-h{display:flex;align-items:center;gap:10px}.ec-h h4{font-size:1.05rem;margin:0;flex:1}
+.ec-ic{width:26px;height:26px;border-radius:50%;display:inline-grid;place-items:center;font:800 .9rem/1 var(--font);color:#fff;background:var(--muted)}
+.ec-ok .ec-ic{background:var(--ok)}.ec-ok .ec-ic::before{content:"\2713"}
+.ec-warn .ec-ic{background:var(--warn)}.ec-warn .ec-ic::before{content:"!"}
+.ec-bad .ec-ic{background:var(--bad)}.ec-bad .ec-ic::before{content:"\00d7";font-size:1.1rem}
+.ec-info .ec-ic::before{content:"i"}
+.ec-head{margin:8px 0 0;font-weight:800}
+.ec-why,.ec-fix{margin:6px 0 0;font-size:.93rem;color:var(--muted)}.ec-fix{color:var(--fg)}
+.ec-raw{margin:10px 0 0;padding:10px 12px;background:var(--sunk);border:1.5px solid var(--edge);border-radius:10px;font:.8rem/1.5 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;max-height:180px;overflow:auto}
+.ec-more{border-top:3px solid var(--line)}.ec-more summary{cursor:pointer;font-weight:800;padding:14px 18px;min-height:48px}
+.ec-more .ec-list{padding-top:0}
+.ec-extra{opacity:.95}
+.ec-empty{border:1.5px dashed var(--edge);border-radius:var(--r);padding:20px 22px;margin:0 0 28px;color:var(--muted)}
+.ec-empty b{color:var(--fg)}
+.ec-empty ul{margin:10px 0 0;padding-left:20px}
+.ec-rel a{display:block;font-weight:800;color:var(--ctext)}
+.ec-rel div{padding:14px 16px}
+
+.srcdet{margin:4px 0 18px}.srcdet:first-of-type{border-top:0}
+.srcbody{padding:0 0 12px;color:var(--muted)}.srcbody p{padding:0 0 10px;margin:0}
+.state{margin:14px 0 0;display:flex;gap:12px;align-items:flex-start;justify-content:space-between;font-size:.95rem;font-weight:600;padding:10px 14px;border-radius:10px;background:var(--warn-bg);color:var(--warn)}
+.state.unreg{background:var(--cu-wash);color:var(--fg)}.state.fail{background:var(--bad-bg);color:var(--bad)}
+.state button{font:700 .88rem var(--font);border:1.5px solid currentColor;background:transparent;color:inherit;border-radius:999px;padding:6px 14px;min-height:38px;cursor:pointer;white-space:nowrap}
+</style>
+</head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><filter id="wob" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter></defs></svg>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="wrap hbar"><a class="brand" href="../" aria-label="PennyData home"><svg class="logo-m" viewBox="62 0 136 146" aria-hidden="true"><path d="M66 150 Q130 120 194 150 Z" fill="#111"/><path d="M104 62 C96 40 104 22 116 18 C114 30 120 34 124 36 C126 18 140 10 154 18 C146 24 146 32 150 40 C162 34 176 38 178 46 C164 46 158 52 154 60 Z" fill="#111" stroke="#111" stroke-width="4"/><circle cx="130" cy="100" r="46" fill="#fff" stroke="#111" stroke-width="6"/><ellipse cx="114" cy="96" rx="4.5" ry="6.5" fill="#111"/><ellipse cx="146" cy="96" rx="4.5" ry="6.5" fill="#111"/><path d="M104 80 Q114 72 124 79 M138 79 Q148 72 158 80" fill="none" stroke="#111" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M108 118 Q130 138 154 116" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="98" cy="114" r="6" fill="#C8692B" opacity=".55"/><circle cx="162" cy="114" r="6" fill="#C8692B" opacity=".55"/></svg><span>Penny<b>Data</b></span></a><button class="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav"><i aria-hidden="true"></i><span>Menu</span></button><nav aria-label="Tools" class="nav" id="site-nav"><a href="../whois-dns-lookup/">WHOIS &amp; DNS</a><a href="../image-extractor/">Images</a><a href="../contact-finder/">Contacts</a><a href="../polymarket-odds-viewer/">Polymarket</a><a href="../hn-who-is-hiring-search/">Hiring</a><a href="../email-domain-checker/" aria-current="page">Email check</a><a href="../meta-tag-previewer/">Meta tags</a></nav></div><noscript><style>.menu-btn{display:none}.nav{display:flex!important;position:static!important;flex-wrap:wrap;box-shadow:none!important;padding:0 20px 10px!important;flex-direction:row!important}</style></noscript></header>
+<main id="main"><section class="thero"><div class="wrap thero-grid"><div class="thero-txt"><p class="crumb"><a href="../">Tools</a> / Email domain checker</p><h1>SPF, DKIM &amp; DMARC checker</h1><p class="lead">Enter a domain. See whether its MX, SPF, DKIM and DMARC records are set up right, in plain English, with the fix for anything that is not.</p><ul class="facts-line"><li>Up to 5 domains</li><li>No cookies, no account</li><li>Reads public DNS only</li></ul></div><div class="thero-art" aria-hidden="true"><svg class="mascot hero-fig" viewBox="20 4 240 322" aria-hidden="true"><g filter="url(#wob)"><path d="M108 156 L102 304 M150 156 L158 304" stroke="#111" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M86 306 Q104 294 118 306 L118 318 L82 318 Z" fill="#C8692B" stroke="#111" stroke-width="4" stroke-linejoin="round"/><path d="M146 306 Q164 294 180 306 L182 318 L146 318 Z" fill="#C8692B" stroke="#111" stroke-width="4" stroke-linejoin="round"/><path d="M82 176 Q130 150 178 176 L192 276 Q130 296 68 276 Z" fill="#111" stroke="#111" stroke-width="6" stroke-linejoin="round"/><path d="M94 170 Q130 204 166 170" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/><path d="M118 192 L116 226 M142 192 L144 226" stroke="#C8692B" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M96 252 Q130 240 164 252" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/><path d="M88 190 Q60 222 46 252" stroke="#111" stroke-width="22" fill="none" stroke-linecap="round"/><circle cx="44" cy="262" r="15" fill="#111"/><circle cx="36" cy="251" r="7" fill="#111"/><path d="M172 190 Q198 198 201 166" stroke="#111" stroke-width="22" fill="none" stroke-linecap="round"/><g transform="translate(214 128)"><g transform="rotate(-6)"><rect x="-27" y="-20" width="54" height="38" rx="5" fill="#fff" stroke="#111" stroke-width="4.5"/><path d="M-23 -15 L0 3 L23 -15" fill="none" stroke="#C8692B" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/></g><circle cx="18" cy="16" r="14" fill="#C8692B" stroke="#111" stroke-width="4.5"/><path d="M11 16 L16 21 L26 10" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></g><circle cx="201" cy="158" r="15" fill="#111"/><circle cx="191" cy="149" r="7" fill="#111"/><path d="M104 62 C96 40 104 22 116 18 C114 30 120 34 124 36 C126 18 140 10 154 18 C146 24 146 32 150 40 C162 34 176 38 178 46 C164 46 158 52 154 60 Z" fill="#111" stroke="#111" stroke-width="4"/><circle cx="130" cy="100" r="46" fill="#fff" stroke="#111" stroke-width="6"/><ellipse cx="114" cy="96" rx="4.5" ry="6.5" fill="#111"/><ellipse cx="146" cy="96" rx="4.5" ry="6.5" fill="#111"/><path d="M104 80 Q114 72 124 79 M138 79 Q148 72 158 80" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M108 118 Q130 138 154 116" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="98" cy="114" r="6" fill="#C8692B" opacity=".55"/><circle cx="162" cy="114" r="6" fill="#C8692B" opacity=".55"/></g></svg></div></div></section>
+<div class="wrap"><div class="panel"><div class="panel-head"><div class="pal" data-mood="idle" aria-hidden="true"><svg viewBox="58 4 144 150"><g filter="url(#wob)"><path d="M60 156 Q130 118 200 156 Z" fill="#111"/><path d="M104 62 C96 40 104 22 116 18 C114 30 120 34 124 36 C126 18 140 10 154 18 C146 24 146 32 150 40 C162 34 176 38 178 46 C164 46 158 52 154 60 Z" fill="#111" stroke="#111" stroke-width="4"/><circle cx="130" cy="100" r="46" fill="#fff" stroke="#111" stroke-width="6"/><g class="f f-idle"><ellipse cx="114" cy="96" rx="4.5" ry="6.5" fill="#111"/><ellipse cx="146" cy="96" rx="4.5" ry="6.5" fill="#111"/><path d="M104 80 Q114 72 124 79 M138 79 Q148 72 158 80" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M108 118 Q130 138 154 116" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g><g class="f f-work"><ellipse cx="114" cy="96" rx="4.5" ry="7" fill="#111"/><ellipse cx="146" cy="96" rx="4.5" ry="7" fill="#111"/><path d="M102 82 L124 76" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M138 72 Q148 66 158 76" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M114 120 Q132 136 150 118" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g><g class="f f-ok"><path d="M103 99 Q114 85 125 99 M135 99 Q146 85 157 99" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M106 114 Q130 148 156 112 Z" fill="#fff" stroke="#111" stroke-width="4.5" stroke-linejoin="round"/><path d="M118 126 Q130 134 144 126" fill="none" stroke="#C8692B" stroke-width="3.5" stroke-linecap="round"/></g><g class="f f-err"><ellipse cx="114" cy="96" rx="5.5" ry="8" fill="#111"/><ellipse cx="146" cy="96" rx="5.5" ry="8" fill="#111"/><path d="M104 76 Q114 66 124 74 M138 74 Q148 66 158 76" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="130" cy="125" rx="8" ry="10" fill="#fff" stroke="#111" stroke-width="4.5"/></g><circle cx="98" cy="114" r="6" fill="#C8692B" opacity=".55"/><circle cx="162" cy="114" r="6" fill="#C8692B" opacity=".55"/></g></svg></div><div class="t"><b>Email domain checker</b><span>Check MX, SPF, DKIM and DMARC</span></div></div><div class="ec-grid"><div><label for="domains">Domains <span class="hint">one per line, up to 5. An email address works too</span></label>
+<textarea id="domains" spellcheck="false" autocapitalize="off" placeholder="example.com&#10;you@yourcompany.com" style="min-height:112px"></textarea></div>
+<div class="ec-sel"><label for="sel">DKIM selector <span class="hint">optional, not a domain</span></label><input type="text" id="sel" spellcheck="false" autocapitalize="off" placeholder="selector1 (optional)" aria-describedby="selhint"><p class="hint" id="selhint" style="margin:6px 0 0">We also try 10 common selectors (google, selector1, default...).</p></div></div>
+<div class="row"><span class="lbl">Try:</span><div class="chips" role="group" aria-label="Examples"><button type="button" class="chip dom" data-ex="github.com">github.com</button><button type="button" class="chip dom" data-ex="example.com">example.com</button><button type="button" class="chip" data-ex="github.com&#10;mozilla.org&#10;example.com">3 domains</button><button type="button" class="chip" data-ex="">clear</button></div></div>
+<div class="actions"><button class="btn" id="run" type="button">Check domain</button><button class="btn ghost" id="demo" type="button">Try an example</button></div>
+<p class="hint" style="margin:14px 0 0">Reads public DNS only. Your browser asks Google Public DNS (Cloudflare as backup), not a PennyData server. Free: 30 domains per hour.</p>
+<p id="status" class="status" role="status" aria-live="polite"></p></div>
+<div id="empty" class="ec-empty"><b>What you will get</b> for each domain:<ul><li>A pass, review or fail verdict for MX, SPF, DKIM and DMARC</li><li>A plain-English reason and the exact fix, next to the raw record</li><li>A copyable report and a CSV</li></ul></div>
+<div id="res" hidden><div class="rbar"><h2>Results</h2><div class="actions" style="margin:0"><button class="btn ghost sm" id="copy" type="button" disabled>Copy report</button><button class="btn ghost sm" id="csv" type="button" disabled>Download CSV</button></div></div>
+<div id="results" class="results"></div></div>
+<p class="apify-line"><span>Need this for a long list?</span> <a href="https://apify.com/pennydata/bulk-domain-whois-dns-lookup?utm_source=pennydata-site&amp;utm_medium=referral&amp;utm_campaign=email-domain-checker" rel="noopener">Run the bulk version on Apify <span aria-hidden="true">&rarr;</span></a> <span class="al-note">(paid, PennyData earns a little)</span></p><section class="about-tool"><h2 class="sec-h">What this tool does, and its limits</h2><p>The checker reads the public DNS records that decide whether mail from a domain is trusted: MX for where mail is delivered, SPF for which servers may send, DKIM for the signing key and DMARC for what receivers should do when checks fail. Each gets a pass, review or fail verdict in plain English, with the fix when something is off. It only reads public DNS through Google Public DNS and sends no mail. The main limit is DKIM: keys live at a selector name chosen by the sender, so the tool tries ten common ones and a selector you type in, and may report not seen for a domain that signs with another. The bulk version on Apify checks long lists.</p></section><section style="padding-top:8px">
+<h2 class="sec-h faq-h" id="faq-h">Questions</h2>
+<details class="how"><summary>What the records mean</summary><div class="glossary"><div><b>MX</b><p>Where email for the domain is delivered.</p></div><div><b>SPF</b><p>Which servers are allowed to send as the domain.</p></div><div><b>DKIM</b><p>A public key receivers use to check a message signature.</p></div><div><b>DMARC</b><p>What to do when SPF and DKIM fail, plus reports.</p></div></div></details><details class="how"><summary>What does this email domain checker look at?</summary><p>It reads the public DNS records that decide whether your email is trusted: MX (where mail is delivered), SPF (which servers may send), DKIM (the signing key, for 10 common selectors plus one you choose) and DMARC (what receivers should do when checks fail). It also notes two optional extras, MTA-STS and BIMI.</p></details><details class="how"><summary>Why does it say DKIM was not seen when my email is signed?</summary><p>DKIM keys live at a selector name that the sender chooses, such as google or selector1, and DNS cannot list all selectors for a domain. The tool tries ten common ones. If your provider uses another, open a real email from your domain, find s= in the DKIM-Signature header, type that into the selector box and check again.</p></details><details class="how"><summary>What is the SPF limit of 10 DNS lookups?</summary><p>SPF allows at most 10 lookups caused by include, a, mx, ptr, exists and redirect, counted through every nested include. Past 10, receivers return a permanent error and SPF fails. The tool follows your includes and shows the count so you can trim before you add another service.</p></details><details class="how"><summary>Which DMARC policy should I use?</summary><p>Start with p=none and an rua address to collect reports without affecting delivery. When the reports show only legitimate senders passing, move to p=quarantine and then p=reject. If you check a subdomain, receivers that find no DMARC record there use the parent domain's policy, so check the parent too.</p></details><details class="how"><summary>Do I really need SPF, DKIM and DMARC?</summary><p>For most domains that send email, yes. Google and Yahoo have required SPF, DKIM and a DMARC policy from bulk senders (about 5,000 or more messages a day to personal Gmail accounts) since February 2024, and smaller senders see better inbox placement with all three.</p></details></section>
+<nav class="more" aria-label="More free tools"><h2>More free tools</h2><ul><li><a href="../whois-dns-lookup/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><circle cx="8" cy="-10" r="20" fill="#FBEBDD" stroke="#111" stroke-width="5"/><path d="M-6 5 L-18 26" stroke="#111" stroke-width="8" stroke-linecap="round"/><path d="M-2 -18 Q4 -24 12 -21" fill="none" stroke="#C8692B" stroke-width="3.5" stroke-linecap="round"/></svg></span><span><b>Domain WHOIS &amp; DNS lookup</b><span class="d">Expiry date, registrar and A, MX, NS, TXT records for up to 10 domains.</span></span></a></li><li><a href="../image-extractor/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><g transform="rotate(8)"><rect x="-27" y="-24" width="54" height="44" rx="5" fill="#fff" stroke="#111" stroke-width="4.5"/><circle cx="-10" cy="-10" r="5" fill="#C8692B"/><path d="M-23 16 L-8 2 L2 11 L10 4 L23 16 Z" fill="#C8692B"/></g></svg></span><span><b>Image extractor</b><span class="d">Every image URL a page references, from pasted HTML.</span></span></a></li><li><a href="../contact-finder/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><g transform="rotate(-8)"><rect x="-28" y="-20" width="56" height="40" rx="5" fill="#fff" stroke="#111" stroke-width="4.5"/><path d="M-24 -15 L0 3 L24 -15" fill="none" stroke="#C8692B" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/></g></svg></span><span><b>Contact finder</b><span class="d">A site&#x27;s contact page and the public emails it lists.</span></span></a></li><li><a href="../polymarket-odds-viewer/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><rect x="-24" y="-2" width="14" height="26" fill="#C8692B" stroke="#111" stroke-width="4"/><rect x="-6" y="-16" width="14" height="40" fill="#fff" stroke="#111" stroke-width="4"/><rect x="12" y="-30" width="14" height="54" fill="#C8692B" stroke="#111" stroke-width="4"/></svg></span><span><b>Polymarket odds viewer</b><span class="d">Search open markets and read the odds as percentages.</span></span></a></li><li><a href="../hn-who-is-hiring-search/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><g transform="rotate(6)"><path d="M-9 -18 v-8 h18 v8" fill="none" stroke="#111" stroke-width="4.5" stroke-linejoin="round"/><rect x="-28" y="-18" width="56" height="40" rx="6" fill="#C8692B" stroke="#111" stroke-width="4.5"/><path d="M-28 0 H28" stroke="#111" stroke-width="4"/><rect x="-5" y="-4" width="10" height="9" rx="2" fill="#fff" stroke="#111" stroke-width="3"/></g></svg></span><span><b>Hacker News Who is hiring search</b><span class="d">Filter the latest monthly thread by keyword.</span></span></a></li><li><a href="../meta-tag-previewer/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><rect x="-30" y="-24" width="60" height="48" rx="6" fill="#fff" stroke="#111" stroke-width="4.5"/><path d="M-30 -10 H30" stroke="#111" stroke-width="4"/><circle cx="-22" cy="-17" r="2.5" fill="#C8692B"/><circle cx="-14" cy="-17" r="2.5" fill="#C8692B"/><rect x="-22" y="-3" width="26" height="20" rx="3" fill="#C8692B" stroke="#111" stroke-width="3.5"/><path d="M10 0 H24 M10 8 H24 M10 16 H20" stroke="#111" stroke-width="3.5" stroke-linecap="round"/></svg></span><span><b>Meta tag previewer</b><span class="d">Preview Google and social cards from pasted HTML.</span></span></a></li></ul></nav>
+<aside class="bulk"><div class="bulk-art"><svg class="mascot" viewBox="36 8 216 180" role="img" aria-label="PennyData mascot holding a copper penny"><g filter="url(#wob)"><path d="M82 176 Q130 150 178 176 L192 276 Q130 296 68 276 Z" fill="#111" stroke="#111" stroke-width="6" stroke-linejoin="round"/><path d="M94 170 Q130 204 166 170" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/><path d="M118 192 L116 226 M142 192 L144 226" stroke="#C8692B" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M96 252 Q130 240 164 252" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/><path d="M88 190 Q60 222 46 252" stroke="#111" stroke-width="22" fill="none" stroke-linecap="round"/><circle cx="44" cy="262" r="15" fill="#111"/><circle cx="36" cy="251" r="7" fill="#111"/><path d="M172 190 Q198 198 201 166" stroke="#111" stroke-width="22" fill="none" stroke-linecap="round"/><g transform="translate(214 128)"><circle cx="2" cy="-2" r="25" fill="#C8692B" stroke="#111" stroke-width="5"/><circle cx="2" cy="-2" r="17" fill="none" stroke="#fff" stroke-width="2" opacity=".6"/><text x="2" y="9" text-anchor="middle" font-size="30" font-weight="800" fill="#fff" font-family="Noto Sans,system-ui,sans-serif">&#162;</text></g><circle cx="201" cy="158" r="15" fill="#111"/><circle cx="191" cy="149" r="7" fill="#111"/><path d="M104 62 C96 40 104 22 116 18 C114 30 120 34 124 36 C126 18 140 10 154 18 C146 24 146 32 150 40 C162 34 176 38 178 46 C164 46 158 52 154 60 Z" fill="#111" stroke="#111" stroke-width="4"/><circle cx="130" cy="100" r="46" fill="#fff" stroke="#111" stroke-width="6"/><ellipse cx="114" cy="96" rx="4.5" ry="7" fill="#111"/><ellipse cx="146" cy="96" rx="4.5" ry="7" fill="#111"/><path d="M102 82 L124 76" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M138 72 Q148 66 158 76" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M114 120 Q132 136 150 118" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="98" cy="114" r="6" fill="#C8692B" opacity=".55"/><circle cx="162" cy="114" r="6" fill="#C8692B" opacity=".55"/></g></svg></div><div><p class="eyebrow">When you outgrow this</p><h2>Checking hundreds of domains?</h2><p>The bulk domain lookup on Apify covers up to 1,000 domains per run, including MX, SPF and DMARC alongside expiry, registrar and nameservers, and exports CSV or JSON. It does not probe DKIM selectors.</p><p class="bulk-note">The bulk version runs on Apify and costs money. PennyData earns a little from those runs.</p></div>
+<a class="btn" href="https://apify.com/pennydata/bulk-domain-whois-dns-lookup?utm_source=pennydata-site&amp;utm_medium=referral&amp;utm_campaign=email-domain-checker" rel="noopener">Open the bulk domain lookup on Apify <span aria-hidden="true">&rarr;</span></a></aside>
+</div></main>
+<footer class="foot"><div class="wrap"><div class="foot-grid"><div class="foot-brand"><svg class="logo-m" viewBox="62 0 136 146" aria-hidden="true"><path d="M66 150 Q130 120 194 150 Z" fill="#111"/><path d="M104 62 C96 40 104 22 116 18 C114 30 120 34 124 36 C126 18 140 10 154 18 C146 24 146 32 150 40 C162 34 176 38 178 46 C164 46 158 52 154 60 Z" fill="#111" stroke="#111" stroke-width="4"/><circle cx="130" cy="100" r="46" fill="#fff" stroke="#111" stroke-width="6"/><ellipse cx="114" cy="96" rx="4.5" ry="6.5" fill="#111"/><ellipse cx="146" cy="96" rx="4.5" ry="6.5" fill="#111"/><path d="M104 80 Q114 72 124 79 M138 79 Q148 72 158 80" fill="none" stroke="#111" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M108 118 Q130 138 154 116" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="98" cy="114" r="6" fill="#C8692B" opacity=".55"/><circle cx="162" cy="114" r="6" fill="#C8692B" opacity=".55"/></svg></div><ul class="foot-notes"><li><b>Built with AI assistance</b> (Claude). No analytics, cookies or accounts.</li><li><b>Honest money note.</b> The bulk versions run on Apify, and PennyData earns a little from those runs. The free tools stay free.</li></ul></div><nav class="foot-links" aria-label="All tools"><a href="../whois-dns-lookup/">WHOIS &amp; DNS</a><a href="../image-extractor/">Images</a><a href="../contact-finder/">Contacts</a><a href="../polymarket-odds-viewer/">Polymarket</a><a href="../hn-who-is-hiring-search/">Hiring</a><a href="../email-domain-checker/">Email check</a><a href="../meta-tag-previewer/">Meta tags</a><a href="../#about">About</a></nav></div></footer>
+<script src="../common.js"></script>
+<script>
+var limit = pdLimit('email', 30, 3600e3), MAXD = 5, report = null;
+var SEL = ['google', 'selector1', 'selector2', 'default', 'k1', 'k2', 's1', 's2', 'mail', 'dkim'];
+var ta = document.getElementById('domains'), sel = document.getElementById('sel'), st = document.getElementById('status'),
+    run = document.getElementById('run'), res = document.getElementById('res'), out = document.getElementById('results'),
+    csvB = document.getElementById('csv'), cpB = document.getElementById('copy'), empty = document.getElementById('empty');
+
+/* ---------- DNS over HTTPS (Google first, Cloudflare as fallback) ---------- */
+var cache = {};
+function fetchJson(url, hdr) {
+  var ac = window.AbortController ? new AbortController() : null, to = setTimeout(function () { if (ac) ac.abort(); }, 8000);
+  return fetch(url, { headers: hdr || {}, signal: ac ? ac.signal : undefined }).then(function (r) { clearTimeout(to); if (!r.ok) throw 0; return r.json(); },
+    function (e) { clearTimeout(to); throw e; });
+}
+// resolves {ok, nx, data:[strings]}. ok=false means no resolver answered (a tool failure, not an empty answer).
+function doh(name, type) {
+  var key = type + ' ' + name.toLowerCase();
+  if (cache[key]) return cache[key];
+  var n = encodeURIComponent(name), code = { MX: 15, TXT: 16 }[type];
+  function parse(j) {
+    if (j.Status !== 0 && j.Status !== 3) throw 0;           // SERVFAIL etc: try the other resolver
+    var data = (j.Answer || []).filter(function (a) { return a.type === code; }).map(function (a) { return a.data; });
+    return { ok: true, nx: j.Status === 3, data: data };
+  }
+  var p = fetchJson('https://dns.google/resolve?name=' + n + '&type=' + type).then(parse).catch(function () {
+    return fetchJson('https://cloudflare-dns.com/dns-query?name=' + n + '&type=' + type, { accept: 'application/dns-json' }).then(parse);
+  }).catch(function () { return { ok: false, nx: false, data: [] }; });
+  cache[key] = p; return p;
+}
+// TXT answers come back as quoted chunks; join the chunks into the real string.
+function txtJoin(s) {
+  var m = s.match(/"((?:[^"\\]|\\.)*)"/g);
+  return m ? m.map(function (x) { return x.slice(1, -1).replace(/\\(.)/g, '$1'); }).join('') : s;
+}
+function txts(name) { return doh(name, 'TXT').then(function (r) { return { ok: r.ok, nx: r.nx, data: r.data.map(txtJoin) }; }); }
+
+/* ---------- input ---------- */
+function toDomain(raw) {
+  var s = raw.trim().toLowerCase();
+  if (!s) return { skip: true };
+  if (s.indexOf('@') > -1) s = s.split('@').pop();                     // you@company.com -> company.com
+  s = s.replace(/^[a-z][a-z0-9+.-]*:\/\//, '').split(/[\/?#]/)[0].replace(/:\d+$/, '').replace(/\.$/, '');
+  if (!s) return { bad: raw, why: 'nothing left to check' };
+  if (/^[\d.]+$/.test(s) || s.indexOf(':') > -1) return { bad: raw, why: 'IP addresses have no email records' };
+  if (s.indexOf('.') < 0) return { bad: raw, why: 'needs a dot, like example.com' };
+  try { s = new URL('http://' + s).hostname; } catch (e) { return { bad: raw, why: 'not a valid domain name' }; }  // also converts accents to punycode
+  if (!/^([a-z0-9_]([a-z0-9_-]{0,61}[a-z0-9_])?\.)+[a-z0-9-]{2,63}$/.test(s)) return { bad: raw, why: 'not a valid domain name' };
+  return { d: s };
+}
+function parseInput(raw) {
+  var seen = {}, list = [], bad = [];
+  raw.split(/[\n,;\s]+/).forEach(function (t) {
+    var r = toDomain(t); if (r.skip) return;
+    if (r.bad) bad.push(r); else if (!seen[r.d]) { seen[r.d] = 1; list.push(r.d); }
+  });
+  var over = Math.max(0, list.length - MAXD);
+  return { list: list.slice(0, MAXD), bad: bad, over: over };
+}
+
+/* ---------- run a task list with limited concurrency ---------- */
+function pool(tasks, n) {
+  var i = 0, results = [];
+  function worker() { if (i >= tasks.length) return Promise.resolve(); var k = i++; return tasks[k]().then(function (r) { results[k] = r; return worker(); }); }
+  var w = []; for (var j = 0; j < n; j++) w.push(worker());
+  return Promise.all(w).then(function () { return results; });
+}
+
+/* ---------- checks ---------- */
+function chk(key, name, status, head, why, fix, raw, extra) {
+  return { key: key, name: name, status: status, head: head, why: why || '', fix: fix || '', raw: raw || [], extra: !!extra };
+}
+function checkMx(r) {
+  if (!r.ok) return chk('mx', 'MX', 'info', 'Lookup failed', 'No DNS resolver answered this query, so MX could not be checked. Try again.', '', []);
+  var recs = r.data.map(function (s) { var m = s.trim().split(/\s+/); return { pri: +m[0], host: (m[1] || '').replace(/\.$/, '') }; })
+    .sort(function (a, b) { return a.pri - b.pri; });
+  var raw = recs.map(function (x) { return x.pri + ' ' + x.host; });
+  if (!recs.length) return chk('mx', 'MX', 'bad', 'No MX records', 'Without MX records, other mail servers cannot find where to deliver email for this domain (they may fall back to its A record, which rarely runs a mail server).',
+    'Add the MX records your email provider gives you (Google Workspace, Microsoft 365, Fastmail and others publish them).', []);
+  if (recs.length === 1 && (recs[0].host === '' || recs[0].host === '.')) return chk('mx', 'MX', 'info', 'Null MX: this domain says it receives no email',
+    'A single MX of "0 ." is a deliberate signal that the domain does not accept mail. Fine for a domain that only sends or sends nothing.', '', raw);
+  return chk('mx', 'MX', 'ok', recs.length + ' mail server' + (recs.length > 1 ? 's' : '') + ' found',
+    'Email for this domain is delivered to the host with the lowest priority number first: ' + recs.map(function (x) { return x.host; }).join(', ') + '.', '', raw);
+}
+function spfWalk(rec, st, depth) {
+  var kids = [];
+  rec.split(/\s+/).slice(1).forEach(function (tok) {
+    var m = tok.replace(/^[+\-~?]/, '').toLowerCase();
+    if (/^(a|mx)([:\/].*)?$/.test(m)) st.n++;
+    else if (/^ptr(:.*)?$/.test(m)) { st.n++; st.ptr = true; }
+    else if (/^exists:/.test(m)) st.n++;
+    else if (/^(include:|redirect=)/.test(m)) {
+      st.n++;
+      var t = m.replace(/^(include:|redirect=)/, '');
+      if (!t || /%\{/.test(t)) return;
+      if (depth >= 6 || st.seen[t] || st.fetched >= 15) { if (!st.seen[t]) st.cut = true; return; }
+      st.seen[t] = 1; st.fetched++;
+      kids.push(txts(t).then(function (r) {
+        var s = r.data.filter(function (x) { return /^v=spf1(\s|$)/i.test(x); })[0];
+        if (!s) { st.broken.push(t); return; }
+        return spfWalk(s, st, depth + 1);
+      }));
+    }
+  });
+  return Promise.all(kids);
+}
+function checkSpf(domain, r) {
+  if (!r.ok) return Promise.resolve(chk('spf', 'SPF', 'info', 'Lookup failed', 'No DNS resolver answered this query, so SPF could not be checked. Try again.', '', []));
+  var recs = r.data.filter(function (x) { return /^v=spf1(\s|$)/i.test(x); });
+  if (!recs.length) return Promise.resolve(chk('spf', 'SPF', 'bad', 'No SPF record',
+    'SPF lists which servers may send email for your domain. Without it, receivers have nothing to check, and Gmail and Yahoo expect it.',
+    'Publish one TXT record starting with v=spf1 that lists your email provider, for example "v=spf1 include:_spf.google.com ~all". Use the exact include your provider documents.', []));
+  if (recs.length > 1) return Promise.resolve(chk('spf', 'SPF', 'bad', recs.length + ' SPF records (only one is allowed)',
+    'Receivers treat more than one SPF record as a permanent error, so SPF fails for every message.', 'Merge them into a single TXT record, combining the include: and ip4: parts, with one all at the end.', recs));
+  var rec = recs[0].trim(), s = { n: 0, seen: {}, fetched: 0, cut: false, broken: [], ptr: false };
+  s.seen[domain] = 1;
+  return spfWalk(rec, s, 0).then(function () {
+    var toks = rec.split(/\s+/).slice(1), all = toks.filter(function (t) { return /^[+\-~?]?all$/i.test(t); })[0], red = toks.some(function (t) { return /^redirect=/i.test(t); });
+    var status = 'ok', head = 'SPF record found', why = [], fix = [];
+    var q = all ? (all.charAt(0).match(/[+\-~?]/) ? all.charAt(0) : '+') : '';
+    if (q === '-') why.push('Ends with -all: mail from servers not listed is rejected. Strict and good.');
+    else if (q === '~') why.push('Ends with ~all: mail from unlisted servers is marked suspicious (soft fail). This is the common, safe choice; -all is stricter.');
+    else if (q === '?') { status = 'warn'; why.push('Ends with ?all, which says nothing about unlisted servers.'); fix.push('Change ?all to ~all or -all.'); }
+    else if (q === '+') { status = 'bad'; head = 'SPF allows anyone to send'; why.push('Ends with +all, which authorises every server on the internet.'); fix.push('Replace +all with ~all or -all.'); }
+    else if (!red) { status = 'warn'; why.push('There is no all mechanism at the end, so the record never says what to do with unlisted servers.'); fix.push('End the record with ~all or -all.'); }
+    var cnt = s.n + (s.cut ? '+' : '');
+    if (s.n > 10) { status = 'bad'; head = 'SPF is over the 10 lookup limit'; why.push('It needs ' + cnt + ' DNS lookups (includes followed). Receivers stop at 10 and return a permanent error, so SPF fails.'); fix.push('Remove unused include: entries or replace some with ip4: ranges.'); }
+    else if (s.n >= 8 && status === 'ok') { status = 'warn'; head = 'SPF is close to the 10 lookup limit'; why.push('It uses ' + cnt + ' of 10 allowed DNS lookups, so adding one more service could break it.'); fix.push('Trim unused includes before adding new senders.'); }
+    else why.push('Uses ' + cnt + ' of 10 allowed DNS lookups' + (s.cut ? ' (counting stopped early, the real number is at least this)' : ' (includes followed)') + '.');
+    if (s.ptr) { if (status === 'ok') status = 'warn'; why.push('Uses the ptr mechanism, which is slow and discouraged.'); fix.push('Replace ptr with ip4:/ip6: or include: entries.'); }
+    if (s.broken.length) { if (status === 'ok') status = 'warn'; why.push('Includes a domain with no SPF record: ' + s.broken.join(', ') + '. Receivers treat that as an error.'); fix.push('Fix or remove ' + s.broken.join(', ') + '.'); }
+    return chk('spf', 'SPF', status, head, why.join(' '), fix.join(' '), [rec]);
+  });
+}
+function checkDmarc(r, domain) {
+  var sub = domain.split('.').length > 2;
+  if (!r.ok) return chk('dmarc', 'DMARC', 'info', 'Lookup failed', 'No DNS resolver answered this query, so DMARC could not be checked. Try again.', '', []);
+  var recs = r.data.filter(function (x) { return /^v=DMARC1\s*(;|$)/i.test(x.trim()); });
+  if (!recs.length) return chk('dmarc', 'DMARC', 'bad', 'No DMARC record',
+    'DMARC tells receivers what to do when SPF and DKIM fail, and sends you reports. Gmail and Yahoo require it from bulk senders.' + (sub ? ' This looks like a subdomain: receivers fall back to the parent domain\'s DMARC policy, so check the parent too.' : ''),
+    'Start in monitoring mode: add a TXT record named _dmarc.' + domain + ' with the value  v=DMARC1; p=none; rua=mailto:dmarc@' + domain + '  then read the reports and move to quarantine and reject.', []);
+  if (recs.length > 1) return chk('dmarc', 'DMARC', 'bad', recs.length + ' DMARC records (only one is allowed)', 'Receivers ignore DMARC when there is more than one record.', 'Delete all but one.', recs);
+  var rec = recs[0].trim(), tags = {};
+  rec.split(';').forEach(function (p) { var i = p.indexOf('='); if (i > 0) tags[p.slice(0, i).trim().toLowerCase()] = p.slice(i + 1).trim(); });
+  var p = (tags.p || '').toLowerCase(), status = 'ok', head, why = [], fix = [];
+  if (p === 'reject') head = 'DMARC policy: reject';
+  else if (p === 'quarantine') head = 'DMARC policy: quarantine';
+  else if (p === 'none') { status = 'warn'; head = 'DMARC policy: none (monitoring only)'; why.push('p=none reports failures but asks receivers to deliver them anyway, so it does not stop spoofing yet.'); fix.push('Once the reports look clean, move to p=quarantine and then p=reject.'); }
+  else { status = 'bad'; head = 'DMARC record has no valid policy'; why.push('The p= tag is ' + (p ? 'set to "' + p + '"' : 'missing') + '. It must be none, quarantine or reject.'); fix.push('Set p=none, p=quarantine or p=reject.'); }
+  if (p === 'reject') why.push('Mail that fails both SPF and DKIM alignment is rejected. This is the strongest setting.');
+  if (p === 'quarantine') why.push('Mail that fails is sent to spam. A good step before reject.');
+  if (tags.pct && +tags.pct < 100 && p !== 'none') { if (status === 'ok') status = 'warn'; why.push('pct=' + tags.pct + ' means the policy applies to only ' + tags.pct + '% of failing mail.'); fix.push('Raise pct to 100 when you are confident.'); }
+  if (!tags.rua) { why.push('No rua= address, so you will not receive aggregate reports.'); fix.push('Add rua=mailto:address to see who sends as your domain.'); }
+  else why.push('Aggregate reports go to ' + tags.rua + '.');
+  if (tags.sp) why.push('Subdomains use sp=' + tags.sp + '.');
+  return chk('dmarc', 'DMARC', status, head, why.join(' '), fix.join(' '), [rec]);
+}
+function checkDkim(results) {
+  var all = results.filter(function (x) { return x.rec; });
+  var found = all.filter(function (x) { return /(?:^|;)\s*p=\s*[^;\s]/i.test(x.rec); });
+  var revoked = all.length - found.length;
+  if (results.every(function (x) { return x.fail; })) return chk('dkim', 'DKIM', 'info', 'Lookup failed', 'No DNS resolver answered these queries. Try again.', '', []);
+  if (!found.length) return chk('dkim', 'DKIM', 'info', revoked ? 'No active DKIM key (' + revoked + ' revoked or blank)' : 'No DKIM key at the ' + results.length + ' selectors tried',
+    (revoked ? 'Records with an empty p= are revoked keys or a wildcard placeholder, so they do not count. ' : '') + 'This does not mean DKIM is missing. Each sender picks its own selector name, and DNS cannot list them. Tried: ' + results.map(function (x) { return x.sel; }).join(', ') + '.',
+    'Find the selector in the DKIM-Signature header of a real email from this domain (the s= value), then type it into the selector box above and check again.', []);
+  var warn = false, why = [];
+  if (revoked) why.push(revoked + ' other selector' + (revoked > 1 ? 's have' : ' has') + ' an empty p= (revoked, ignored).');
+  found.forEach(function (f) {
+    var p = ((f.rec.match(/(?:^|;)\s*p=([^;]*)/i) || [])[1] || '').replace(/\s+/g, ''), ed = /k=ed25519/i.test(f.rec);
+    {
+      var bytes = Math.floor(p.length * 3 / 4);
+      if (!ed && bytes < 220) { warn = true; why.push(f.sel + ': the key looks like 1024-bit RSA or shorter. 2048-bit is recommended.'); }
+      else why.push(f.sel + ': ' + (ed ? 'Ed25519' : 'about 2048-bit RSA') + ' key published.');
+    }
+  });
+  return chk('dkim', 'DKIM', warn ? 'warn' : 'ok', found.length + ' DKIM key' + (found.length > 1 ? 's' : '') + ' found',
+    why.join(' ') + ' Presence only: this checks the published key, not that your mail is signed with it.', warn ? 'Rotate to a 2048-bit key with your email provider, or remove revoked selectors you no longer use.' : '',
+    found.map(function (f) { return f.sel + '._domainkey: ' + f.rec; }));
+}
+function checkExtra(key, name, r, re, okHead, okWhy, missHead, missWhy) {
+  var hit = r.ok ? r.data.filter(function (x) { return re.test(x.trim()); }) : [];
+  if (!r.ok) return chk(key, name, 'info', 'Lookup failed', '', '', [], true);
+  return hit.length ? chk(key, name, 'ok', okHead, okWhy, '', hit, true) : chk(key, name, 'info', missHead, missWhy, '', [], true);
+}
+
+function checkDomain(domain, extraSel, tick) {
+  var sels = SEL.slice(); if (extraSel && sels.indexOf(extraSel) < 0) sels.unshift(extraSel);
+  var tasks = [
+    function () { return doh(domain, 'MX'); },
+    function () { return txts(domain); },
+    function () { return txts('_dmarc.' + domain); },
+    function () { return txts('_mta-sts.' + domain); },
+    function () { return txts('default._bimi.' + domain); }
+  ].concat(sels.map(function (s) { return function () { return txts(s + '._domainkey.' + domain).then(function (r) { return { sel: s, fail: !r.ok, rec: r.data.filter(function (x) { return /v=DKIM1|p=/i.test(x); })[0] || '' }; }); }; }));
+  return pool(tasks.map(function (t) { return function () { return t().then(function (x) { tick(); return x; }); }; }), 6).then(function (r) {
+    var mx = r[0], txt = r[1];
+    if (mx.ok && txt.ok && mx.nx && txt.nx) return { domain: domain, nx: true, checks: [], overall: 'bad', ok: true };
+    var dk = r.slice(5);
+    return checkSpf(domain, txt).then(function (spf) {
+      var checks = [checkMx(mx), spf, checkDkim(dk), checkDmarc(r[2], domain),
+        checkExtra('mtasts', 'MTA-STS', r[3], /^v=STSv1/i, 'MTA-STS record found', 'Receivers that support it will insist on encrypted delivery. (The policy file itself is not checked here.)', 'MTA-STS not set (optional)', 'Optional extra that forces encrypted mail delivery. Not required.'),
+        checkExtra('bimi', 'BIMI', r[4], /^v=BIMI1/i, 'BIMI record found', 'Lets supporting inboxes show your logo. Needs a strict DMARC policy.', 'BIMI not set (optional)', 'Optional extra that shows your logo in some inboxes. Not required.')];
+      var core = checks.slice(0, 4), lvl = 'ok';
+      if (core.some(function (c) { return c.status === 'warn'; })) lvl = 'warn';
+      if (core.some(function (c) { return c.status === 'bad'; })) lvl = 'bad';
+      var anyOk = !(mx.ok === false && txt.ok === false);
+      return { domain: domain, checks: checks, overall: lvl, ok: anyOk };
+    });
+  });
+}
+
+/* ---------- render ---------- */
+var LABEL = { ok: 'Pass', warn: 'Review', bad: 'Fail', info: 'Note' }, PILL = { ok: 'pill-ok', warn: 'pill-warn', bad: 'pill-bad', info: '' };
+var OVER = { ok: 'Looks healthy', warn: 'Worth a look', bad: 'Needs fixing' };
+function tileLabel(c) { return c.key === 'dkim' && c.status === 'info' ? 'Not seen' : LABEL[c.status]; }
+function pillOf(status, text) { return '<span class="pill ' + PILL[status] + '">' + pdEsc(text) + '</span>'; }
+var uid = 0;
+function checkHtml(c, pre) {
+  return '<section' + (pre ? ' id="' + pre + '-' + c.key + '"' : '') + ' class="ec-chk ec-' + c.status + (c.extra ? ' ec-extra' : '') + '"><div class="ec-h"><span class="ec-ic" aria-hidden="true"></span><h4>' + pdEsc(c.name) + '</h4>' + pillOf(c.status, c.key === 'dkim' && c.status === 'info' ? 'Not seen' : LABEL[c.status]) + '</div>' +
+    '<p class="ec-head">' + pdEsc(c.head) + '</p>' + (c.why ? '<p class="ec-why">' + pdEsc(c.why) + '</p>' : '') +
+    (c.fix ? '<p class="ec-fix"><b>How to fix:</b> ' + pdEsc(c.fix) + '</p>' : '') +
+    (c.raw.length ? '<details class="ec-rawd"><summary>Show raw record' + (c.raw.length > 1 ? 's' : '') + '</summary><pre class="ec-raw" tabindex="0" aria-label="' + pdEsc(c.name) + ' record">' + pdEsc(c.raw.join('\n')) + '</pre></details>' : '') + '</section>';
+}
+function cardHtml(d) {
+  if (d.nx) return '<article class="rcard ec-card"><header><h3 class="mono">' + pdEsc(d.domain) + '</h3>' + pillOf('bad', 'Not found') + '</header><p class="rnote">This domain does not exist in DNS (NXDOMAIN), so it has no email records. Check the spelling, or whether the domain is registered.</p></article>';
+  var core = d.checks.slice(0, 4), extras = d.checks.slice(4), pre = 'ec' + (uid++);
+  var order = ['mx', 'spf', 'dkim', 'dmarc'], tiles = order.map(function (k) { return core.filter(function (c) { return c.key === k; })[0]; });
+  return '<article class="rcard ec-card"><header><h3 class="mono">' + pdEsc(d.domain) + '</h3>' + pillOf(d.overall, OVER[d.overall]) + '</header>' +
+    '<ul class="ec-tiles">' + tiles.map(function (c) { return '<li><a class="ec-t ec-' + c.status + '" href="#' + pre + '-' + c.key + '"><span>' + c.name + '</span><b>' + tileLabel(c) + '</b></a></li>'; }).join('') + '</ul>' +
+    '<div class="ec-list">' + core.map(function (c) { return checkHtml(c, pre); }).join('') + '</div>' +
+    '<details class="ec-more"><summary>Optional extras: MTA-STS and BIMI</summary><div class="ec-list">' + extras.map(function (c) { return checkHtml(c); }).join('') + '</div></details></article>';
+}
+function plain(d) {
+  if (d.nx) return d.domain + ': domain does not exist (NXDOMAIN)';
+  return d.domain + ': ' + OVER[d.overall] + '\n' + d.checks.map(function (c) {
+    return '  ' + c.name + ' [' + (c.key === 'dkim' && c.status === 'info' ? 'not seen' : LABEL[c.status].toLowerCase()) + '] ' + c.head + (c.fix ? ' | Fix: ' + c.fix : '');
+  }).join('\n');
+}
+function csvRows(rows) {
+  var o = [['domain', 'check', 'status', 'summary', 'how_to_fix', 'record']];
+  rows.forEach(function (d) {
+    if (d.nx) { o.push([d.domain, 'domain', 'fail', 'Domain does not exist (NXDOMAIN)', '', '']); return; }
+    d.checks.forEach(function (c) { o.push([d.domain, c.name, c.key === 'dkim' && c.status === 'info' ? 'not seen' : LABEL[c.status].toLowerCase(), c.head, c.fix, c.raw.join(' | ')]); });
+  });
+  return o;
+}
+function setResults(on) { res.hidden = !on; empty.hidden = on; csvB.disabled = cpB.disabled = !on; if (!on) { out.innerHTML = ''; report = null; } }
+
+/* ---------- wiring ---------- */
+function go() {
+  var p = parseInput(ta.value), s = sel.value.trim().toLowerCase();
+  setResults(false);
+  if (s && !/^[a-z0-9._-]{1,63}$/.test(s)) { pdStatus(st, 'The DKIM selector can only contain letters, numbers, dots, dashes and underscores.', 'err'); sel.focus(); return; }
+  if (!p.list.length) {
+    var m = p.bad.length ? 'Could not read "' + p.bad[0].bad + '": ' + p.bad[0].why + '. Enter something like example.com or you@example.com.' : 'Enter at least one domain, like example.com.';
+    pdStatus(st, m, 'err'); ta.focus(); return;
+  }
+  if (limit.left() < p.list.length) { pdStatus(st, pdLimitMsg(limit, p.list.length, 'domain checks') + ' Free use is 30 domains per hour in this browser.', 'err'); return; }
+  var notes = [];
+  if (p.over) notes.push('Only the first ' + MAXD + ' domains are checked (' + p.over + ' skipped).');
+  if (p.bad.length) notes.push('Skipped: ' + p.bad.slice(0, 3).map(function (b) { return b.bad + ' (' + b.why + ')'; }).join('; ') + '.');
+  cache = {};
+  pdBusy(run, true);
+  var total = p.list.length * (15 + (s && SEL.indexOf(s) < 0 ? 1 : 0)), done = 0;
+  function tick() { done++; pdStatus(st, 'Checking DNS records: ' + Math.min(done, total) + ' of about ' + total + ' lookups done...', 'work'); }
+  pdStatus(st, 'Checking DNS records...', 'work');
+  Promise.all(p.list.map(function (d) { return checkDomain(d, s, tick); })).then(function (rows) {
+    var worked = rows.filter(function (r) { return r.ok; });
+    if (!worked.length) { pdStatus(st, 'Could not reach public DNS (dns.google and cloudflare-dns.com both failed). Check your connection or a blocker, then try again. No free uses were spent.', 'err'); return; }
+    limit.use(p.list.length);
+    report = rows; res.hidden = false; empty.hidden = true; csvB.disabled = cpB.disabled = false;
+    out.innerHTML = rows.map(cardHtml).join('');
+    var bad = rows.filter(function (r) { return r.overall === 'bad'; }).length;
+    pdStatus(st, (notes.length ? notes.join(' ') + ' ' : '') + 'Done: ' + rows.length + ' domain' + (rows.length > 1 ? 's' : '') + ' checked' + (bad ? ', ' + bad + ' need' + (bad > 1 ? '' : 's') + ' fixing' : '') + '. ' + limit.left() + ' free checks left this hour.', 'ok');
+  }).catch(function () { pdStatus(st, 'Something went wrong. Try again.', 'err'); }).then(function () { pdBusy(run, false); });
+}
+run.onclick = go;
+ta.addEventListener('keydown', function (e) { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) go(); });
+document.querySelectorAll('[data-ex]').forEach(function (b) { b.onclick = function () { ta.value = b.dataset.ex; ta.focus(); }; });
+document.getElementById('demo').onclick = function () { ta.value = 'github.com'; sel.value = ''; go(); };
+csvB.onclick = function () { if (report) pdDownload('email-domain-check.csv', pdCsv(csvRows(report))); };
+cpB.onclick = function () { if (report) pdCopy(report.map(plain).join('\n\n'), 'Report copied'); };
+
+</script>
+</body></html>

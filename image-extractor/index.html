@@ -1,80 +1,253 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Extract all images from a web page (free, in your browser) | PennyData</title>
-<meta name="description" content="Paste a web page's HTML and list every image URL: img src, srcset, lazy-load data attributes, og:image and CSS background images. Download as CSV.">
-<link rel="canonical" href="https://project1dev.github.io/pennydata-site/image-extractor/">
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Extract all images from a web page | PennyData</title>
+<meta name="description" content="Free image extractor: paste a page's HTML and list every image URL, including srcset, lazy-load, og:image and CSS backgrounds. Filter, copy or export CSV. Runs in your browser.">
+<link rel="canonical" href="https://penny-data.github.io/pennydata-site/image-extractor/">
+<meta name="theme-color" content="#C8692B">
+<meta property="og:type" content="website"><meta property="og:site_name" content="PennyData"><meta property="og:title" content="Extract all images from a web page | PennyData"><meta property="og:description" content="Free image extractor: paste a page&#x27;s HTML and list every image URL, including srcset, lazy-load, og:image and CSS backgrounds. Filter, copy or export CSV. Runs in your browser."><meta property="og:url" content="https://penny-data.github.io/pennydata-site/image-extractor/"><meta property="og:image" content="https://penny-data.github.io/pennydata-site/og/image-extractor.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Image extractor, a free PennyData tool">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Extract all images from a web page | PennyData"><meta name="twitter:description" content="Free image extractor: paste a page&#x27;s HTML and list every image URL, including srcset, lazy-load, og:image and CSS backgrounds. Filter, copy or export CSV. Runs in your browser."><meta name="twitter:image" content="https://penny-data.github.io/pennydata-site/og/image-extractor.png">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+
+
 <link rel="stylesheet" href="../style.css">
-</head>
-<body>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "sameAs": ["https://apify.com/pennydata"], "@id": "https://penny-data.github.io/pennydata-site/#org", "name": "PennyData", "url": "https://penny-data.github.io/pennydata-site/", "logo": "https://penny-data.github.io/pennydata-site/favicon.svg"}, {"@type": "WebSite", "@id": "https://penny-data.github.io/pennydata-site/#website", "url": "https://penny-data.github.io/pennydata-site/", "name": "PennyData", "publisher": {"@id": "https://penny-data.github.io/pennydata-site/#org"}}, {"@type": "WebApplication", "dateModified": "2026-10-26", "name": "PennyData Image Extractor", "url": "https://penny-data.github.io/pennydata-site/image-extractor/", "description": "Free image extractor: paste a page's HTML and list every image URL, including srcset, lazy-load, og:image and CSS backgrounds. Filter, copy or export CSV. Runs in your browser.", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (runs in a web browser)", "browserRequirements": "Requires JavaScript", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "@id": "https://penny-data.github.io/pennydata-site/image-extractor/#app", "isPartOf": {"@id": "https://penny-data.github.io/pennydata-site/#website"}, "publisher": {"@id": "https://penny-data.github.io/pennydata-site/#org"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Tools", "item": "https://penny-data.github.io/pennydata-site/"}, {"@type": "ListItem", "position": 2, "name": "Image extractor", "item": "https://penny-data.github.io/pennydata-site/image-extractor/"}]}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Why do I paste the page HTML instead of typing a URL?", "acceptedAnswer": {"@type": "Answer", "text": "Browsers do not let one website read another website's pages, so a purely in-browser tool cannot fetch a page for you. Pasting the source is the honest workaround, and it means the page never goes through a server of ours. If you want a tool that fetches the pages for you, the bulk version on Apify does that."}}, {"@type": "Question", "name": "Does the HTML I paste leave my browser?", "acceptedAnswer": {"@type": "Answer", "text": "No. The HTML is parsed in your browser and nothing is uploaded. The thumbnails are different: your browser loads them straight from the sites that host the images, so those sites can see a request. Untick “Show previews” if you only want the list of URLs."}}, {"@type": "Question", "name": "What counts as an image here?", "acceptedAnswer": {"@type": "Answer", "text": "The tool reads img src and srcset, picture and source tags, common lazy-load attributes (data-src, data-srcset, data-lazy, data-original), noscript fallbacks, video posters, og:image and twitter:image tags, icon links, and url(...) values in inline styles and style blocks. Data URIs are ignored."}}, {"@type": "Question", "name": "Why are some images missing from the results?", "acceptedAnswer": {"@type": "Answer", "text": "Images that a script adds after the page loads are not in the original page source, and linked CSS files are not read. Use the bookmarklet in step 1 instead: it copies the page as it looks right now, scripts included. If the images still are not there, they may be drawn on a canvas or loaded by a script on scroll."}}, {"@type": "Question", "name": "Can I download all the images at once?", "acceptedAnswer": {"@type": "Answer", "text": "This free tool gives you the list: copy all URLs, copy one, open one, or export a CSV. It does not download the image files themselves. The bulk version on Apify can fetch many pages and offers a ZIP download, but it runs on Apify and costs money."}}]}]}</script>
+<style>/* image-extractor page only (namespaced ix-) */
+.ix-bm{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-weight:800;font-size:.9rem;color:var(--fg);background:var(--surface);border:2px dashed var(--line);border-radius:999px;padding:8px 14px;text-decoration:none;cursor:grab;min-height:40px}
+.ix-bm:hover{background:var(--cu-wash2)}
+.steps.ix-steps li p+p{margin-top:2px}
+.ix-fields{display:grid;gap:20px}
+.ix-fields textarea{min-height:200px;font-size:14px;resize:vertical}
+.ix-toolrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.ix-toolrow .lbl{font-size:.85rem;color:var(--muted);font-weight:700}
+.ix-toolrow .chip{font-family:var(--font)}
+.ix-trust{margin:14px 0 0;font-size:.9rem;color:var(--muted)}
+.ix-empty{border:1.5px dashed var(--edge);border-radius:var(--r);padding:34px 24px;text-align:center;color:var(--muted);margin:8px 0 36px}
+.ix-empty b{display:block;color:var(--fg);font-size:1.15rem;margin-bottom:6px}
+.ix-tools{display:flex;gap:10px;flex-wrap:wrap}
+.btn.sm{min-height:44px;padding:8px 18px;font-size:.95rem}
+.ix-filters{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0;align-items:center}
+.ix-filters button{font:700 .88rem/1 var(--font);min-height:44px;padding:8px 14px;border:2px solid var(--line);border-radius:999px;background:var(--surface);color:var(--fg);cursor:pointer}
+.ix-filters button:hover{background:var(--cu-wash)}
+.ix-filters button[aria-pressed=true]{background:var(--fg);color:var(--bg)}
+.ix-filters button span{opacity:.7;margin-left:4px;font-family:var(--mono);font-weight:600}
+.ix-opts{display:flex;align-items:center;gap:10px;margin:14px 0 0;font-weight:700;font-size:.95rem;cursor:pointer;min-height:44px}
+.ix-opts input{width:22px;height:22px;accent-color:var(--cu);flex:none}
+.ix-notes{margin:14px 0 0;display:grid;gap:8px}
+.ix-notes p{margin:0;font-size:.92rem;font-weight:600;color:var(--warn);background:var(--warn-bg);padding:9px 12px;border-radius:10px}
+.ix-grid{list-style:none;padding:0;margin:18px 0 8px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px}
+.ix-tile{border:1.5px solid var(--edge);border-radius:var(--r-s);background:var(--surface);overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.ix-pv{position:relative;aspect-ratio:4/3;background:repeating-conic-gradient(var(--sunk) 0 25%,var(--surface) 0 50%) 0 0/16px 16px;border-bottom:1.5px solid var(--edge);display:grid;place-items:center;overflow:hidden}
+.ix-pv img{width:100%;height:100%;object-fit:contain;display:block}
+.ix-pv .ix-ph{display:none;text-align:center;font:700 .8rem/1.3 var(--mono);color:var(--muted);padding:10px}
+.ix-pv.off .ix-ph,.ix-pv.bad .ix-ph{display:block}
+.ix-pv.bad img,.ix-pv.off img{display:none}
+.ix-pv .ix-kind{position:absolute;left:8px;top:8px}
+.ix-pv .ix-dim{position:absolute;right:8px;bottom:8px;font:700 .72rem/1 var(--mono);background:var(--fg);color:var(--bg);padding:4px 7px;border-radius:6px}
+.ix-meta{padding:12px 14px 4px;min-width:0}
+.ix-name{display:block;font:700 .9rem/1.3 var(--mono);overflow-wrap:anywhere}
+.ix-host{display:block;font-size:.8rem;color:var(--muted);margin-top:2px;overflow-wrap:anywhere}
+.ix-btns{display:flex;gap:8px;padding:10px 14px 14px;margin-top:auto}
+.ix-btns button,.ix-btns a{flex:1;text-align:center;font:800 .85rem/1 var(--font);min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--line);border-radius:999px;background:var(--surface);color:var(--fg);text-decoration:none;cursor:pointer}
+.ix-btns button:hover,.ix-btns a:hover{background:var(--cu-wash2)}
+.ix-cap{color:var(--muted);font-size:.92rem;margin:6px 0 30px}
+.ix-sec{padding-top:44px}
+.ix-more{list-style:none;padding:0;margin:20px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.ix-more a{display:block;height:100%;text-decoration:none;color:var(--fg);border:1.5px solid var(--edge);border-radius:var(--r-s);background:var(--surface);padding:16px 18px;transition:transform .12s}
+.ix-more a:hover{transform:translate(-2px,-2px)}
+.ix-more b{display:block;font-size:1.05rem}
+.ix-more span{display:block;color:var(--muted);font-size:.92rem;margin-top:4px}
+@media (max-width:520px){.ix-grid{grid-template-columns:1fr 1fr;gap:12px}.ix-btns{flex-direction:column}.ix-tools{width:100%}.ix-tools .btn{flex:1}}
+@media (max-width:360px){.ix-grid{grid-template-columns:1fr}}
+#out{scroll-margin-top:150px}
+
+.srcdet{margin:4px 0 18px}.srcdet:first-of-type{border-top:0}
+.srcbody{padding:0 0 12px;color:var(--muted)}.srcbody p{padding:0 0 10px;margin:0}
+.state{margin:14px 0 0;display:flex;gap:12px;align-items:flex-start;justify-content:space-between;font-size:.95rem;font-weight:600;padding:10px 14px;border-radius:10px;background:var(--warn-bg);color:var(--warn)}
+.state.unreg{background:var(--cu-wash);color:var(--fg)}.state.fail{background:var(--bad-bg);color:var(--bad)}
+.state button{font:700 .88rem var(--font);border:1.5px solid currentColor;background:transparent;color:inherit;border-radius:999px;padding:6px 14px;min-height:38px;cursor:pointer;white-space:nowrap}
+</style>
+</head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><filter id="wob" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter></defs></svg>
 <a class="skip" href="#main">Skip to content</a>
-<header><a class="brand" href="../">PennyData</a><nav aria-label="Tools"><a href="../whois-dns-lookup/">WHOIS/DNS</a><a href="./" aria-current="page">Images</a><a href="../contact-finder/">Contacts</a><a href="../polymarket-odds-viewer/">Odds</a><a href="../hn-who-is-hiring-search/">Jobs</a></nav></header>
-<main id="main">
-<h1>Extract all images from a web page</h1>
-<p class="lead">Get every image URL a page references, including the ones a right-click "save" misses: srcset sizes, lazy-loaded images, social preview images and CSS backgrounds.</p>
-<ol>
-<li>Open the page, press <kbd>Ctrl</kbd>+<kbd>U</kbd> (<kbd>Cmd</kbd>+<kbd>Option</kbd>+<kbd>U</kbd> on a Mac) to view its source.</li>
-<li>Select all, copy, and paste it below. Add the page address so relative links become full URLs.</li>
-</ol>
-<label for="base">Page URL</label>
-<input id="base" type="url" placeholder="https://example.com/products/blue-chair" spellcheck="false">
-<label for="html">Page HTML</label>
-<textarea id="html" spellcheck="false" placeholder="&lt;!doctype html&gt;..."></textarea>
-<button id="run">Extract images</button><button id="csv" class="secondary" disabled>Download CSV</button><button id="copy" class="secondary" disabled>Copy URLs</button>
+<header class="top"><div class="wrap hbar"><a class="brand" href="../" aria-label="PennyData home"><svg class="logo-m" viewBox="62 0 136 146" aria-hidden="true"><path d="M66 150 Q130 120 194 150 Z" fill="#111"/><path d="M104 62 C96 40 104 22 116 18 C114 30 120 34 124 36 C126 18 140 10 154 18 C146 24 146 32 150 40 C162 34 176 38 178 46 C164 46 158 52 154 60 Z" fill="#111" stroke="#111" stroke-width="4"/><circle cx="130" cy="100" r="46" fill="#fff" stroke="#111" stroke-width="6"/><ellipse cx="114" cy="96" rx="4.5" ry="6.5" fill="#111"/><ellipse cx="146" cy="96" rx="4.5" ry="6.5" fill="#111"/><path d="M104 80 Q114 72 124 79 M138 79 Q148 72 158 80" fill="none" stroke="#111" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M108 118 Q130 138 154 116" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="98" cy="114" r="6" fill="#C8692B" opacity=".55"/><circle cx="162" cy="114" r="6" fill="#C8692B" opacity=".55"/></svg><span>Penny<b>Data</b></span></a><button class="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav"><i aria-hidden="true"></i><span>Menu</span></button><nav aria-label="Tools" class="nav" id="site-nav"><a href="../whois-dns-lookup/">WHOIS &amp; DNS</a><a href="../image-extractor/" aria-current="page">Images</a><a href="../contact-finder/">Contacts</a><a href="../polymarket-odds-viewer/">Polymarket</a><a href="../hn-who-is-hiring-search/">Hiring</a><a href="../email-domain-checker/">Email check</a><a href="../meta-tag-previewer/">Meta tags</a></nav></div><noscript><style>.menu-btn{display:none}.nav{display:flex!important;position:static!important;flex-wrap:wrap;box-shadow:none!important;padding:0 20px 10px!important;flex-direction:row!important}</style></noscript></header>
+<main id="main"><section class="thero"><div class="wrap thero-grid"><div class="thero-txt"><p class="crumb"><a href="../">Tools</a> / Image extractor</p><h1>Extract all images from a web page</h1><p class="lead">Paste a page's HTML and get every image it references: srcset sizes, lazy-loaded images, social preview images and CSS backgrounds. Filter them, copy them, export a CSV.</p><ul class="facts-line"><li>30 pages per hour</li><li>Your HTML is never uploaded</li><li>CSV export</li></ul></div><div class="thero-art" aria-hidden="true"><svg class="mascot hero-fig" viewBox="20 4 240 322" aria-hidden="true"><g filter="url(#wob)"><path d="M108 156 L102 304 M150 156 L158 304" stroke="#111" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M86 306 Q104 294 118 306 L118 318 L82 318 Z" fill="#C8692B" stroke="#111" stroke-width="4" stroke-linejoin="round"/><path d="M146 306 Q164 294 180 306 L182 318 L146 318 Z" fill="#C8692B" stroke="#111" stroke-width="4" stroke-linejoin="round"/><path d="M82 176 Q130 150 178 176 L192 276 Q130 296 68 276 Z" fill="#111" stroke="#111" stroke-width="6" stroke-linejoin="round"/><path d="M94 170 Q130 204 166 170" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/><path d="M118 192 L116 226 M142 192 L144 226" stroke="#C8692B" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M96 252 Q130 240 164 252" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/><path d="M88 190 Q60 222 46 252" stroke="#111" stroke-width="22" fill="none" stroke-linecap="round"/><circle cx="44" cy="262" r="15" fill="#111"/><circle cx="36" cy="251" r="7" fill="#111"/><path d="M172 190 Q198 198 201 166" stroke="#111" stroke-width="22" fill="none" stroke-linecap="round"/><g transform="translate(214 128)"><g transform="rotate(8)"><rect x="-27" y="-24" width="54" height="44" rx="5" fill="#fff" stroke="#111" stroke-width="4.5"/><circle cx="-10" cy="-10" r="5" fill="#C8692B"/><path d="M-23 16 L-8 2 L2 11 L10 4 L23 16 Z" fill="#C8692B"/></g></g><circle cx="201" cy="158" r="15" fill="#111"/><circle cx="191" cy="149" r="7" fill="#111"/><path d="M104 62 C96 40 104 22 116 18 C114 30 120 34 124 36 C126 18 140 10 154 18 C146 24 146 32 150 40 C162 34 176 38 178 46 C164 46 158 52 154 60 Z" fill="#111" stroke="#111" stroke-width="4"/><circle cx="130" cy="100" r="46" fill="#fff" stroke="#111" stroke-width="6"/><ellipse cx="114" cy="96" rx="4.5" ry="6.5" fill="#111"/><ellipse cx="146" cy="96" rx="4.5" ry="6.5" fill="#111"/><path d="M104 80 Q114 72 124 79 M138 79 Q148 72 158 80" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M108 118 Q130 138 154 116" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="98" cy="114" r="6" fill="#C8692B" opacity=".55"/><circle cx="162" cy="114" r="6" fill="#C8692B" opacity=".55"/></g></svg></div></div></section>
+<div class="wrap">
+<div class="panel" id="tool"><div class="panel-head"><div class="pal" data-mood="idle" aria-hidden="true"><svg viewBox="58 4 144 150"><g filter="url(#wob)"><path d="M60 156 Q130 118 200 156 Z" fill="#111"/><path d="M104 62 C96 40 104 22 116 18 C114 30 120 34 124 36 C126 18 140 10 154 18 C146 24 146 32 150 40 C162 34 176 38 178 46 C164 46 158 52 154 60 Z" fill="#111" stroke="#111" stroke-width="4"/><circle cx="130" cy="100" r="46" fill="#fff" stroke="#111" stroke-width="6"/><g class="f f-idle"><ellipse cx="114" cy="96" rx="4.5" ry="6.5" fill="#111"/><ellipse cx="146" cy="96" rx="4.5" ry="6.5" fill="#111"/><path d="M104 80 Q114 72 124 79 M138 79 Q148 72 158 80" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M108 118 Q130 138 154 116" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g><g class="f f-work"><ellipse cx="114" cy="96" rx="4.5" ry="7" fill="#111"/><ellipse cx="146" cy="96" rx="4.5" ry="7" fill="#111"/><path d="M102 82 L124 76" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M138 72 Q148 66 158 76" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M114 120 Q132 136 150 118" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g><g class="f f-ok"><path d="M103 99 Q114 85 125 99 M135 99 Q146 85 157 99" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M106 114 Q130 148 156 112 Z" fill="#fff" stroke="#111" stroke-width="4.5" stroke-linejoin="round"/><path d="M118 126 Q130 134 144 126" fill="none" stroke="#C8692B" stroke-width="3.5" stroke-linecap="round"/></g><g class="f f-err"><ellipse cx="114" cy="96" rx="5.5" ry="8" fill="#111"/><ellipse cx="146" cy="96" rx="5.5" ry="8" fill="#111"/><path d="M104 76 Q114 66 124 74 M138 74 Q148 66 158 76" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="130" cy="125" rx="8" ry="10" fill="#fff" stroke="#111" stroke-width="4.5"/></g><circle cx="98" cy="114" r="6" fill="#C8692B" opacity=".55"/><circle cx="162" cy="114" r="6" fill="#C8692B" opacity=".55"/></g></svg></div><div class="t"><b>Image extractor</b><span>Paste page HTML, press Extract</span></div></div><div class="actions quick"><button type="button" class="btn" id="sample">Try an example</button><button type="button" class="btn ghost" id="paste">Paste from clipboard</button><button type="button" class="btn ghost sm" id="clear">Clear</button></div><p class="keyhint">Or open any page, press <kbd>Ctrl</kbd>+<kbd>U</kbd>, select all, copy, then paste below.</p><details class="how srcdet"><summary>How do I get the page HTML?</summary><div class="srcbody"><p>Press <kbd>Ctrl</kbd>+<kbd>U</kbd> (<kbd>Cmd</kbd>+<kbd>Option</kbd>+<kbd>U</kbd> on a Mac) to view the source, then select all and copy.</p><p>Or drag this button to your bookmarks bar, then click it on any page (it does nothing here): <a class="btn sm ix-bm" draggable="true" aria-label="Copy page HTML bookmarklet. Drag it to your bookmarks bar." href="#bookmarklet" data-bm="(function(){var h='<!-- pennydata-url: '+location.href+' -->\n'+document.documentElement.outerHTML;(navigator.clipboard?navigator.clipboard.writeText(h):Promise.reject()).then(function(){alert('Page HTML copied. Paste it into the PennyData image extractor.')},function(){alert('Could not copy on this page.')})})();">Copy page HTML</a></p><p>Paste it below and press Extract. Add the page address so relative links like <code>/img/a.jpg</code> become full URLs. The bookmarklet fills that in for you.</p></div></details><div class="ix-fields">
+<div class="field"><label for="base">Page URL <span class="hint">optional, resolves relative links like /img/a.jpg</span></label><input id="base" type="url" inputmode="url" placeholder="https://example.com/page" spellcheck="false" autocomplete="off"></div>
+<div class="field"><label for="html">Page HTML</label><textarea id="html" spellcheck="false" placeholder="Paste the page HTML here"></textarea></div></div>
+
+<div class="actions"><button class="btn big" id="run" type="button">Extract images</button></div>
 <p id="status" class="status" role="status" aria-live="polite"></p>
-<div id="grid" class="grid"></div>
-<h2>How it works</h2>
-<p>The HTML is parsed inside your browser; nothing is uploaded. The tool reads <code>img</code> src and srcset, <code>picture</code> sources, common lazy-load attributes (data-src, data-srcset, data-lazy, data-original), <code>og:image</code> and <code>twitter:image</code> tags, link icons and <code>url(...)</code> in inline styles. Pages that build their images with JavaScript after loading may show fewer images in the source. Free use is limited to 30 pages per hour per browser.</p>
-<div class="bulk"><strong>Need images from many pages or a whole site?</strong> The bulk version fetches a list of pages for you and returns every image URL with alt text, size and type, with an optional ZIP download: <a href="https://apify.com/pennydata/website-image-extractor">Website Image Extractor on Apify</a>.</div>
+<p class="ix-trust">Your HTML stays in your browser. 30 pages per hour, free. Thumbnails load directly from the image sites.</p></div>
+<section aria-labelledby="rh">
+<div id="empty" class="ix-empty"><b id="rh-e">Your images will show up here</b>Press &ldquo;Try an example&rdquo; to fill the form with a real saved page.<div class="sample-prev" aria-hidden="true"><p class="exlabel">What a result looks like (made-up sample)</p><ul class="sp-grid"><li><span class="sp-img"><svg viewBox="0 0 160 90" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="160" height="90" fill="#F3E7DA"/><circle cx="116" cy="26" r="9" fill="#C8692B"/><path d="M0 90 L52 40 L88 70 L112 52 L160 90Z" fill="#111"/></svg></span><b>IMG</b><i>/img/hero.jpg</i></li><li><span class="sp-img"><svg viewBox="0 0 160 90" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="160" height="90" fill="#F8D9BF"/><circle cx="116" cy="26" r="9" fill="#C8692B"/><path d="M0 90 L52 40 L88 70 L112 52 L160 90Z" fill="#111"/><path d="M0 0H160" stroke="#C8692B" stroke-width="0"/></svg></span><b>SRCSET</b><i>/img/hero@2x.jpg</i></li><li><span class="sp-img"><svg viewBox="0 0 160 90" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="160" height="90" fill="#C8692B"/><rect x="24" y="22" width="112" height="14" rx="4" fill="#fff"/><rect x="24" y="44" width="76" height="9" rx="4" fill="#F6C79B"/></svg></span><b>OG:IMAGE</b><i>/share.png</i></li><li><span class="sp-img"><svg viewBox="0 0 160 90" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="160" height="90" fill="#EFE9E0"/><g fill="#C8692B"><circle cx="30" cy="25" r="5"/><circle cx="70" cy="25" r="5"/><circle cx="110" cy="25" r="5"/><circle cx="50" cy="55" r="5"/><circle cx="90" cy="55" r="5"/><circle cx="130" cy="55" r="5"/></g></svg></span><b>CSS BG</b><i>/bg/dots.svg</i></li></ul></div></div>
+<div id="out" hidden><div class="rbar"><h2 id="rh" tabindex="-1">Images found</h2><div class="ix-tools"><button class="btn sm" id="copy" type="button">Copy URLs</button><button class="btn ghost sm" id="csv" type="button">Download CSV</button></div></div>
+<div class="ix-filters" id="filters" role="group" aria-label="Filter by where the image was found"></div>
+<label class="ix-opts"><input type="checkbox" id="prev" checked> <span>Show previews <span class="hint" style="margin:0">(loads each image from its own site)</span></span></label>
+<div class="ix-notes" id="notes"></div>
+<ul class="ix-grid" id="grid"></ul><p class="ix-cap" id="cap" hidden></p></div></section>
+<p class="apify-line"><span>Need this for a long list?</span> <a href="https://apify.com/pennydata/website-image-extractor?utm_source=pennydata-site&amp;utm_medium=referral&amp;utm_campaign=image-extractor" rel="noopener">Run the bulk version on Apify <span aria-hidden="true">&rarr;</span></a> <span class="al-note">(paid, PennyData earns a little)</span></p><section class="about-tool"><h2 class="sec-h">What this tool does, and its limits</h2><p>You paste the HTML source of a page and the tool lists every image address it can find in it: normal img tags, srcset candidates, picture sources, lazy-load attributes, video posters, social preview images, icons and CSS background images. It runs entirely in your browser, so the HTML is never uploaded, and it needs the page address only to turn relative paths into full URLs. Because a browser page cannot read other sites, it cannot fetch a page for you, and it cannot see images that a script adds after the page loads unless you copy the rendered page with the bookmarklet. It lists addresses and previews them; it does not download the image files. For fetching many pages at once, the bulk version on Apify does that.</p></section><section class="ix-sec"><h2 class="sec-h faq-h" id="faq-h">Questions</h2><div style="margin-top:20px"><details class="how"><summary>Why do I paste the page HTML instead of typing a URL?</summary><p>Browsers do not let one website read another website's pages, so a purely in-browser tool cannot fetch a page for you. Pasting the source is the honest workaround, and it means the page never goes through a server of ours. If you want a tool that fetches the pages for you, the bulk version on Apify does that.</p></details><details class="how"><summary>Does the HTML I paste leave my browser?</summary><p>No. The HTML is parsed in your browser and nothing is uploaded. The thumbnails are different: your browser loads them straight from the sites that host the images, so those sites can see a request. Untick &ldquo;Show previews&rdquo; if you only want the list of URLs.</p></details><details class="how"><summary>What counts as an image here?</summary><p>The tool reads img src and srcset, picture and source tags, common lazy-load attributes (data-src, data-srcset, data-lazy, data-original), noscript fallbacks, video posters, og:image and twitter:image tags, icon links, and url(...) values in inline styles and style blocks. Data URIs are ignored.</p></details><details class="how"><summary>Why are some images missing from the results?</summary><p>Images that a script adds after the page loads are not in the original page source, and linked CSS files are not read. Use the bookmarklet in step 1 instead: it copies the page as it looks right now, scripts included. If the images still are not there, they may be drawn on a canvas or loaded by a script on scroll.</p></details><details class="how"><summary>Can I download all the images at once?</summary><p>This free tool gives you the list: copy all URLs, copy one, open one, or export a CSV. It does not download the image files themselves. The bulk version on Apify can fetch many pages and offers a ZIP download, but it runs on Apify and costs money.</p></details></div></section>
+<nav class="more" aria-label="More free tools"><h2>More free tools</h2><ul><li><a href="../whois-dns-lookup/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><circle cx="8" cy="-10" r="20" fill="#FBEBDD" stroke="#111" stroke-width="5"/><path d="M-6 5 L-18 26" stroke="#111" stroke-width="8" stroke-linecap="round"/><path d="M-2 -18 Q4 -24 12 -21" fill="none" stroke="#C8692B" stroke-width="3.5" stroke-linecap="round"/></svg></span><span><b>Domain WHOIS &amp; DNS lookup</b><span class="d">Expiry date, registrar and A, MX, NS, TXT records for up to 10 domains.</span></span></a></li><li><a href="../contact-finder/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><g transform="rotate(-8)"><rect x="-28" y="-20" width="56" height="40" rx="5" fill="#fff" stroke="#111" stroke-width="4.5"/><path d="M-24 -15 L0 3 L24 -15" fill="none" stroke="#C8692B" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/></g></svg></span><span><b>Contact finder</b><span class="d">A site&#x27;s contact page and the public emails it lists.</span></span></a></li><li><a href="../polymarket-odds-viewer/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><rect x="-24" y="-2" width="14" height="26" fill="#C8692B" stroke="#111" stroke-width="4"/><rect x="-6" y="-16" width="14" height="40" fill="#fff" stroke="#111" stroke-width="4"/><rect x="12" y="-30" width="14" height="54" fill="#C8692B" stroke="#111" stroke-width="4"/></svg></span><span><b>Polymarket odds viewer</b><span class="d">Search open markets and read the odds as percentages.</span></span></a></li><li><a href="../hn-who-is-hiring-search/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><g transform="rotate(6)"><path d="M-9 -18 v-8 h18 v8" fill="none" stroke="#111" stroke-width="4.5" stroke-linejoin="round"/><rect x="-28" y="-18" width="56" height="40" rx="6" fill="#C8692B" stroke="#111" stroke-width="4.5"/><path d="M-28 0 H28" stroke="#111" stroke-width="4"/><rect x="-5" y="-4" width="10" height="9" rx="2" fill="#fff" stroke="#111" stroke-width="3"/></g></svg></span><span><b>Hacker News Who is hiring search</b><span class="d">Filter the latest monthly thread by keyword.</span></span></a></li><li><a href="../email-domain-checker/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><g transform="rotate(-6)"><rect x="-27" y="-20" width="54" height="38" rx="5" fill="#fff" stroke="#111" stroke-width="4.5"/><path d="M-23 -15 L0 3 L23 -15" fill="none" stroke="#C8692B" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/></g><circle cx="18" cy="16" r="14" fill="#C8692B" stroke="#111" stroke-width="4.5"/><path d="M11 16 L16 21 L26 10" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><b>Email domain checker</b><span class="d">Plain-English SPF, DKIM, DMARC and MX verdicts.</span></span></a></li><li><a href="../meta-tag-previewer/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><rect x="-30" y="-24" width="60" height="48" rx="6" fill="#fff" stroke="#111" stroke-width="4.5"/><path d="M-30 -10 H30" stroke="#111" stroke-width="4"/><circle cx="-22" cy="-17" r="2.5" fill="#C8692B"/><circle cx="-14" cy="-17" r="2.5" fill="#C8692B"/><rect x="-22" y="-3" width="26" height="20" rx="3" fill="#C8692B" stroke="#111" stroke-width="3.5"/><path d="M10 0 H24 M10 8 H24 M10 16 H20" stroke="#111" stroke-width="3.5" stroke-linecap="round"/></svg></span><span><b>Meta tag previewer</b><span class="d">Preview Google and social cards from pasted HTML.</span></span></a></li></ul></nav>
+<aside class="bulk"><div class="bulk-art"><svg class="mascot" viewBox="36 8 216 180" role="img" aria-label="PennyData mascot holding a copper penny"><g filter="url(#wob)"><path d="M82 176 Q130 150 178 176 L192 276 Q130 296 68 276 Z" fill="#111" stroke="#111" stroke-width="6" stroke-linejoin="round"/><path d="M94 170 Q130 204 166 170" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/><path d="M118 192 L116 226 M142 192 L144 226" stroke="#C8692B" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M96 252 Q130 240 164 252" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/><path d="M88 190 Q60 222 46 252" stroke="#111" stroke-width="22" fill="none" stroke-linecap="round"/><circle cx="44" cy="262" r="15" fill="#111"/><circle cx="36" cy="251" r="7" fill="#111"/><path d="M172 190 Q198 198 201 166" stroke="#111" stroke-width="22" fill="none" stroke-linecap="round"/><g transform="translate(214 128)"><circle cx="2" cy="-2" r="25" fill="#C8692B" stroke="#111" stroke-width="5"/><circle cx="2" cy="-2" r="17" fill="none" stroke="#fff" stroke-width="2" opacity=".6"/><text x="2" y="9" text-anchor="middle" font-size="30" font-weight="800" fill="#fff" font-family="Noto Sans,system-ui,sans-serif">&#162;</text></g><circle cx="201" cy="158" r="15" fill="#111"/><circle cx="191" cy="149" r="7" fill="#111"/><path d="M104 62 C96 40 104 22 116 18 C114 30 120 34 124 36 C126 18 140 10 154 18 C146 24 146 32 150 40 C162 34 176 38 178 46 C164 46 158 52 154 60 Z" fill="#111" stroke="#111" stroke-width="4"/><circle cx="130" cy="100" r="46" fill="#fff" stroke="#111" stroke-width="6"/><ellipse cx="114" cy="96" rx="5.5" ry="8" fill="#111"/><ellipse cx="146" cy="96" rx="5.5" ry="8" fill="#111"/><path d="M104 76 Q114 66 124 74 M138 74 Q148 66 158 76" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="130" cy="125" rx="8" ry="10" fill="#fff" stroke="#111" stroke-width="4.5"/><circle cx="98" cy="114" r="6" fill="#C8692B" opacity=".55"/><circle cx="162" cy="114" r="6" fill="#C8692B" opacity=".55"/></g></svg></div><div><p class="eyebrow">When you outgrow this</p><h2>Need images from many pages or a whole site?</h2><p>The bulk version fetches a list of pages for you and returns every image URL with alt text, size and type, with an optional ZIP download.</p><p class="bulk-note">The bulk version runs on Apify and costs money. PennyData earns a little from those runs.</p></div>
+<a class="btn" href="https://apify.com/pennydata/website-image-extractor?utm_source=pennydata-site&amp;utm_medium=referral&amp;utm_campaign=image-extractor" rel="noopener">Open on Apify <span aria-hidden="true">&rarr;</span></a></aside>
+</div>
 </main>
-<footer>
-<p><strong>Privacy:</strong> no analytics, no cookies; the free-use counter stays in your browser's local storage. The HTML you paste stays in your browser. Preview thumbnails load from the sites that host the images.</p>
-<p>I built this and earn from runs of the bulk version. Written with AI assistance (Claude).</p>
-</footer>
+<footer class="foot"><div class="wrap"><div class="foot-grid"><div class="foot-brand"><svg class="logo-m" viewBox="62 0 136 146" aria-hidden="true"><path d="M66 150 Q130 120 194 150 Z" fill="#111"/><path d="M104 62 C96 40 104 22 116 18 C114 30 120 34 124 36 C126 18 140 10 154 18 C146 24 146 32 150 40 C162 34 176 38 178 46 C164 46 158 52 154 60 Z" fill="#111" stroke="#111" stroke-width="4"/><circle cx="130" cy="100" r="46" fill="#fff" stroke="#111" stroke-width="6"/><ellipse cx="114" cy="96" rx="4.5" ry="6.5" fill="#111"/><ellipse cx="146" cy="96" rx="4.5" ry="6.5" fill="#111"/><path d="M104 80 Q114 72 124 79 M138 79 Q148 72 158 80" fill="none" stroke="#111" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M108 118 Q130 138 154 116" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="98" cy="114" r="6" fill="#C8692B" opacity=".55"/><circle cx="162" cy="114" r="6" fill="#C8692B" opacity=".55"/></svg></div><ul class="foot-notes"><li><b>Built with AI assistance</b> (Claude). No analytics, cookies or accounts.</li><li><b>Honest money note.</b> The bulk versions run on Apify, and PennyData earns a little from those runs. The free tools stay free.</li></ul></div><nav class="foot-links" aria-label="All tools"><a href="../whois-dns-lookup/">WHOIS &amp; DNS</a><a href="../image-extractor/">Images</a><a href="../contact-finder/">Contacts</a><a href="../polymarket-odds-viewer/">Polymarket</a><a href="../hn-who-is-hiring-search/">Hiring</a><a href="../email-domain-checker/">Email check</a><a href="../meta-tag-previewer/">Meta tags</a><a href="../#about">About</a></nav></div></footer>
 <script src="../common.js"></script>
 <script>
-var limit = pdLimit('images', 30, 3600e3), found = [];
-function extract(html, base) {
-  var doc = new DOMParser().parseFromString(html, 'text/html'), out = [], seen = {};
-  function add(u, kind) {
-    u = (u || '').trim();
-    if (!u || /^data:/i.test(u)) return;
-    try { u = new URL(u, base || undefined).href; } catch (e) { if (!/^\/\//.test(u)) return; u = 'https:' + u; }
-    if (!seen[u]) { seen[u] = 1; out.push([u, kind]); }
+var limit = pdLimit('images', 30, 3600e3), found = [], shown = [], filter = 'all', MAXTILES = 200;
+var $ = function (id) { return document.getElementById(id); };
+var st = $('status'), run = $('run'), KINDS = { img: 'Image tag', srcset: 'Responsive', lazy: 'Lazy-load', picture: 'Picture', social: 'Social preview', icon: 'Icon', css: 'CSS background', poster: 'Video poster' };
+var SAMPLE = '<!doctype html><html><head>\n<meta property="og:image" content="/static/opengraph-icon-200x200.png">\n<link rel="apple-touch-icon" href="/static/apple-touch-icon-144x144-precomposed.png">\n<link rel="icon" href="/static/favicon.ico">\n</head><body>\n<img src="/static/img/python-logo.png" alt="Logo">\n<img src="/static/img/psf-logo.png?x=1" srcset="/static/img/psf-logo.png 1x, /static/img/python-logo-large.png 2x">\n<img data-src="/static/img/python-logo-large.png" alt="">\n<div style="background-image:url(/static/img/python-logo.png?bg=1)"></div>\n<a href="java\x73cript:alert(1)"><img src="java\x73cript:alert(1)"></a>\n</body></html>';
+var SAMPLE_BASE = 'https://www.python.org/';
+
+function normBase(v) {
+  v = (v || '').trim();
+  if (!v) return '';
+  if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(v)) v = 'https://' + v;
+  try { var u = new URL(v); if (!/^https?:$/.test(u.protocol) || !/^[^\s]+\.[a-z0-9-]{2,}$|^localhost$/i.test(u.hostname)) return null; return u.href; } catch (e) { return null; }
+}
+// srcset per spec: URLs may contain commas; a candidate ends at a comma that follows whitespace/descriptor.
+function parseSrcset(s) {
+  var out = [], i = 0, n = (s || '').length;
+  while (i < n) {
+    while (i < n && /[\s,]/.test(s[i])) i++;
+    var j = i; while (j < n && !/\s/.test(s[j])) j++;
+    var url = s.slice(i, j); i = j;
+    if (/,$/.test(url)) url = url.replace(/,+$/, '');
+    else { while (i < n && s[i] !== ',') i++; }
+    if (url) out.push(url);
   }
-  function srcset(s, kind) { (s || '').split(',').forEach(function (p) { add(p.trim().split(/\s+/)[0], kind); }); }
+  return out;
+}
+function extract(html, base, depth) {
+  var doc = new DOMParser().parseFromString(html, 'text/html'), out = [], seen = {}, skip = { noBase: 0, unsafe: 0 };
+  function add(raw, kind) {
+    raw = (raw || '').trim();
+    if (!raw || /^(data|blob|about):/i.test(raw) || raw.charAt(0) === '#') return;
+    if (/[<>"'`\s]/.test(raw) || /^[a-z][a-z0-9+.-]*:/i.test(raw) && !/^https?:/i.test(raw)) { skip.unsafe++; return; }
+    if (/^\/\//.test(raw)) raw = 'https:' + raw;
+    var u;
+    if (!/^https?:/i.test(raw) && !base) { skip.noBase++; return; }
+    try { u = new URL(raw, base || undefined); } catch (e) { skip.unsafe++; return; }
+    if (!/^https?:$/.test(u.protocol)) { skip.unsafe++; return; }
+    var h = u.href;
+    if (!seen[h]) { seen[h] = 1; out.push([h, kind]); }
+  }
+  function srcset(s, kind) { parseSrcset(s).forEach(function (u) { add(u, kind); }); }
   doc.querySelectorAll('img').forEach(function (el) {
     add(el.getAttribute('src'), 'img');
     srcset(el.getAttribute('srcset'), 'srcset');
     ['data-src', 'data-lazy', 'data-original', 'data-lazy-src'].forEach(function (a) { add(el.getAttribute(a), 'lazy'); });
     srcset(el.getAttribute('data-srcset'), 'lazy');
   });
-  doc.querySelectorAll('picture source').forEach(function (el) { srcset(el.getAttribute('srcset') || el.getAttribute('data-srcset'), 'picture'); });
-  doc.querySelectorAll('meta[property="og:image"],meta[name="og:image"],meta[name="twitter:image"],meta[property="twitter:image"]').forEach(function (el) { add(el.getAttribute('content'), 'social'); });
-  doc.querySelectorAll('link[rel~="icon"],link[rel="apple-touch-icon"],link[rel="image_src"]').forEach(function (el) { add(el.getAttribute('href'), 'icon'); });
-  doc.querySelectorAll('[style*="url("]').forEach(function (el) {
-    (el.getAttribute('style').match(/url\(\s*['"]?([^'")]+)['"]?\s*\)/g) || []).forEach(function (m) { add(m.replace(/^url\(\s*['"]?|['"]?\s*\)$/g, ''), 'css'); });
+  doc.querySelectorAll('source').forEach(function (el) { srcset(el.getAttribute('srcset') || el.getAttribute('data-srcset'), 'picture'); });
+  doc.querySelectorAll('video[poster]').forEach(function (el) { add(el.getAttribute('poster'), 'poster'); });
+  doc.querySelectorAll('meta[property="og:image"],meta[property="og:image:url"],meta[property="og:image:secure_url"],meta[name="og:image"],meta[name="twitter:image"],meta[name="twitter:image:src"],meta[property="twitter:image"],meta[itemprop="image"]').forEach(function (el) { add(el.getAttribute('content'), 'social'); });
+  doc.querySelectorAll('link[rel~="icon"],link[rel~="apple-touch-icon"],link[rel="image_src"],link[rel~="mask-icon"]').forEach(function (el) { add(el.getAttribute('href'), 'icon'); });
+  function css(text) {
+    (text.match(/url\(\s*(?:'[^']*'|"[^"]*"|[^)]*)\s*\)/gi) || []).forEach(function (m) {
+      var u = m.replace(/^url\(\s*['"]?|['"]?\s*\)$/gi, '');
+      if (!/\.(woff2?|ttf|otf|eot|css)(\?|#|$)/i.test(u)) add(u, 'css');
+    });
+  }
+  doc.querySelectorAll('[style*="url("]').forEach(function (el) { css(el.getAttribute('style')); });
+  doc.querySelectorAll('style').forEach(function (el) { css(el.textContent); });
+  if (!depth) doc.querySelectorAll('noscript').forEach(function (el) {
+    var t = el.textContent; if (t && /<img/i.test(t)) {
+      var r = extract(t, base, 1); r.items.forEach(function (it) { if (!seen[it[0]]) { seen[it[0]] = 1; out.push(it); } });
+      skip.noBase += r.skip.noBase; skip.unsafe += r.skip.unsafe;
+    }
   });
-  return out;
+  return { items: out, skip: skip };
 }
-document.getElementById('run').onclick = function () {
-  var st = document.getElementById('status'), html = document.getElementById('html').value, base = document.getElementById('base').value.trim();
-  if (base && !/^https?:\/\//i.test(base)) base = 'https://' + base;
-  if (!html.trim()) { st.textContent = 'Paste the page HTML first.'; return; }
-  if (!limit.use(1)) { st.textContent = 'Free limit reached (30 pages per hour in this browser). Try again later or use the bulk version below.'; return; }
-  found = extract(html, base);
-  document.getElementById('grid').innerHTML = found.map(function (f) {
-    return '<figure><a href="' + pdEsc(f[0]) + '" target="_blank" rel="noopener noreferrer"><img loading="lazy" referrerpolicy="no-referrer" src="' + pdEsc(f[0]) + '" alt="Image ' + pdEsc(f[1]) + ' from the page"></a><figcaption>' + pdEsc(f[1]) + ': ' + pdEsc(f[0]) + '</figcaption></figure>';
+function fname(u) { try { var p = new URL(u).pathname.split('/').filter(Boolean).pop() || '(root)'; return decodeURIComponent(p); } catch (e) { return u; } }
+function host(u) { try { return new URL(u).host; } catch (e) { return ''; } }
+function visible() { return filter === 'all' ? found : found.filter(function (f) { return f[1] === filter; }); }
+function renderFilters() {
+  var c = {}; found.forEach(function (f) { c[f[1]] = (c[f[1]] || 0) + 1; });
+  var keys = Object.keys(KINDS).filter(function (k) { return c[k]; });
+  $('filters').innerHTML = keys.length < 2 ? '' : [['all', 'All', found.length]].concat(keys.map(function (k) { return [k, KINDS[k], c[k]]; })).map(function (k) {
+    return '<button type="button" data-k="' + k[0] + '" aria-pressed="' + (filter === k[0]) + '">' + pdEsc(k[1]) + '<span>' + k[2] + '</span></button>';
   }).join('');
-  document.getElementById('csv').disabled = document.getElementById('copy').disabled = !found.length;
-  st.textContent = found.length + ' unique image URL(s) found.' + (base ? '' : ' Tip: add the page URL to turn relative paths into full links.');
+}
+function renderGrid() {
+  shown = visible();
+  var on = $('prev').checked, part = shown.slice(0, MAXTILES);
+  $('grid').innerHTML = part.map(function (f, i) {
+    var n = fname(f[0]);
+    return '<li class="ix-tile"><div class="ix-pv' + (on ? '' : ' off') + '"><span class="pill ix-kind">' + pdEsc(KINDS[f[1]] || f[1]) + '</span>' +
+      (on ? '<img loading="lazy" decoding="async" referrerpolicy="no-referrer" src="' + pdEsc(f[0]) + '" alt="Preview of ' + pdEsc(n) + '">' : '') +
+      '<span class="ix-ph">' + (on ? 'No preview available' : 'Previews off') + '</span></div>' +
+      '<div class="ix-meta"><b class="ix-name">' + pdEsc(n) + '</b><span class="ix-host">' + pdEsc(host(f[0])) + '</span></div>' +
+      '<div class="ix-btns"><button type="button" data-i="' + i + '" aria-label="Copy URL of ' + pdEsc(n) + '">Copy URL</button><a href="' + pdEsc(f[0]) + '" target="_blank" rel="noopener noreferrer" aria-label="Open ' + pdEsc(n) + ' in a new tab">Open</a></div></li>';
+  }).join('');
+  var cap = $('cap'); cap.hidden = shown.length <= MAXTILES;
+  cap.textContent = 'Showing the first ' + MAXTILES + ' of ' + shown.length + '. Copy URLs and the CSV include all of them.';
+  $('copy').textContent = 'Copy ' + (filter === 'all' ? 'URLs' : shown.length + ' URLs');
+}
+$('grid').addEventListener('error', function (e) { if (e.target.tagName === 'IMG') e.target.parentNode.classList.add('bad'); }, true);
+$('grid').addEventListener('load', function (e) {
+  var im = e.target; if (im.tagName !== 'IMG' || !im.naturalWidth) return;
+  var d = document.createElement('span'); d.className = 'ix-dim'; d.textContent = im.naturalWidth + ' × ' + im.naturalHeight; im.parentNode.appendChild(d);
+}, true);
+$('grid').addEventListener('click', function (e) {
+  var b = e.target.closest('button[data-i]'); if (b) pdCopy(shown[+b.getAttribute('data-i')][0], 'Copied URL');
+});
+$('filters').addEventListener('click', function (e) {
+  var b = e.target.closest('button[data-k]'); if (!b) return;
+  filter = b.getAttribute('data-k'); renderFilters(); renderGrid();
+});
+$('prev').onchange = renderGrid;
+function reset() { found = []; filter = 'all'; $('out').hidden = true; $('empty').hidden = false; }
+(function(){ var a = document.querySelector('a.ix-bm[data-bm]'); if (a) a.setAttribute('href', 'java' + 'script:' + a.getAttribute('data-bm')); })();
+$('sample').onclick = function () { $('html').value = SAMPLE; $('base').value = SAMPLE_BASE; pdStatus(st, 'Sample loaded: a saved copy of python.org page source, not a live fetch.', ''); $('run').click(); };
+$('clear').onclick = function () { $('html').value = ''; $('base').value = ''; pdStatus(st, '', ''); reset(); $('html').focus(); };
+$('paste').onclick = function () {
+  if (!navigator.clipboard || !navigator.clipboard.readText) { pdStatus(st, 'This browser cannot read the clipboard from here. Click the box and press Ctrl+V.', 'err'); return; }
+  navigator.clipboard.readText().then(function (t) {
+    if (!t.trim()) { pdStatus(st, 'The clipboard is empty. Copy a page\'s HTML first.', 'err'); return; }
+    $('html').value = t; pdStatus(st, 'Pasted ' + t.length.toLocaleString('en-US') + ' characters. Press Extract images.', '');
+  }, function () { pdStatus(st, 'The browser blocked clipboard access. Click the box and press Ctrl+V instead.', 'err'); });
 };
-document.getElementById('csv').onclick = function () { pdDownload('images.csv', pdCsv([['url', 'found_in']].concat(found))); };
-document.getElementById('copy').onclick = function () {
-  navigator.clipboard.writeText(found.map(function (f) { return f[0]; }).join('\n')).then(function () { document.getElementById('status').textContent = 'Copied ' + found.length + ' URL(s).'; });
+function fail(msg) { reset(); pdStatus(st, msg, 'err'); }
+run.onclick = function () {
+  var html = $('html').value, baseRaw = $('base').value;
+  if (!html.trim()) return fail('Paste the page HTML first, or press "Try an example".');
+  if (html.indexOf('<') < 0) return fail('That does not look like HTML. Use "view source" on the page (Ctrl+U), copy everything and paste it here.');
+  if (!baseRaw.trim()) {
+    var m = html.match(/<!--\s*pennydata-url:\s*(\S+)\s*-->/);
+    if (m) { baseRaw = m[1]; $('base').value = baseRaw; }
+  }
+  var base = normBase(baseRaw);
+  if (base === null) return fail('"' + baseRaw.trim().slice(0, 60) + '" is not a web address. Use something like https://example.com/page, or leave it empty.');
+  if (limit.left() < 1) return fail(pdLimitMsg(limit, 1, 'pages'));
+  pdBusy(run, true); pdStatus(st, 'Reading the page...', 'work');
+  setTimeout(function () {
+    var r;
+    try { r = extract(html, base); } catch (e) { pdBusy(run, false); return fail('Could not read that HTML. Try copying it again.'); }
+    found = r.items; filter = 'all';
+    var notes = [];
+    if (r.skip.noBase) notes.push(r.skip.noBase + ' relative link' + (r.skip.noBase === 1 ? ' was' : 's were') + ' skipped because no page URL is set. Add the page URL above and extract again.');
+    if (r.skip.unsafe) notes.push(r.skip.unsafe + ' entr' + (r.skip.unsafe === 1 ? 'y was' : 'ies were') + ' ignored because ' + (r.skip.unsafe === 1 ? 'it is' : 'they are') + ' not a plain http or https image address (for example javascript: links).');
+    $('notes').innerHTML = notes.map(function (n) { return '<p>' + pdEsc(n) + '</p>'; }).join('');
+    pdBusy(run, false);
+    if (!found.length) {
+      reset(); $('notes').innerHTML = ''; 
+      pdStatus(st, 'No images found in that HTML.' + (notes.length ? ' ' + notes.join(' ') : ' If the page builds its images with JavaScript, use the "Copy page HTML" bookmarklet instead of view source.'), 'err'); return;
+    }
+    limit.use(1);
+    $('prev').checked = found.length <= 60;
+    $('empty').hidden = true; $('out').hidden = false;
+    $('rh').textContent = found.length + ' image' + (found.length === 1 ? '' : 's') + ' found';
+    renderFilters(); renderGrid();
+    pdStatus(st, found.length + ' unique image URL' + (found.length === 1 ? '' : 's') + ' found. ' + limit.left() + ' free pages left this hour.' + ($('base').value.indexOf('www.python.org') >= 0 && $('html').value === SAMPLE ? ' (Sample data: a saved copy of python.org, not a live fetch.)' : '') + (found.length > 60 ? ' Previews are off for big pages; tick "Show previews" to load them.' : ''), 'ok');
+    $('rh').focus({ preventScroll: true });
+    $('out').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  }, 30);
 };
+$('csv').onclick = function () { var v = visible(); pdDownload('images.csv', pdCsv([['url', 'found_in', 'file_name']].concat(v.map(function (f) { return [f[0], f[1], fname(f[0])]; })))); };
+$('copy').onclick = function () { var v = visible(); pdCopy(v.map(function (f) { return f[0]; }).join('\n'), 'Copied ' + v.length + ' URL' + (v.length === 1 ? '' : 's')); };
+
 </script>
-</body>
-</html>
+</body></html>

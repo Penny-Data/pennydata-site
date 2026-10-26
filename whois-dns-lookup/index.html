@@ -1,89 +1,261 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Free domain WHOIS and DNS lookup (up to 10 domains) | PennyData</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Free domain WHOIS and DNS lookup | PennyData</title>
 <meta name="description" content="Look up domain registration date, expiry date, registrar and A, MX, NS, TXT records for up to 10 domains at once. Free, in your browser.">
-<link rel="canonical" href="https://project1dev.github.io/pennydata-site/whois-dns-lookup/">
+<link rel="canonical" href="https://penny-data.github.io/pennydata-site/whois-dns-lookup/">
+<meta name="theme-color" content="#C8692B">
+<meta property="og:type" content="website"><meta property="og:site_name" content="PennyData"><meta property="og:title" content="Free domain WHOIS and DNS lookup | PennyData"><meta property="og:description" content="Look up domain registration date, expiry date, registrar and A, MX, NS, TXT records for up to 10 domains at once. Free, in your browser."><meta property="og:url" content="https://penny-data.github.io/pennydata-site/whois-dns-lookup/"><meta property="og:image" content="https://penny-data.github.io/pennydata-site/og/whois-dns-lookup.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Domain WHOIS &amp; DNS lookup, a free PennyData tool">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Free domain WHOIS and DNS lookup | PennyData"><meta name="twitter:description" content="Look up domain registration date, expiry date, registrar and A, MX, NS, TXT records for up to 10 domains at once. Free, in your browser."><meta name="twitter:image" content="https://penny-data.github.io/pennydata-site/og/whois-dns-lookup.png">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+
+
 <link rel="stylesheet" href="../style.css">
-</head>
-<body>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "sameAs": ["https://apify.com/pennydata"], "@id": "https://penny-data.github.io/pennydata-site/#org", "name": "PennyData", "url": "https://penny-data.github.io/pennydata-site/", "logo": "https://penny-data.github.io/pennydata-site/favicon.svg"}, {"@type": "WebSite", "@id": "https://penny-data.github.io/pennydata-site/#website", "url": "https://penny-data.github.io/pennydata-site/", "name": "PennyData", "publisher": {"@id": "https://penny-data.github.io/pennydata-site/#org"}}, {"@type": "WebApplication", "dateModified": "2026-10-26", "name": "PennyData WHOIS and DNS lookup", "url": "https://penny-data.github.io/pennydata-site/whois-dns-lookup/", "description": "Free browser tool that looks up registration date, expiry date, registrar and A, AAAA, MX, NS and TXT records for up to 10 domains at once.", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (runs in a web browser)", "browserRequirements": "Requires JavaScript", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "@id": "https://penny-data.github.io/pennydata-site/whois-dns-lookup/#app", "isPartOf": {"@id": "https://penny-data.github.io/pennydata-site/#website"}, "publisher": {"@id": "https://penny-data.github.io/pennydata-site/#org"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Tools", "item": "https://penny-data.github.io/pennydata-site/"}, {"@type": "ListItem", "position": 2, "name": "Domain WHOIS & DNS lookup", "item": "https://penny-data.github.io/pennydata-site/whois-dns-lookup/"}]}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is the difference between WHOIS and RDAP?", "acceptedAnswer": {"@type": "Answer", "text": "WHOIS is the older plain-text protocol for looking up who registered a domain. RDAP is its modern replacement and returns structured data. This page uses RDAP (through rdap.org, which forwards your query to the right registry), so you get the same facts a WHOIS lookup would show: registration, expiry and last-changed dates, plus the registrar."}}, {"@type": "Question", "name": "Why is the owner's name or email not shown?", "acceptedAnswer": {"@type": "Answer", "text": "This tool does not try to show owner contact details. Since GDPR most registries and registrars redact personal data, and many return only a proxy or nothing. The page shows registration dates, the registrar and the DNS records, which are public and reliable."}}, {"@type": "Question", "name": "Why are the dates and registrar blank for my domain?", "acceptedAnswer": {"@type": "Answer", "text": "There are three cases, and the result card tells you which one applies. The name may be unregistered (no registry record and no DNS). The registry for that ending may not publish RDAP data through rdap.org, which is common for some country endings. Or the lookup failed, for example a timeout or a rate limit, in which case a Retry button appears."}}, {"@type": "Question", "name": "What does 'days left' mean? Will the domain disappear on that date?", "acceptedAnswer": {"@type": "Answer", "text": "It counts the days until the expiry date the registry reports. An expiry date is not a drop date: most registrars give the owner a renewal grace period after it, and the owner can renew early at any time. Treat it as a reminder date, not a deadline."}}, {"@type": "Question", "name": "Does it tell me whether a domain is available to buy?", "acceptedAnswer": {"@type": "Answer", "text": "Not for certain. If there is no registry record and no DNS records, the card says the name looks unregistered, which is a good hint. Confirm with a registrar before you count on it, because some registered names have no DNS and some endings are not covered by RDAP."}}]}]}</script>
+<style>/* whois page only */
+.trust{margin:14px 0 0;font-size:.9rem;color:var(--muted)}
+.sec2{padding:40px 0 8px}.sec2 .sec-h{margin-bottom:18px}
+.sec2 .eyebrow{margin-bottom:12px}
+.rtools{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.rbar{flex-wrap:wrap;gap:12px}
+.notes{margin-top:14px;border:1.5px dashed var(--edge);border-radius:12px;padding:12px 16px;font-size:.92rem}
+.notes p{margin:0 0 6px;font-weight:700}.notes ul{margin:0;padding-left:20px;color:var(--muted)}.notes code{font-family:var(--mono);color:var(--fg)}
+.rcard .meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pill-age{background:var(--sunk);color:var(--fg)}
+.rcard .state{margin:12px 0 0;display:flex;gap:12px;align-items:flex-start;justify-content:space-between;font-size:.92rem;font-weight:600;padding:10px 12px;border-radius:10px;background:var(--warn-bg);color:var(--warn)}
+.rcard .state.unreg{background:var(--cu-wash);color:var(--fg)}
+.rcard .state.fail{background:var(--bad-bg);color:var(--bad)}
+.rcard .state button{font:700 .85rem var(--font);border:2px solid currentColor;background:transparent;color:inherit;border-radius:999px;padding:6px 14px;min-height:36px;cursor:pointer;white-space:nowrap}
+.rcard .na{color:var(--muted)}
+.scrollhint{display:none;color:var(--muted);font-size:.85rem;margin:-24px 0 28px}
+.table-wrap caption{text-align:left;padding:12px 16px;font-weight:700;color:var(--muted);font-size:.85rem}
+.table-wrap td div+div{margin-top:3px}
+.rel{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:36px}
+.rel a{display:block;text-decoration:none;color:var(--fg);border:1.5px solid var(--edge);border-radius:var(--r-s);padding:16px 18px;background:var(--surface);min-height:88px}
+.rel a:hover{background:var(--cu-wash);border-color:var(--cu)}
+.rel b{display:block;font-size:1.05rem;margin-bottom:4px}.rel span{color:var(--muted);font-size:.92rem}
+.table-wrap:focus-visible{outline:3px solid var(--cu);outline-offset:2px}
+@media (max-width:640px){.scrollhint{display:block}.rtools .btn{flex:1 1 auto}.rtools{width:100%}}
+.scrollhint[hidden]{display:none!important}
+@media (max-width:640px){.rcard dl{grid-template-columns:1fr 1fr}.rcard dl .wide{grid-column:1/-1}}
+
+.srcdet{margin:4px 0 18px}.srcdet:first-of-type{border-top:0}
+.srcbody{padding:0 0 12px;color:var(--muted)}.srcbody p{padding:0 0 10px;margin:0}
+.state{margin:14px 0 0;display:flex;gap:12px;align-items:flex-start;justify-content:space-between;font-size:.95rem;font-weight:600;padding:10px 14px;border-radius:10px;background:var(--warn-bg);color:var(--warn)}
+.state.unreg{background:var(--cu-wash);color:var(--fg)}.state.fail{background:var(--bad-bg);color:var(--bad)}
+.state button{font:700 .88rem var(--font);border:1.5px solid currentColor;background:transparent;color:inherit;border-radius:999px;padding:6px 14px;min-height:38px;cursor:pointer;white-space:nowrap}
+</style>
+</head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><filter id="wob" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter></defs></svg>
 <a class="skip" href="#main">Skip to content</a>
-<header><a class="brand" href="../">PennyData</a><nav aria-label="Tools"><a href="./" aria-current="page">WHOIS/DNS</a><a href="../image-extractor/">Images</a><a href="../contact-finder/">Contacts</a><a href="../polymarket-odds-viewer/">Odds</a><a href="../hn-who-is-hiring-search/">Jobs</a></nav></header>
-<main id="main">
-<h1>Domain WHOIS and DNS lookup</h1>
-<p class="lead">Paste up to 10 domains, one per line. You get the registration, expiry and last-changed dates and the registrar from RDAP (the modern replacement for WHOIS), plus the domain's A, MX, NS and TXT records.</p>
-<label for="domains">Domains (one per line, max 10)</label>
-<textarea id="domains" spellcheck="false" placeholder="example.com&#10;wikipedia.org"></textarea>
-<button id="run">Look up</button><button id="csv" class="secondary" disabled>Download CSV</button>
+<header class="top"><div class="wrap hbar"><a class="brand" href="../" aria-label="PennyData home"><svg class="logo-m" viewBox="62 0 136 146" aria-hidden="true"><path d="M66 150 Q130 120 194 150 Z" fill="#111"/><path d="M104 62 C96 40 104 22 116 18 C114 30 120 34 124 36 C126 18 140 10 154 18 C146 24 146 32 150 40 C162 34 176 38 178 46 C164 46 158 52 154 60 Z" fill="#111" stroke="#111" stroke-width="4"/><circle cx="130" cy="100" r="46" fill="#fff" stroke="#111" stroke-width="6"/><ellipse cx="114" cy="96" rx="4.5" ry="6.5" fill="#111"/><ellipse cx="146" cy="96" rx="4.5" ry="6.5" fill="#111"/><path d="M104 80 Q114 72 124 79 M138 79 Q148 72 158 80" fill="none" stroke="#111" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M108 118 Q130 138 154 116" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="98" cy="114" r="6" fill="#C8692B" opacity=".55"/><circle cx="162" cy="114" r="6" fill="#C8692B" opacity=".55"/></svg><span>Penny<b>Data</b></span></a><button class="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav"><i aria-hidden="true"></i><span>Menu</span></button><nav aria-label="Tools" class="nav" id="site-nav"><a href="../whois-dns-lookup/" aria-current="page">WHOIS &amp; DNS</a><a href="../image-extractor/">Images</a><a href="../contact-finder/">Contacts</a><a href="../polymarket-odds-viewer/">Polymarket</a><a href="../hn-who-is-hiring-search/">Hiring</a><a href="../email-domain-checker/">Email check</a><a href="../meta-tag-previewer/">Meta tags</a></nav></div><noscript><style>.menu-btn{display:none}.nav{display:flex!important;position:static!important;flex-wrap:wrap;box-shadow:none!important;padding:0 20px 10px!important;flex-direction:row!important}</style></noscript></header>
+<main id="main"><section class="thero"><div class="wrap thero-grid"><div class="thero-txt"><p class="crumb"><a href="../">Tools</a> / WHOIS &amp; DNS</p><h1>Domain WHOIS &amp; DNS lookup</h1><p class="lead">Paste up to 10 domains. See when each was registered and when it expires, who the registrar is, and the A, AAAA, MX, NS and TXT records.</p><ul class="facts-line"><li>Up to 10 at once, 50 per hour</li><li>No cookies, no account</li><li>Data from RDAP and Google DNS</li></ul></div><div class="thero-art" aria-hidden="true"><svg class="mascot hero-fig" viewBox="20 4 240 322" aria-hidden="true"><g filter="url(#wob)"><path d="M108 156 L102 304 M150 156 L158 304" stroke="#111" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M86 306 Q104 294 118 306 L118 318 L82 318 Z" fill="#C8692B" stroke="#111" stroke-width="4" stroke-linejoin="round"/><path d="M146 306 Q164 294 180 306 L182 318 L146 318 Z" fill="#C8692B" stroke="#111" stroke-width="4" stroke-linejoin="round"/><path d="M82 176 Q130 150 178 176 L192 276 Q130 296 68 276 Z" fill="#111" stroke="#111" stroke-width="6" stroke-linejoin="round"/><path d="M94 170 Q130 204 166 170" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/><path d="M118 192 L116 226 M142 192 L144 226" stroke="#C8692B" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M96 252 Q130 240 164 252" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/><path d="M88 190 Q60 222 46 252" stroke="#111" stroke-width="22" fill="none" stroke-linecap="round"/><circle cx="44" cy="262" r="15" fill="#111"/><circle cx="36" cy="251" r="7" fill="#111"/><path d="M172 190 Q198 198 201 166" stroke="#111" stroke-width="22" fill="none" stroke-linecap="round"/><g transform="translate(214 128)"><circle cx="8" cy="-10" r="20" fill="#FBEBDD" stroke="#111" stroke-width="5"/><path d="M-6 5 L-18 26" stroke="#111" stroke-width="8" stroke-linecap="round"/><path d="M-2 -18 Q4 -24 12 -21" fill="none" stroke="#C8692B" stroke-width="3.5" stroke-linecap="round"/></g><circle cx="201" cy="158" r="15" fill="#111"/><circle cx="191" cy="149" r="7" fill="#111"/><path d="M104 62 C96 40 104 22 116 18 C114 30 120 34 124 36 C126 18 140 10 154 18 C146 24 146 32 150 40 C162 34 176 38 178 46 C164 46 158 52 154 60 Z" fill="#111" stroke="#111" stroke-width="4"/><circle cx="130" cy="100" r="46" fill="#fff" stroke="#111" stroke-width="6"/><ellipse cx="114" cy="96" rx="4.5" ry="7" fill="#111"/><ellipse cx="146" cy="96" rx="4.5" ry="7" fill="#111"/><path d="M102 82 L124 76" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M138 72 Q148 66 158 76" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M114 120 Q132 136 150 118" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="98" cy="114" r="6" fill="#C8692B" opacity=".55"/><circle cx="162" cy="114" r="6" fill="#C8692B" opacity=".55"/></g></svg></div></div></section>
+<div class="wrap"><div class="panel"><div class="panel-head"><div class="pal" data-mood="idle" aria-hidden="true"><svg viewBox="58 4 144 150"><g filter="url(#wob)"><path d="M60 156 Q130 118 200 156 Z" fill="#111"/><path d="M104 62 C96 40 104 22 116 18 C114 30 120 34 124 36 C126 18 140 10 154 18 C146 24 146 32 150 40 C162 34 176 38 178 46 C164 46 158 52 154 60 Z" fill="#111" stroke="#111" stroke-width="4"/><circle cx="130" cy="100" r="46" fill="#fff" stroke="#111" stroke-width="6"/><g class="f f-idle"><ellipse cx="114" cy="96" rx="4.5" ry="6.5" fill="#111"/><ellipse cx="146" cy="96" rx="4.5" ry="6.5" fill="#111"/><path d="M104 80 Q114 72 124 79 M138 79 Q148 72 158 80" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M108 118 Q130 138 154 116" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g><g class="f f-work"><ellipse cx="114" cy="96" rx="4.5" ry="7" fill="#111"/><ellipse cx="146" cy="96" rx="4.5" ry="7" fill="#111"/><path d="M102 82 L124 76" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M138 72 Q148 66 158 76" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M114 120 Q132 136 150 118" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g><g class="f f-ok"><path d="M103 99 Q114 85 125 99 M135 99 Q146 85 157 99" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M106 114 Q130 148 156 112 Z" fill="#fff" stroke="#111" stroke-width="4.5" stroke-linejoin="round"/><path d="M118 126 Q130 134 144 126" fill="none" stroke="#C8692B" stroke-width="3.5" stroke-linecap="round"/></g><g class="f f-err"><ellipse cx="114" cy="96" rx="5.5" ry="8" fill="#111"/><ellipse cx="146" cy="96" rx="5.5" ry="8" fill="#111"/><path d="M104 76 Q114 66 124 74 M138 74 Q148 66 158 76" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="130" cy="125" rx="8" ry="10" fill="#fff" stroke="#111" stroke-width="4.5"/></g><circle cx="98" cy="114" r="6" fill="#C8692B" opacity=".55"/><circle cx="162" cy="114" r="6" fill="#C8692B" opacity=".55"/></g></svg></div><div class="t"><b>WHOIS &amp; DNS lookup</b><span>Paste domains, press Look up</span></div></div><label for="domains">Domains <span class="hint">one per line, up to 10</span></label>
+<textarea id="domains" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="example.com&#10;wikipedia.org&#10;github.com"></textarea>
+<div class="row"><span class="lbl">Try an example:</span><div class="chips" role="group" aria-label="Examples"><button type="button" class="chip dom" data-ex="wikipedia.org">wikipedia.org</button><button type="button" class="chip" data-ex="wikipedia.org&#10;github.com&#10;example.org">3 sites</button><button type="button" class="chip" data-ex="example.com&#10;this-name-is-surely-unregistered-48151623.com&#10;b&#252;cher.de">example, unregistered, IDN</button><button type="button" class="chip" data-ex="">clear</button></div></div>
+<div class="actions"><button class="btn big" id="run" type="button">Look up</button></div>
+<p class="trust">Your list goes straight from this page to Google Public DNS and the registry's RDAP server. Nothing is sent to PennyData.</p>
 <p id="status" class="status" role="status" aria-live="polite"></p>
-<div class="table-wrap"><table id="out" hidden>
-<thead><tr><th scope="col">Domain</th><th scope="col">Registered</th><th scope="col">Expires</th><th scope="col">Updated</th><th scope="col">Registrar</th><th scope="col">A</th><th scope="col">MX</th><th scope="col">NS</th><th scope="col">TXT</th></tr></thead>
-<tbody></tbody></table></div>
-<h2>How it works</h2>
-<p>Your browser asks Google Public DNS (dns.google, DNS-over-HTTPS) for the records and rdap.org for the registration data. rdap.org forwards the query to the registry for that domain's ending. Some country-code endings (for example .de or .co.uk) do not publish RDAP, so their dates show as "not published". Free use is limited to 50 domains per hour per browser.</p>
-<div class="bulk"><strong>Need hundreds or thousands of domains?</strong> The bulk version checks up to 1,000 domains per run (registrar, expiry, domain age, nameservers, plus an MX/SPF/DMARC mode) and exports CSV or JSON: <a href="https://apify.com/pennydata/bulk-domain-whois-dns-lookup">Bulk Domain WHOIS and DNS Lookup on Apify</a>.</div>
+<div id="notes" class="notes" hidden></div></div>
+<div id="empty" class="ix-empty"><b>Your results will show up here</b>Paste some domains above, or press an example chip, then Look up.<div class="sample-prev" aria-hidden="true"><p class="exlabel">What a result looks like (made-up sample)</p><div class="sp-whois"><div class="sw-top"><b>example.org</b><span class="pill pill-ok">214 days left</span></div><dl class="sw-facts"><div><dt>Registered</dt><dd>1995-08-14</dd></div><div><dt>Expires</dt><dd>2027-05-27</dd></div><div><dt>Registrar</dt><dd>Example Registrar</dd></div></dl><div class="sw-recs"><code>A 93.184.216.34</code><code>MX 10 mail.example.org</code><code>NS ns1.example.org</code><code>TXT v=spf1 -all</code></div></div></div></div>
+<div id="res" hidden><div class="rbar"><h2>Results</h2><div class="rtools"><div class="seg" role="group" aria-label="Result view"><button type="button" id="v-cards" aria-pressed="true">Cards</button><button type="button" id="v-table" aria-pressed="false">Table</button></div><button class="btn ghost sm" id="copy" type="button">Copy as text</button><button class="btn ghost sm" id="csv" type="button">Download CSV</button></div></div>
+<div id="results" class="results"></div><div class="table-wrap wide" id="tbl" hidden tabindex="0" role="region" aria-label="Results table, scrolls sideways"></div><p class="scrollhint" id="hint" hidden>Swipe the table sideways to see every column.</p></div>
+
+
+<p class="apify-line"><span>Need this for a long list?</span> <a href="https://apify.com/pennydata/bulk-domain-whois-dns-lookup?utm_source=pennydata-site&amp;utm_medium=referral&amp;utm_campaign=whois-dns-lookup" rel="noopener">Run the bulk version on Apify <span aria-hidden="true">&rarr;</span></a> <span class="al-note">(paid, PennyData earns a little)</span></p><section class="about-tool"><h2 class="sec-h">What this tool does, and its limits</h2><p>This tool takes up to ten domain names and asks two public services about each one. Registration facts (registered date, expiry date, last change and the registrar) come from RDAP, the modern replacement for WHOIS, through the rdap.org forwarder. The address, mail, name server and text records come from Google Public DNS over HTTPS. Everything happens from your browser, so nothing is stored on a PennyData server. The limits are real: some country endings publish no RDAP data, owner names are redacted for privacy by almost every registry, and an expiry date is a reminder, not a drop date. If a lookup fails, the card says so and offers a Retry button. For lists of hundreds or thousands of domains, use the bulk version on Apify.</p></section>
+
+<section class="sec2"><h2 class="sec-h faq-h" id="faq-h">Questions</h2><details class="how"><summary>What the records mean</summary><div class="glossary"><div><b>A</b><p>The IPv4 address the name points to.</p></div><div><b>AAAA</b><p>The IPv6 address the name points to.</p></div><div><b>MX</b><p>The mail servers that receive email for the domain. Lower numbers are tried first.</p></div><div><b>NS</b><p>The nameservers that host the domain's DNS.</p></div><div><b>TXT</b><p>Free-form text, used for SPF email rules, site verification and more.</p></div></div></details><details class="how"><summary>What is the difference between WHOIS and RDAP?</summary><p>WHOIS is the older plain-text protocol for looking up who registered a domain. RDAP is its modern replacement and returns structured data. This page uses RDAP (through rdap.org, which forwards your query to the right registry), so you get the same facts a WHOIS lookup would show: registration, expiry and last-changed dates, plus the registrar.</p></details><details class="how"><summary>Why is the owner's name or email not shown?</summary><p>This tool does not try to show owner contact details. Since GDPR most registries and registrars redact personal data, and many return only a proxy or nothing. The page shows registration dates, the registrar and the DNS records, which are public and reliable.</p></details><details class="how"><summary>Why are the dates and registrar blank for my domain?</summary><p>There are three cases, and the result card tells you which one applies. The name may be unregistered (no registry record and no DNS). The registry for that ending may not publish RDAP data through rdap.org, which is common for some country endings. Or the lookup failed, for example a timeout or a rate limit, in which case a Retry button appears.</p></details><details class="how"><summary>What does 'days left' mean? Will the domain disappear on that date?</summary><p>It counts the days until the expiry date the registry reports. An expiry date is not a drop date: most registrars give the owner a renewal grace period after it, and the owner can renew early at any time. Treat it as a reminder date, not a deadline.</p></details><details class="how"><summary>Does it tell me whether a domain is available to buy?</summary><p>Not for certain. If there is no registry record and no DNS records, the card says the name looks unregistered, which is a good hint. Confirm with a registrar before you count on it, because some registered names have no DNS and some endings are not covered by RDAP.</p></details></section>
+
+
+<nav class="more" aria-label="More free tools"><h2>More free tools</h2><ul><li><a href="../image-extractor/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><g transform="rotate(8)"><rect x="-27" y="-24" width="54" height="44" rx="5" fill="#fff" stroke="#111" stroke-width="4.5"/><circle cx="-10" cy="-10" r="5" fill="#C8692B"/><path d="M-23 16 L-8 2 L2 11 L10 4 L23 16 Z" fill="#C8692B"/></g></svg></span><span><b>Image extractor</b><span class="d">Every image URL a page references, from pasted HTML.</span></span></a></li><li><a href="../contact-finder/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><g transform="rotate(-8)"><rect x="-28" y="-20" width="56" height="40" rx="5" fill="#fff" stroke="#111" stroke-width="4.5"/><path d="M-24 -15 L0 3 L24 -15" fill="none" stroke="#C8692B" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/></g></svg></span><span><b>Contact finder</b><span class="d">A site&#x27;s contact page and the public emails it lists.</span></span></a></li><li><a href="../polymarket-odds-viewer/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><rect x="-24" y="-2" width="14" height="26" fill="#C8692B" stroke="#111" stroke-width="4"/><rect x="-6" y="-16" width="14" height="40" fill="#fff" stroke="#111" stroke-width="4"/><rect x="12" y="-30" width="14" height="54" fill="#C8692B" stroke="#111" stroke-width="4"/></svg></span><span><b>Polymarket odds viewer</b><span class="d">Search open markets and read the odds as percentages.</span></span></a></li><li><a href="../hn-who-is-hiring-search/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><g transform="rotate(6)"><path d="M-9 -18 v-8 h18 v8" fill="none" stroke="#111" stroke-width="4.5" stroke-linejoin="round"/><rect x="-28" y="-18" width="56" height="40" rx="6" fill="#C8692B" stroke="#111" stroke-width="4.5"/><path d="M-28 0 H28" stroke="#111" stroke-width="4"/><rect x="-5" y="-4" width="10" height="9" rx="2" fill="#fff" stroke="#111" stroke-width="3"/></g></svg></span><span><b>Hacker News Who is hiring search</b><span class="d">Filter the latest monthly thread by keyword.</span></span></a></li><li><a href="../email-domain-checker/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><g transform="rotate(-6)"><rect x="-27" y="-20" width="54" height="38" rx="5" fill="#fff" stroke="#111" stroke-width="4.5"/><path d="M-23 -15 L0 3 L23 -15" fill="none" stroke="#C8692B" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/></g><circle cx="18" cy="16" r="14" fill="#C8692B" stroke="#111" stroke-width="4.5"/><path d="M11 16 L16 21 L26 10" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><b>Email domain checker</b><span class="d">Plain-English SPF, DKIM, DMARC and MX verdicts.</span></span></a></li><li><a href="../meta-tag-previewer/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><rect x="-30" y="-24" width="60" height="48" rx="6" fill="#fff" stroke="#111" stroke-width="4.5"/><path d="M-30 -10 H30" stroke="#111" stroke-width="4"/><circle cx="-22" cy="-17" r="2.5" fill="#C8692B"/><circle cx="-14" cy="-17" r="2.5" fill="#C8692B"/><rect x="-22" y="-3" width="26" height="20" rx="3" fill="#C8692B" stroke="#111" stroke-width="3.5"/><path d="M10 0 H24 M10 8 H24 M10 16 H20" stroke="#111" stroke-width="3.5" stroke-linecap="round"/></svg></span><span><b>Meta tag previewer</b><span class="d">Preview Google and social cards from pasted HTML.</span></span></a></li></ul></nav>
+<aside class="bulk"><div class="bulk-art"><svg class="mascot" viewBox="36 8 216 180" role="img" aria-label="PennyData mascot holding a copper penny"><g filter="url(#wob)"><path d="M82 176 Q130 150 178 176 L192 276 Q130 296 68 276 Z" fill="#111" stroke="#111" stroke-width="6" stroke-linejoin="round"/><path d="M94 170 Q130 204 166 170" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/><path d="M118 192 L116 226 M142 192 L144 226" stroke="#C8692B" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M96 252 Q130 240 164 252" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/><path d="M88 190 Q60 222 46 252" stroke="#111" stroke-width="22" fill="none" stroke-linecap="round"/><circle cx="44" cy="262" r="15" fill="#111"/><circle cx="36" cy="251" r="7" fill="#111"/><path d="M172 190 Q198 198 201 166" stroke="#111" stroke-width="22" fill="none" stroke-linecap="round"/><g transform="translate(214 128)"><circle cx="2" cy="-2" r="25" fill="#C8692B" stroke="#111" stroke-width="5"/><circle cx="2" cy="-2" r="17" fill="none" stroke="#fff" stroke-width="2" opacity=".6"/><text x="2" y="9" text-anchor="middle" font-size="30" font-weight="800" fill="#fff" font-family="Noto Sans,system-ui,sans-serif">&#162;</text></g><circle cx="201" cy="158" r="15" fill="#111"/><circle cx="191" cy="149" r="7" fill="#111"/><path d="M104 62 C96 40 104 22 116 18 C114 30 120 34 124 36 C126 18 140 10 154 18 C146 24 146 32 150 40 C162 34 176 38 178 46 C164 46 158 52 154 60 Z" fill="#111" stroke="#111" stroke-width="4"/><circle cx="130" cy="100" r="46" fill="#fff" stroke="#111" stroke-width="6"/><ellipse cx="114" cy="96" rx="4.5" ry="7" fill="#111"/><ellipse cx="146" cy="96" rx="4.5" ry="7" fill="#111"/><path d="M102 82 L124 76" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M138 72 Q148 66 158 76" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M114 120 Q132 136 150 118" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="98" cy="114" r="6" fill="#C8692B" opacity=".55"/><circle cx="162" cy="114" r="6" fill="#C8692B" opacity=".55"/></g></svg></div><div><p class="eyebrow">When you outgrow this</p><h2>Hundreds or thousands of domains?</h2><p>The bulk version checks up to 1,000 domains per run (registrar, expiry, domain age, nameservers, availability, plus MX, SPF and DMARC) and exports CSV or JSON.</p><p class="bulk-note">The bulk version runs on Apify and costs money. PennyData earns a little from those runs.</p></div>
+<a class="btn" href="https://apify.com/pennydata/bulk-domain-whois-dns-lookup?utm_source=pennydata-site&amp;utm_medium=referral&amp;utm_campaign=whois-dns-lookup" rel="noopener">Open on Apify <span aria-hidden="true">&rarr;</span></a></aside>
+</div>
+
 </main>
-<footer>
-<p><strong>Privacy:</strong> no analytics, no cookies; the free-use counter stays in your browser's local storage. The domains you enter are sent from your browser to dns.google and rdap.org only.</p>
-<p>I built this and earn from runs of the bulk version. Written with AI assistance (Claude).</p>
-</footer>
+<footer class="foot"><div class="wrap"><div class="foot-grid"><div class="foot-brand"><svg class="logo-m" viewBox="62 0 136 146" aria-hidden="true"><path d="M66 150 Q130 120 194 150 Z" fill="#111"/><path d="M104 62 C96 40 104 22 116 18 C114 30 120 34 124 36 C126 18 140 10 154 18 C146 24 146 32 150 40 C162 34 176 38 178 46 C164 46 158 52 154 60 Z" fill="#111" stroke="#111" stroke-width="4"/><circle cx="130" cy="100" r="46" fill="#fff" stroke="#111" stroke-width="6"/><ellipse cx="114" cy="96" rx="4.5" ry="6.5" fill="#111"/><ellipse cx="146" cy="96" rx="4.5" ry="6.5" fill="#111"/><path d="M104 80 Q114 72 124 79 M138 79 Q148 72 158 80" fill="none" stroke="#111" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M108 118 Q130 138 154 116" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="98" cy="114" r="6" fill="#C8692B" opacity=".55"/><circle cx="162" cy="114" r="6" fill="#C8692B" opacity=".55"/></svg></div><ul class="foot-notes"><li><b>Built with AI assistance</b> (Claude). No analytics, cookies or accounts.</li><li><b>Honest money note.</b> The bulk versions run on Apify, and PennyData earns a little from those runs. The free tools stay free.</li></ul></div><nav class="foot-links" aria-label="All tools"><a href="../whois-dns-lookup/">WHOIS &amp; DNS</a><a href="../image-extractor/">Images</a><a href="../contact-finder/">Contacts</a><a href="../polymarket-odds-viewer/">Polymarket</a><a href="../hn-who-is-hiring-search/">Hiring</a><a href="../email-domain-checker/">Email check</a><a href="../meta-tag-previewer/">Meta tags</a><a href="../#about">About</a></nav></div></footer>
 <script src="../common.js"></script>
 <script>
-var limit = pdLimit('whois', 50, 3600e3), rows = [];
-function dateOf(r, action) {
-  var e = (r.events || []).filter(function (x) { return x.eventAction === action; })[0];
-  return e ? e.eventDate.slice(0, 10) : '';
+var limit = pdLimit('whois', 50, 3600e3), rows = [], busy = false;
+var $ = function (id) { return document.getElementById(id); };
+var ta = $('domains'), st = $('status'), run = $('run'), notesEl = $('notes');
+var EXAMPLE = 'example.com\nwikipedia.org\ngithub.com', MAX = 10, CONC = 3, TYPES = { A: 1, AAAA: 28, NS: 2, MX: 15, TXT: 16 };
+
+/* ---- input parsing: returns accepted names and a reason for every skipped entry ---- */
+function parseInput(raw) {
+  var seen = {}, list = [], skipped = [];
+  raw.split(/[\s,;]+/).filter(Boolean).forEach(function (tok) {
+    var s = tok.trim().toLowerCase();
+    if (s.indexOf('@') >= 0) return skipped.push([tok, 'looks like an email address, enter the part after the @']);
+    s = s.replace(/^[a-z][a-z0-9+.-]*:\/\//, '').split(/[\/?#]/)[0].replace(/:\d+$/, '').replace(/^www\./, '').replace(/\.+$/, '');
+    if (!s) return skipped.push([tok, 'empty']);
+    if (/^\d{1,3}(\.\d{1,3}){3}$/.test(s) || s.indexOf(':') >= 0) return skipped.push([tok, 'IP addresses are not supported, enter a domain name']);
+    var h;
+    try { h = new URL('http://' + s).hostname; } catch (e) { return skipped.push([tok, 'not a valid domain name']); }
+    if (h.indexOf('.') < 0) return skipped.push([tok, 'needs an ending such as .com']);
+    var labels = h.split('.');
+    if (!labels.every(function (l) { return /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$/.test(l); }) || !/^([a-z]{2,}|xn--[a-z0-9-]+)$/.test(labels[labels.length - 1]))
+      return skipped.push([tok, 'not a valid domain name']);
+    if (seen[h]) return;
+    seen[h] = 1; list.push({ d: h, shown: s });
+  });
+  return { list: list, skipped: skipped };
 }
-function registrar(r) {
+
+/* ---- network ---- */
+function timed(url, ms) {
+  var c = new AbortController(), t = setTimeout(function () { c.abort(); }, ms);
+  return fetch(url, { signal: c.signal }).then(function (r) { clearTimeout(t); return r; }, function (e) { clearTimeout(t); throw e; });
+}
+function dns(name, type) { // {ok, nx, recs}
+  return timed('https://dns.google/resolve?name=' + encodeURIComponent(name) + '&type=' + type, 8000)
+    .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+    .then(function (j) {
+      var recs = (j.Answer || []).filter(function (a) { return a.type === TYPES[type]; }).map(function (a) { return a.data.replace(/^"|"$/g, '').replace(/" "/g, ''); });
+      return { ok: true, nx: j.Status === 3, recs: recs };
+    }).catch(function () { return { ok: false, nx: false, recs: [] }; });
+}
+function ev(r, a) { var e = (r.events || []).filter(function (x) { return x.eventAction === a; })[0]; return e ? e.eventDate.slice(0, 10) : ''; }
+function registrarOf(r) {
   var e = (r.entities || []).filter(function (x) { return (x.roles || []).indexOf('registrar') >= 0; })[0];
   if (!e) return '';
   var fn = ((e.vcardArray || [])[1] || []).filter(function (v) { return v[0] === 'fn'; })[0];
   return fn ? fn[3] : (e.handle || '');
 }
-function dns(name, type) {
-  return fetch('https://dns.google/resolve?name=' + encodeURIComponent(name) + '&type=' + type)
-    .then(function (r) { return r.json(); })
-    .then(function (j) { return (j.Answer || []).filter(function (a) { return a.type === { A: 1, NS: 2, MX: 15, TXT: 16 }[type]; }).map(function (a) { return a.data.replace(/^"|"$/g, ''); }); })
-    .catch(function () { return ['(lookup failed)']; });
+function rdap(name) { // {s:'ok'|'nf'|'err', ...}
+  return timed('https://rdap.org/domain/' + encodeURIComponent(name), 12000).then(function (r) {
+    if (r.status === 404) return { s: 'nf' };
+    if (!r.ok) return { s: 'err', why: r.status === 429 ? 'rate limited' : 'HTTP ' + r.status };
+    return r.json().then(function (j) { return { s: 'ok', reg: ev(j, 'registration'), exp: ev(j, 'expiration'), upd: ev(j, 'last changed'), registrar: registrarOf(j) }; });
+  }).catch(function (e) { return { s: 'err', why: e && e.name === 'AbortError' ? 'timed out' : 'network error' }; });
 }
-function rdap(name) {
-  return fetch('https://rdap.org/domain/' + encodeURIComponent(name))
-    .then(function (r) { if (!r.ok) throw 0; return r.json(); })
-    .then(function (r) { return [dateOf(r, 'registration'), dateOf(r, 'expiration'), dateOf(r, 'last changed'), registrar(r)]; })
-    .catch(function () { return ['not published', '', '', '']; });
-}
-function clean(s) {
-  s = s.trim().toLowerCase().replace(/^[a-z]+:\/\//, '').split(/[\/?#]/)[0].replace(/^www\./, '');
-  return /^[a-z0-9.-]+\.[a-z0-9-]{2,}$/.test(s) ? s : '';
-}
-document.getElementById('run').onclick = function () {
-  var btn = this, st = document.getElementById('status');
-  var list = document.getElementById('domains').value.split(/[\s,]+/).map(clean).filter(Boolean);
-  list = list.filter(function (d, i) { return list.indexOf(d) === i; });
-  if (!list.length) { st.textContent = 'Enter at least one domain, like example.com.'; return; }
-  if (list.length > 10) { st.textContent = 'Only the first 10 domains are checked. Use the bulk version below for longer lists.'; list = list.slice(0, 10); }
-  else st.textContent = '';
-  if (!limit.use(list.length)) { st.textContent = 'Free limit reached (50 domains per hour in this browser, ' + limit.left() + ' left). Try again later or use the bulk version below.'; return; }
-  btn.disabled = true; st.textContent += ' Looking up ' + list.length + ' domain(s)...';
-  Promise.all(list.map(function (d) {
-    return Promise.all([rdap(d), dns(d, 'A'), dns(d, 'MX'), dns(d, 'NS'), dns(d, 'TXT')]).then(function (x) {
-      return [d].concat(x[0], [x[1].join(' '), x[2].join('; '), x[3].join(' '), x[4].join(' | ')]);
-    });
-  })).then(function (res) {
-    rows = res;
-    var tb = document.querySelector('#out tbody');
-    tb.innerHTML = res.map(function (r) { return '<tr>' + r.map(function (v, i) { return (i ? '<td>' : '<th scope="row">') + pdEsc(v || '-') + (i ? '</td>' : '</th>'); }).join('') + '</tr>'; }).join('');
-    document.getElementById('out').hidden = false;
-    document.getElementById('csv').disabled = false;
-    st.textContent = 'Done: ' + res.length + ' domain(s). ' + limit.left() + ' free lookups left this hour.';
-    btn.disabled = false;
+function lookup(item) {
+  var d = item.d;
+  return Promise.all([rdap(d), dns(d, 'A'), dns(d, 'AAAA'), dns(d, 'MX'), dns(d, 'NS'), dns(d, 'TXT')]).then(function (x) {
+    var r = x[0], o = { domain: d, shown: item.shown, rs: r.s, why: r.why || '', registered: r.reg || '', expires: r.exp || '', updated: r.upd || '', registrar: r.registrar || '',
+      a: x[1], aaaa: x[2], mx: x[3], ns: x[4], txt: x[5] };
+    var exists = x[4].recs.length || x[1].recs.length || x[2].recs.length;
+    var nx = x[1].nx || x[4].nx;
+    o.state = r.s === 'ok' ? 'ok' : r.s === 'err' ? 'fail' : ((nx || (!exists && x[1].ok && x[4].ok)) ? 'unreg' : (exists ? 'nordap' : 'fail'));
+    return o;
   });
+}
+function pool(items, n, tick) {
+  var out = new Array(items.length), next = 0, done = 0;
+  return new Promise(function (res) {
+    function go() {
+      if (next >= items.length) { if (done === items.length) res(out); return; }
+      var i = next++;
+      lookup(items[i]).then(function (o) { out[i] = o; }, function () { out[i] = { domain: items[i].d, shown: items[i].shown, state: 'fail', rs: 'err', why: 'error', a: {recs: []}, aaaa: {recs: []}, mx: {recs: []}, ns: {recs: []}, txt: {recs: []}, registered: '', expires: '', updated: '', registrar: '' }; })
+        .then(function () { done++; tick(done); go(); });
+    }
+    for (var k = 0; k < Math.min(n, items.length); k++) go();
+  });
+}
+
+/* ---- rendering ---- */
+function daysLeft(iso) { return iso ? Math.round((new Date(iso + 'T00:00:00Z') - Date.now()) / 864e5) : null; }
+function expPill(iso) {
+  var n = daysLeft(iso); if (n === null) return '';
+  if (n < 0) return '<span class="pill pill-bad">expired ' + (-n) + ' days ago</span>';
+  return '<span class="pill ' + (n < 60 ? 'pill-warn' : 'pill-ok') + '">' + n + ' days left</span>';
+}
+function age(iso) {
+  if (!iso) return '';
+  var m = Math.floor((Date.now() - new Date(iso + 'T00:00:00Z')) / 2629800000);
+  if (m < 0) return '';
+  if (m < 12) return m <= 1 ? 'under 1 month old' : m + ' months old';
+  var y = Math.floor(m / 12); return y + (y === 1 ? ' year old' : ' years old');
+}
+var STATE = {
+  unreg: ['unreg', 'No registry record and no DNS records. This name looks unregistered. Confirm with a registrar before you rely on it.'],
+  nordap: ['', 'DNS works, so the name exists, but its registry does not publish RDAP data through rdap.org. Dates and registrar are not available here.'],
+  fail: ['fail', 'The registry lookup failed (%why%). The DNS records below may still be right.']
 };
-document.getElementById('csv').onclick = function () {
-  pdDownload('whois-dns.csv', pdCsv([['domain', 'registered', 'expires', 'updated', 'registrar', 'a', 'mx', 'ns', 'txt']].concat(rows)));
+function vals(o, mono) {
+  if (!o.ok) return '<span class="na">lookup failed</span>';
+  return o.recs.length ? o.recs.map(function (v) { return '<div class="' + (mono || 'mono') + '">' + pdEsc(v) + '</div>'; }).join('') : '<span class="na">none</span>';
+}
+function mxNote(o) { return o.ok && o.recs.length === 1 && /^0\s+\.?$/.test(o.recs[0]) ? '<div class="na small">Null MX: this domain says it accepts no email.</div>' : ''; }
+function card(r, i) {
+  var s = r.state !== 'ok' ? STATE[r.state] : null, a = age(r.registered);
+  var L = function (o) { return o.ok ? o.recs : null; };
+  var state = s ? '<p class="state ' + s[0] + '"><span>' + pdEsc(s[1].replace('%why%', r.why || 'unknown error')) + '</span>' + (r.state === 'fail' ? '<button type="button" data-retry="' + i + '">Retry</button>' : '') + '</p>' : '';
+  return pdDomainCard({ domain: r.domain, shown: r.shown, pills: (a ? '<span class="pill pill-age">' + a + '</span>' : '') + expPill(r.expires), state: state,
+    registered: r.registered, expires: r.expires, updated: r.updated, registrar: r.registrar, a: L(r.a), aaaa: L(r.aaaa), mx: L(r.mx), ns: L(r.ns), txt: L(r.txt) });
+}
+function cellList(o) { return o.ok ? (o.recs.length ? o.recs.map(function (v) { return '<div>' + pdEsc(String(v).replace(/\.$/, '')) + '</div>'; }).join('') : '<span class="na">none</span>') : '<span class="na">failed</span>'; }
+function table(list) {
+  var H = ['Domain', 'Status', 'Registered', 'Expires', 'Registrar', 'A', 'AAAA', 'MX', 'NS', 'TXT'];
+  return '<table><caption>Dashes mean the registry gave no value for that field. Each DNS record sits on its own line.</caption><thead><tr>' + H.map(function (h) { return '<th scope="col">' + h + '</th>'; }).join('') + '</tr></thead><tbody>' +
+    list.map(function (r) {
+      var stt = { ok: 'registered', unreg: 'looks unregistered', nordap: 'no RDAP data', fail: 'registry lookup failed' }[r.state];
+      var n = daysLeft(r.expires);
+      return '<tr><th scope="row">' + pdEsc(r.shown) + '</th><td>' + stt + '</td><td>' + (pdEsc(r.registered) || '-') + '</td><td>' + (pdEsc(r.expires) || '-') + (n !== null ? ' (' + n + ' d)' : '') + '</td><td>' + (pdEsc(r.registrar) || '-') + '</td><td>' +
+        cellList(r.a) + '</td><td>' + cellList(r.aaaa) + '</td><td>' + cellList(r.mx) + '</td><td>' + cellList(r.ns) + '</td><td>' + cellList(r.txt) + '</td></tr>';
+    }).join('') + '</tbody></table>';
+}
+function j(o, sep) { return o.recs.join(sep); }
+var NOTE = { ok: '', unreg: 'looks unregistered', nordap: 'no RDAP data for this ending', fail: 'registry lookup failed' };
+function csvRows() {
+  return [['domain', 'status', 'registered', 'expires', 'last_changed', 'registrar', 'a', 'aaaa', 'mx', 'ns', 'txt']].concat(rows.map(function (r) {
+    return [r.domain, NOTE[r.state] || 'registered', r.registered, r.expires, r.updated, r.registrar, j(r.a, ' '), j(r.aaaa, ' '), j(r.mx, '; '), j(r.ns, ' '), j(r.txt, ' | ')];
+  }));
+}
+function paint() {
+  $('res').hidden = !rows.length; $('empty').hidden = !!rows.length;
+  $('results').innerHTML = rows.map(card).join('');
+  $('tbl').innerHTML = table(rows);
+}
+function view(t) {
+  $('results').hidden = t; $('tbl').hidden = !t; $('hint').hidden = !t;
+  $('v-cards').setAttribute('aria-pressed', t ? 'false' : 'true'); $('v-table').setAttribute('aria-pressed', t ? 'true' : 'false');
+}
+function showNotes(p, cut) {
+  var h = '';
+  if (cut) h += '<p>Only the first ' + MAX + ' of ' + (p.list.length + cut) + ' domains were checked. Run the rest in a second batch.</p>';
+  if (p.skipped.length) h += '<p>Skipped ' + p.skipped.length + ' entr' + (p.skipped.length === 1 ? 'y' : 'ies') + ':</p><ul>' + p.skipped.slice(0, 10).map(function (s) { return '<li><code>' + pdEsc(s[0]) + '</code>: ' + pdEsc(s[1]) + '</li>'; }).join('') + '</ul>';
+  notesEl.innerHTML = h; notesEl.hidden = !h;
+}
+
+/* ---- events ---- */
+document.querySelectorAll('[data-ex]').forEach(function (b) { b.onclick = function () { ta.value = b.dataset.ex; ta.focus(); }; });
+$('v-cards').onclick = function () { view(false); };
+$('v-table').onclick = function () { view(true); };
+$('csv').onclick = function () { pdDownload('whois-dns.csv', pdCsv(csvRows())); };
+$('copy').onclick = function () { pdCopy(csvRows().map(function (r) { return r.join('\t'); }).join('\n'), 'Copied, paste into a spreadsheet'); };
+$('results').addEventListener('click', function (e) {
+  var b = e.target.closest('[data-retry]'); if (!b) return;
+  var i = +b.dataset.retry; b.disabled = true; b.textContent = 'Retrying...';
+  lookup({ d: rows[i].domain, shown: rows[i].shown }).then(function (o) { rows[i] = o; paint(); });
+});
+run.onclick = function () {
+  if (busy) return;
+  if (!ta.value.trim()) { ta.value = EXAMPLE; }  // empty box: run the placeholder example so the button always does something
+  var p = parseInput(ta.value);
+  rows = []; paint(); showNotes(p, 0);
+  if (!p.list.length) {
+    pdStatus(st, p.skipped.length ? 'None of those could be read as a domain. Use names like example.com.' : 'Enter at least one domain, like example.com.', 'err'); return;
+  }
+  var cut = Math.max(0, p.list.length - MAX), items = p.list.slice(0, MAX);
+  showNotes({ list: items, skipped: p.skipped }, cut);
+  if (items.length > limit.left()) {
+    pdStatus(st, limit.left() === 0 ? 'Free limit reached: 50 domains per hour in this browser. Wait a while and try again, or use the bulk version below.' :
+      'You have ' + limit.left() + ' free lookups left this hour but this list has ' + items.length + '. Remove some, or use the bulk version below.', 'err'); return;
+  }
+  limit.use(items.length);
+  busy = true; pdBusy(run, true);
+  pdStatus(st, 'Checked 0 of ' + items.length + ' domains...', 'work');
+  pool(items, CONC, function (n) { pdStatus(st, 'Checked ' + n + ' of ' + items.length + ' domains...', 'work'); }).then(function (out) {
+    rows = out; paint(); view(!$('tbl').hidden);
+    var bad = out.filter(function (r) { return r.state === 'fail'; }).length;
+    pdStatus(st, 'Done: ' + out.length + ' domain' + (out.length === 1 ? '' : 's') + (bad ? ', ' + bad + ' with a failed registry lookup (use Retry)' : '') + '. ' + limit.left() + ' free lookups left this hour.', bad ? 'err' : 'ok');
+    $('res').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
+  }).then(function () { busy = false; pdBusy(run, false); });
 };
+
+(function () {
+  var q = new URLSearchParams(location.search).get('d');
+  if (q) { ta.value = q.split(/[\s,]+/).filter(Boolean).slice(0, MAX).join('\n'); setTimeout(function () { run.click(); }, 0); }
+})();
 </script>
-</body>
-</html>
+</body></html>

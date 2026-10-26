@@ -1,71 +1,184 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Hacker News Who is Hiring: search the latest thread (free) | PennyData</title>
-<meta name="description" content="Search the latest Hacker News Who is Hiring thread by keyword, remote or location. Loads the thread in your browser, filters job posts, downloads CSV.">
-<link rel="canonical" href="https://project1dev.github.io/pennydata-site/hn-who-is-hiring-search/">
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hacker News Who is hiring search | PennyData</title>
+<meta name="description" content="Search the latest Hacker News &quot;Who is hiring?&quot; thread by keyword, remote or location. Free, no signup, filters in your browser, copy links and CSV export.">
+<link rel="canonical" href="https://penny-data.github.io/pennydata-site/hn-who-is-hiring-search/">
+<meta name="theme-color" content="#C8692B">
+<meta property="og:type" content="website"><meta property="og:site_name" content="PennyData"><meta property="og:title" content="Hacker News Who is hiring search | PennyData"><meta property="og:description" content="Search the latest Hacker News &quot;Who is hiring?&quot; thread by keyword, remote or location. Free, no signup, filters in your browser, copy links and CSV export."><meta property="og:url" content="https://penny-data.github.io/pennydata-site/hn-who-is-hiring-search/"><meta property="og:image" content="https://penny-data.github.io/pennydata-site/og/hn-who-is-hiring-search.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Hacker News Who is hiring search, a free PennyData tool">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Hacker News Who is hiring search | PennyData"><meta name="twitter:description" content="Search the latest Hacker News &quot;Who is hiring?&quot; thread by keyword, remote or location. Free, no signup, filters in your browser, copy links and CSV export."><meta name="twitter:image" content="https://penny-data.github.io/pennydata-site/og/hn-who-is-hiring-search.png">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+
+
 <link rel="stylesheet" href="../style.css">
-</head>
-<body>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "sameAs": ["https://apify.com/pennydata"], "@id": "https://penny-data.github.io/pennydata-site/#org", "name": "PennyData", "url": "https://penny-data.github.io/pennydata-site/", "logo": "https://penny-data.github.io/pennydata-site/favicon.svg"}, {"@type": "WebSite", "@id": "https://penny-data.github.io/pennydata-site/#website", "url": "https://penny-data.github.io/pennydata-site/", "name": "PennyData", "publisher": {"@id": "https://penny-data.github.io/pennydata-site/#org"}}, {"@type": "WebApplication", "dateModified": "2026-10-26", "name": "Hacker News Who is hiring search", "url": "https://penny-data.github.io/pennydata-site/hn-who-is-hiring-search/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "description": "Search the latest Hacker News \"Who is hiring?\" thread by keyword, remote or location. Free, no signup, filters in your browser, copy links and CSV export.", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "@id": "https://penny-data.github.io/pennydata-site/hn-who-is-hiring-search/#app", "isPartOf": {"@id": "https://penny-data.github.io/pennydata-site/#website"}, "publisher": {"@id": "https://penny-data.github.io/pennydata-site/#org"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Tools", "item": "https://penny-data.github.io/pennydata-site/"}, {"@type": "ListItem", "position": 2, "name": "Hacker News Who is hiring search", "item": "https://penny-data.github.io/pennydata-site/hn-who-is-hiring-search/"}]}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Where does the data come from?", "acceptedAnswer": {"@type": "Answer", "text": "From the public Hacker News Algolia API (hn.algolia.com). The page finds the newest posts by the whoishiring account, picks the Who is hiring threads, and downloads the comments of the one you choose."}}, {"@type": "Question", "name": "Do my search words get sent anywhere?", "acceptedAnswer": {"@type": "Answer", "text": "No. Only the thread download goes to Algolia. Keywords are matched in your browser, so you can change them as often as you like without another request."}}, {"@type": "Question", "name": "How does matching work?", "acceptedAnswer": {"@type": "Answer", "text": "Every word you type must appear in the post as a whole word, so rust does not match trust and go does not match google. Put a phrase in quotes to match it exactly, for example \"machine learning\". Matching ignores capital letters."}}, {"@type": "Question", "name": "How are the company and tags worked out?", "acceptedAnswer": {"@type": "Answer", "text": "The first line of most posts is Company | Role | Location | Remote. The page uses the part before the first pipe as the heading. Tags such as Remote, Onsite, Visa and common languages are found by looking for those words in the text. Posts do not follow a strict format, so treat both as a guide and open the original when it matters."}}, {"@type": "Question", "name": "Can I look at older months?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The month menu lists the most recent Who is hiring threads. Pick one and press Load."}}]}]}</script>
+<style>
+.hn-bar{display:flex;gap:12px;flex-wrap:wrap;align-items:end}.hn-bar .f{flex:1 1 220px}.hn-bar .f.sel{flex:0 1 220px;min-width:100%}@media(min-width:700px){.hn-bar .f.sel{min-width:0}}
+.hn-sub{display:block;font-weight:700;font-size:.9rem;margin-bottom:8px}
+.hn-sum{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin:26px 0 6px}
+.hn-sum h2{font-size:1.8rem;margin:0}.hn-sum .acts{display:flex;gap:10px;flex-wrap:wrap}
+.hn-meta{color:var(--muted);font-weight:600;font-size:.92rem;margin:0 0 4px}
+.hn-job{border:1.5px solid var(--edge);border-radius:var(--r-s);background:var(--surface);padding:16px 18px;display:grid;gap:10px}
+.hn-job h3{font-size:1.15rem;margin:0;overflow-wrap:anywhere;line-height:1.3}
+.hn-job .sub{margin:0;color:var(--muted);font-size:.92rem;overflow-wrap:anywhere}
+.hn-job .tags{display:flex;gap:6px;flex-wrap:wrap}
+.hn-tag{font:700 .72rem/1 var(--font);padding:5px 9px;border-radius:999px;background:var(--cu-wash2);color:var(--ctext);border:1.5px solid var(--edge)}
+.hn-tag.r{background:var(--ok-bg);color:var(--ok);border-color:currentColor}
+.hn-job details summary{cursor:pointer;font-weight:800;font-size:.9rem;color:var(--ctext);min-height:32px;display:flex;align-items:center}
+.hn-job .full{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.93rem;margin:6px 0 0;max-height:420px;overflow:auto}
+.hn-job .foot2{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:.84rem;color:var(--muted);font-weight:700;align-items:center}
+.hn-job .foot2 a{min-height:32px;display:inline-flex;align-items:center}
+mark{background:var(--cu-wash2);color:inherit;border-radius:3px;padding:0 2px}
+.hn-skel{height:96px;border-radius:var(--r-s);border:1.5px solid var(--edge);background:linear-gradient(90deg,var(--sunk),var(--cu-wash),var(--sunk));background-size:200% 100%;animation:hnsk 1.2s linear infinite}
+@keyframes hnsk{to{background-position:-200% 0}}@media (prefers-reduced-motion:reduce){.hn-skel{animation:none}}
+.hn-empty{border:1.5px dashed var(--edge);border-radius:var(--r);padding:28px 20px;text-align:center;color:var(--muted)}.hn-empty b{display:block;color:var(--fg);font-size:1.15rem;margin-bottom:6px}
+.hn-faq{padding-top:36px}.hn-faq h2{font-size:clamp(1.6rem,3.5vw,2.2rem);margin-bottom:16px}
+.hn-steps{margin:0 0 8px}.hn-steps h2{font-size:clamp(1.6rem,3.5vw,2.2rem)}
+
+.srcdet{margin:4px 0 18px}.srcdet:first-of-type{border-top:0}
+.srcbody{padding:0 0 12px;color:var(--muted)}.srcbody p{padding:0 0 10px;margin:0}
+.state{margin:14px 0 0;display:flex;gap:12px;align-items:flex-start;justify-content:space-between;font-size:.95rem;font-weight:600;padding:10px 14px;border-radius:10px;background:var(--warn-bg);color:var(--warn)}
+.state.unreg{background:var(--cu-wash);color:var(--fg)}.state.fail{background:var(--bad-bg);color:var(--bad)}
+.state button{font:700 .88rem var(--font);border:1.5px solid currentColor;background:transparent;color:inherit;border-radius:999px;padding:6px 14px;min-height:38px;cursor:pointer;white-space:nowrap}
+.hn-sum{position:sticky;top:68px;z-index:6;background:var(--bg);padding:10px 0;border-bottom:1.5px solid var(--edge);margin-top:var(--s5)}.hn-sum h2{font-size:1.4rem}.hn-cnt{font-size:.9rem;font-weight:700;color:var(--muted);margin-left:8px;letter-spacing:0}@media(max-width:560px){.hn-sum h2{font-size:1.1rem}.hn-cnt{display:block;margin:0;font-size:.8125rem}.hn-sum{top:60px}}
+</style>
+</head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><filter id="wob" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter></defs></svg>
 <a class="skip" href="#main">Skip to content</a>
-<header><a class="brand" href="../">PennyData</a><nav aria-label="Tools"><a href="../whois-dns-lookup/">WHOIS/DNS</a><a href="../image-extractor/">Images</a><a href="../contact-finder/">Contacts</a><a href="../polymarket-odds-viewer/">Odds</a><a href="../hn-who-is-hiring-search/" aria-current="page">Jobs</a></nav></header>
-<main id="main">
-<h1>Hacker News "Who is hiring?": search the latest thread</h1>
-<p class="lead">The monthly thread has hundreds of job posts and no search box. Load the newest one, filter by keyword (python, remote, Berlin, Rust) and open the posts that match.</p>
-<label for="kw">Keywords (all must match, separated by spaces)</label>
-<input id="kw" type="text" placeholder="remote python" spellcheck="false">
-<button id="run">Load latest thread</button><button id="csv" class="secondary" disabled>Download CSV</button>
-<p id="status" class="status" role="status" aria-live="polite"></p>
-<div class="table-wrap"><table id="jobs" hidden><thead><tr><th scope="col">Post (start)</th><th scope="col">Posted</th><th scope="col">Link</th></tr></thead><tbody></tbody></table></div>
-<h2>How it works</h2>
-<p>Your browser downloads the thread from the public Hacker News Algolia API, strips the HTML and filters the posts locally, so you can change keywords without reloading. The table shows the first 100 matches; the CSV has them all with the full text. Free use is limited to 10 thread loads per hour per browser.</p>
-<div class="bulk"><strong>Want every post as clean rows (company, role, location, remote, salary, links) across months?</strong> The bulk version parses the thread into structured data: <a href="https://apify.com/pennydata/hn-whoishiring-parser">HN Who Is Hiring Parser on Apify</a>.</div>
-</main>
-<footer>
-<p><strong>Privacy:</strong> no analytics, no cookies; the free-use counter stays in your browser's local storage. The thread is fetched from hn.algolia.com; your keywords never leave your browser.</p>
-<p>I built this and earn from runs of the bulk version. Written with AI assistance (Claude).</p>
-</footer>
+<header class="top"><div class="wrap hbar"><a class="brand" href="../" aria-label="PennyData home"><svg class="logo-m" viewBox="62 0 136 146" aria-hidden="true"><path d="M66 150 Q130 120 194 150 Z" fill="#111"/><path d="M104 62 C96 40 104 22 116 18 C114 30 120 34 124 36 C126 18 140 10 154 18 C146 24 146 32 150 40 C162 34 176 38 178 46 C164 46 158 52 154 60 Z" fill="#111" stroke="#111" stroke-width="4"/><circle cx="130" cy="100" r="46" fill="#fff" stroke="#111" stroke-width="6"/><ellipse cx="114" cy="96" rx="4.5" ry="6.5" fill="#111"/><ellipse cx="146" cy="96" rx="4.5" ry="6.5" fill="#111"/><path d="M104 80 Q114 72 124 79 M138 79 Q148 72 158 80" fill="none" stroke="#111" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M108 118 Q130 138 154 116" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="98" cy="114" r="6" fill="#C8692B" opacity=".55"/><circle cx="162" cy="114" r="6" fill="#C8692B" opacity=".55"/></svg><span>Penny<b>Data</b></span></a><button class="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav"><i aria-hidden="true"></i><span>Menu</span></button><nav aria-label="Tools" class="nav" id="site-nav"><a href="../whois-dns-lookup/">WHOIS &amp; DNS</a><a href="../image-extractor/">Images</a><a href="../contact-finder/">Contacts</a><a href="../polymarket-odds-viewer/">Polymarket</a><a href="../hn-who-is-hiring-search/" aria-current="page">Hiring</a><a href="../email-domain-checker/">Email check</a><a href="../meta-tag-previewer/">Meta tags</a></nav></div><noscript><style>.menu-btn{display:none}.nav{display:flex!important;position:static!important;flex-wrap:wrap;box-shadow:none!important;padding:0 20px 10px!important;flex-direction:row!important}</style></noscript></header>
+<main id="main"><section class="thero"><div class="wrap thero-grid"><div class="thero-txt"><p class="crumb"><a href="../">Tools</a> / Hiring</p><h1>Hacker News &ldquo;Who is hiring?&rdquo; search</h1><p class="lead">The monthly thread has hundreds of job posts and no search box. Load the newest one, filter by keyword (python, remote, Berlin, Rust) and open the posts that match.</p><ul class="facts-line"><li>10 loads per hour</li><li>Filters in your browser</li><li>CSV export</li></ul></div><div class="thero-art" aria-hidden="true"><svg class="mascot hero-fig" viewBox="20 4 240 322" aria-hidden="true"><g filter="url(#wob)"><path d="M108 156 L102 304 M150 156 L158 304" stroke="#111" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M86 306 Q104 294 118 306 L118 318 L82 318 Z" fill="#C8692B" stroke="#111" stroke-width="4" stroke-linejoin="round"/><path d="M146 306 Q164 294 180 306 L182 318 L146 318 Z" fill="#C8692B" stroke="#111" stroke-width="4" stroke-linejoin="round"/><path d="M82 176 Q130 150 178 176 L192 276 Q130 296 68 276 Z" fill="#111" stroke="#111" stroke-width="6" stroke-linejoin="round"/><path d="M94 170 Q130 204 166 170" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/><path d="M118 192 L116 226 M142 192 L144 226" stroke="#C8692B" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M96 252 Q130 240 164 252" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/><path d="M88 190 Q60 222 46 252" stroke="#111" stroke-width="22" fill="none" stroke-linecap="round"/><circle cx="44" cy="262" r="15" fill="#111"/><circle cx="36" cy="251" r="7" fill="#111"/><path d="M172 190 Q198 198 201 166" stroke="#111" stroke-width="22" fill="none" stroke-linecap="round"/><g transform="translate(214 128)"><g transform="rotate(6)"><path d="M-9 -18 v-8 h18 v8" fill="none" stroke="#111" stroke-width="4.5" stroke-linejoin="round"/><rect x="-28" y="-18" width="56" height="40" rx="6" fill="#C8692B" stroke="#111" stroke-width="4.5"/><path d="M-28 0 H28" stroke="#111" stroke-width="4"/><rect x="-5" y="-4" width="10" height="9" rx="2" fill="#fff" stroke="#111" stroke-width="3"/></g></g><circle cx="201" cy="158" r="15" fill="#111"/><circle cx="191" cy="149" r="7" fill="#111"/><path d="M104 62 C96 40 104 22 116 18 C114 30 120 34 124 36 C126 18 140 10 154 18 C146 24 146 32 150 40 C162 34 176 38 178 46 C164 46 158 52 154 60 Z" fill="#111" stroke="#111" stroke-width="4"/><circle cx="130" cy="100" r="46" fill="#fff" stroke="#111" stroke-width="6"/><path d="M100 92 H160" stroke="#111" stroke-width="5" stroke-linecap="round"/><rect x="101" y="86" width="26" height="17" rx="6" fill="#111"/><rect x="133" y="86" width="26" height="17" rx="6" fill="#111"/><path d="M112 120 Q132 134 156 114" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="98" cy="114" r="6" fill="#C8692B" opacity=".55"/><circle cx="162" cy="114" r="6" fill="#C8692B" opacity=".55"/></g></svg></div></div></section>
+<div class="wrap"><div class="panel"><div class="panel-head"><div class="pal" data-mood="idle" aria-hidden="true"><svg viewBox="58 4 144 150"><g filter="url(#wob)"><path d="M60 156 Q130 118 200 156 Z" fill="#111"/><path d="M104 62 C96 40 104 22 116 18 C114 30 120 34 124 36 C126 18 140 10 154 18 C146 24 146 32 150 40 C162 34 176 38 178 46 C164 46 158 52 154 60 Z" fill="#111" stroke="#111" stroke-width="4"/><circle cx="130" cy="100" r="46" fill="#fff" stroke="#111" stroke-width="6"/><g class="f f-idle"><ellipse cx="114" cy="96" rx="4.5" ry="6.5" fill="#111"/><ellipse cx="146" cy="96" rx="4.5" ry="6.5" fill="#111"/><path d="M104 80 Q114 72 124 79 M138 79 Q148 72 158 80" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M108 118 Q130 138 154 116" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g><g class="f f-work"><ellipse cx="114" cy="96" rx="4.5" ry="7" fill="#111"/><ellipse cx="146" cy="96" rx="4.5" ry="7" fill="#111"/><path d="M102 82 L124 76" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M138 72 Q148 66 158 76" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M114 120 Q132 136 150 118" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g><g class="f f-ok"><path d="M103 99 Q114 85 125 99 M135 99 Q146 85 157 99" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M106 114 Q130 148 156 112 Z" fill="#fff" stroke="#111" stroke-width="4.5" stroke-linejoin="round"/><path d="M118 126 Q130 134 144 126" fill="none" stroke="#C8692B" stroke-width="3.5" stroke-linecap="round"/></g><g class="f f-err"><ellipse cx="114" cy="96" rx="5.5" ry="8" fill="#111"/><ellipse cx="146" cy="96" rx="5.5" ry="8" fill="#111"/><path d="M104 76 Q114 66 124 74 M138 74 Q148 66 158 76" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="130" cy="125" rx="8" ry="10" fill="#fff" stroke="#111" stroke-width="4.5"/></g><circle cx="98" cy="114" r="6" fill="#C8692B" opacity=".55"/><circle cx="162" cy="114" r="6" fill="#C8692B" opacity=".55"/></g></svg></div><div class="t"><b>Who is hiring search</b><span>Search the monthly thread</span></div></div>
+<div class="hn-bar"><div class="f"><label for="kw">Search the thread <span class="hint">all words must match</span></label>
+<input id="kw" type="text" placeholder="remote python  or  &quot;machine learning&quot;" spellcheck="false" autocapitalize="off" autocomplete="off"></div>
+<div class="f sel"><label for="month" class="hn-sub">Month</label><select id="month" aria-label="Thread month"><option value="">Latest thread</option></select></div></div>
+<div class="row"><span class="lbl">Filter:</span><div class="chips scroller" role="group" aria-label="Quick filters"><button type="button" class="chip" data-add="remote">Remote</button><button type="button" class="chip" data-add="onsite">Onsite</button><button type="button" class="chip" data-add="visa">Visa</button><button type="button" class="chip" data-add="python">Python</button><button type="button" class="chip" data-add="rust">Rust</button><button type="button" class="chip" data-add="AI">AI</button><button type="button" class="chip" data-add="junior">Junior</button></div></div>
+<div class="actions"><button class="btn" id="run" type="button">Load thread</button><button class="btn ghost" id="ex" type="button">Try an example</button></div>
+<p class="fine" style="margin:12px 0 0">Your keywords stay in this browser. Only the thread download goes to Hacker News&#39; public API.</p>
+<p id="status" class="status" role="status" aria-live="polite"></p></div>
+<div id="res" hidden><div class="hn-sum"><h2>Matching posts <span class="hn-cnt" id="sumcount"></span></h2><div class="acts"><button class="btn ghost sm" id="copy" type="button" disabled>Copy links</button><button class="btn sm" id="csv" type="button" disabled>Download CSV</button></div></div><p class="hn-meta" id="meta"></p><div id="jobs" class="results" aria-live="polite"></div><div style="text-align:center;margin-top:16px"><button class="btn ghost" id="more" type="button" hidden>Show more</button></div></div>
+<p class="apify-line"><span>Need this for a long list?</span> <a href="https://apify.com/pennydata/hn-whoishiring-parser?utm_source=pennydata-site&amp;utm_medium=referral&amp;utm_campaign=hn-who-is-hiring-search" rel="noopener">Run the bulk version on Apify <span aria-hidden="true">&rarr;</span></a> <span class="al-note">(paid, PennyData earns a little)</span></p><section class="about-tool"><h2 class="sec-h">What this tool does, and its limits</h2><p>Every month the Hacker News community posts a Who is hiring thread with hundreds of job posts and no search box. This tool downloads the thread you pick from the public Hacker News Algolia API and lets you filter it in your browser by keyword, phrase, remote or location. Only the thread download touches the network, so changing your filters is instant and private. The company name and tags are guessed from the first line of each post, which is usually written as Company | Role | Location, but posts do not follow a strict format, so open the original when it matters. You can load the most recent months from the menu. The bulk version on Apify is built for repeat runs and exports.</p></section><section class="hn-faq"><h2 class="sec-h faq-h" id="faq-h">Questions</h2><details class="how"><summary>Where does the data come from?</summary><p>From the public Hacker News Algolia API (hn.algolia.com). The page finds the newest posts by the whoishiring account, picks the Who is hiring threads, and downloads the comments of the one you choose.</p></details><details class="how"><summary>Do my search words get sent anywhere?</summary><p>No. Only the thread download goes to Algolia. Keywords are matched in your browser, so you can change them as often as you like without another request.</p></details><details class="how"><summary>How does matching work?</summary><p>Every word you type must appear in the post as a whole word, so rust does not match trust and go does not match google. Put a phrase in quotes to match it exactly, for example "machine learning". Matching ignores capital letters.</p></details><details class="how"><summary>How are the company and tags worked out?</summary><p>The first line of most posts is Company | Role | Location | Remote. The page uses the part before the first pipe as the heading. Tags such as Remote, Onsite, Visa and common languages are found by looking for those words in the text. Posts do not follow a strict format, so treat both as a guide and open the original when it matters.</p></details><details class="how"><summary>Can I look at older months?</summary><p>Yes. The month menu lists the most recent Who is hiring threads. Pick one and press Load.</p></details></section>
+<nav class="more" aria-label="More free tools"><h2>More free tools</h2><ul><li><a href="../whois-dns-lookup/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><circle cx="8" cy="-10" r="20" fill="#FBEBDD" stroke="#111" stroke-width="5"/><path d="M-6 5 L-18 26" stroke="#111" stroke-width="8" stroke-linecap="round"/><path d="M-2 -18 Q4 -24 12 -21" fill="none" stroke="#C8692B" stroke-width="3.5" stroke-linecap="round"/></svg></span><span><b>Domain WHOIS &amp; DNS lookup</b><span class="d">Expiry date, registrar and A, MX, NS, TXT records for up to 10 domains.</span></span></a></li><li><a href="../image-extractor/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><g transform="rotate(8)"><rect x="-27" y="-24" width="54" height="44" rx="5" fill="#fff" stroke="#111" stroke-width="4.5"/><circle cx="-10" cy="-10" r="5" fill="#C8692B"/><path d="M-23 16 L-8 2 L2 11 L10 4 L23 16 Z" fill="#C8692B"/></g></svg></span><span><b>Image extractor</b><span class="d">Every image URL a page references, from pasted HTML.</span></span></a></li><li><a href="../contact-finder/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><g transform="rotate(-8)"><rect x="-28" y="-20" width="56" height="40" rx="5" fill="#fff" stroke="#111" stroke-width="4.5"/><path d="M-24 -15 L0 3 L24 -15" fill="none" stroke="#C8692B" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/></g></svg></span><span><b>Contact finder</b><span class="d">A site&#x27;s contact page and the public emails it lists.</span></span></a></li><li><a href="../polymarket-odds-viewer/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><rect x="-24" y="-2" width="14" height="26" fill="#C8692B" stroke="#111" stroke-width="4"/><rect x="-6" y="-16" width="14" height="40" fill="#fff" stroke="#111" stroke-width="4"/><rect x="12" y="-30" width="14" height="54" fill="#C8692B" stroke="#111" stroke-width="4"/></svg></span><span><b>Polymarket odds viewer</b><span class="d">Search open markets and read the odds as percentages.</span></span></a></li><li><a href="../email-domain-checker/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><g transform="rotate(-6)"><rect x="-27" y="-20" width="54" height="38" rx="5" fill="#fff" stroke="#111" stroke-width="4.5"/><path d="M-23 -15 L0 3 L23 -15" fill="none" stroke="#C8692B" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/></g><circle cx="18" cy="16" r="14" fill="#C8692B" stroke="#111" stroke-width="4.5"/><path d="M11 16 L16 21 L26 10" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><b>Email domain checker</b><span class="d">Plain-English SPF, DKIM, DMARC and MX verdicts.</span></span></a></li><li><a href="../meta-tag-previewer/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><rect x="-30" y="-24" width="60" height="48" rx="6" fill="#fff" stroke="#111" stroke-width="4.5"/><path d="M-30 -10 H30" stroke="#111" stroke-width="4"/><circle cx="-22" cy="-17" r="2.5" fill="#C8692B"/><circle cx="-14" cy="-17" r="2.5" fill="#C8692B"/><rect x="-22" y="-3" width="26" height="20" rx="3" fill="#C8692B" stroke="#111" stroke-width="3.5"/><path d="M10 0 H24 M10 8 H24 M10 16 H20" stroke="#111" stroke-width="3.5" stroke-linecap="round"/></svg></span><span><b>Meta tag previewer</b><span class="d">Preview Google and social cards from pasted HTML.</span></span></a></li></ul></nav>
+<aside class="bulk"><div class="bulk-art"><svg class="mascot" viewBox="36 8 216 180" role="img" aria-label="PennyData mascot holding a copper penny"><g filter="url(#wob)"><path d="M82 176 Q130 150 178 176 L192 276 Q130 296 68 276 Z" fill="#111" stroke="#111" stroke-width="6" stroke-linejoin="round"/><path d="M94 170 Q130 204 166 170" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/><path d="M118 192 L116 226 M142 192 L144 226" stroke="#C8692B" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M96 252 Q130 240 164 252" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/><path d="M88 190 Q60 222 46 252" stroke="#111" stroke-width="22" fill="none" stroke-linecap="round"/><circle cx="44" cy="262" r="15" fill="#111"/><circle cx="36" cy="251" r="7" fill="#111"/><path d="M172 190 Q198 198 201 166" stroke="#111" stroke-width="22" fill="none" stroke-linecap="round"/><g transform="translate(214 128)"><circle cx="2" cy="-2" r="25" fill="#C8692B" stroke="#111" stroke-width="5"/><circle cx="2" cy="-2" r="17" fill="none" stroke="#fff" stroke-width="2" opacity=".6"/><text x="2" y="9" text-anchor="middle" font-size="30" font-weight="800" fill="#fff" font-family="Noto Sans,system-ui,sans-serif">&#162;</text></g><circle cx="201" cy="158" r="15" fill="#111"/><circle cx="191" cy="149" r="7" fill="#111"/><path d="M104 62 C96 40 104 22 116 18 C114 30 120 34 124 36 C126 18 140 10 154 18 C146 24 146 32 150 40 C162 34 176 38 178 46 C164 46 158 52 154 60 Z" fill="#111" stroke="#111" stroke-width="4"/><circle cx="130" cy="100" r="46" fill="#fff" stroke="#111" stroke-width="6"/><path d="M100 92 H160" stroke="#111" stroke-width="5" stroke-linecap="round"/><rect x="101" y="86" width="26" height="17" rx="6" fill="#111"/><rect x="133" y="86" width="26" height="17" rx="6" fill="#111"/><path d="M112 120 Q132 134 156 114" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="98" cy="114" r="6" fill="#C8692B" opacity=".55"/><circle cx="162" cy="114" r="6" fill="#C8692B" opacity=".55"/></g></svg></div><div><p class="eyebrow">When you outgrow this</p><h2>Every post as clean rows, across months?</h2><p>The bulk version parses the thread into structured rows (company, role, location, remote, salary, visa) so you can search and track them.</p><p class="bulk-note">The bulk version runs on Apify and costs money. PennyData earns a little from those runs.</p></div>
+<a class="btn" href="https://apify.com/pennydata/hn-whoishiring-parser?utm_source=pennydata-site&amp;utm_medium=referral&amp;utm_campaign=hn-who-is-hiring-search" rel="noopener">Open on Apify <span aria-hidden="true">&rarr;</span></a></aside>
+</div></main>
+<footer class="foot"><div class="wrap"><div class="foot-grid"><div class="foot-brand"><svg class="logo-m" viewBox="62 0 136 146" aria-hidden="true"><path d="M66 150 Q130 120 194 150 Z" fill="#111"/><path d="M104 62 C96 40 104 22 116 18 C114 30 120 34 124 36 C126 18 140 10 154 18 C146 24 146 32 150 40 C162 34 176 38 178 46 C164 46 158 52 154 60 Z" fill="#111" stroke="#111" stroke-width="4"/><circle cx="130" cy="100" r="46" fill="#fff" stroke="#111" stroke-width="6"/><ellipse cx="114" cy="96" rx="4.5" ry="6.5" fill="#111"/><ellipse cx="146" cy="96" rx="4.5" ry="6.5" fill="#111"/><path d="M104 80 Q114 72 124 79 M138 79 Q148 72 158 80" fill="none" stroke="#111" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M108 118 Q130 138 154 116" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="98" cy="114" r="6" fill="#C8692B" opacity=".55"/><circle cx="162" cy="114" r="6" fill="#C8692B" opacity=".55"/></svg></div><ul class="foot-notes"><li><b>Built with AI assistance</b> (Claude). No analytics, cookies or accounts.</li><li><b>Honest money note.</b> The bulk versions run on Apify, and PennyData earns a little from those runs. The free tools stay free.</li></ul></div><nav class="foot-links" aria-label="All tools"><a href="../whois-dns-lookup/">WHOIS &amp; DNS</a><a href="../image-extractor/">Images</a><a href="../contact-finder/">Contacts</a><a href="../polymarket-odds-viewer/">Polymarket</a><a href="../hn-who-is-hiring-search/">Hiring</a><a href="../email-domain-checker/">Email check</a><a href="../meta-tag-previewer/">Meta tags</a><a href="../#about">About</a></nav></div></footer>
 <script src="../common.js"></script>
 <script>
-var limit = pdLimit('hnjobs', 10, 3600e3), posts = [], title = '', threadId = 0;
-function strip(h) { var d = new DOMParser().parseFromString(String(h || '').replace(/<p>/g, '\n').replace(/<br\s*\/?>/g, '\n'), 'text/html'); return d.body.textContent.trim(); }
-function render() {
-  var words = document.getElementById('kw').value.toLowerCase().split(/\s+/).filter(Boolean);
-  var m = posts.filter(function (p) { return words.every(function (w) { return p.text.toLowerCase().indexOf(w) > -1; }); });
-  document.querySelector('#jobs tbody').innerHTML = m.slice(0, 100).map(function (p) {
-    return '<tr><td>' + pdEsc(p.text.slice(0, 220)) + (p.text.length > 220 ? '...' : '') + '</td><td>' + pdEsc(p.date) + '</td><td><a href="https://news.ycombinator.com/item?id=' + p.id + '" rel="noopener noreferrer">open</a></td></tr>';
-  }).join('');
-  document.getElementById('jobs').hidden = !m.length;
-  document.getElementById('csv').disabled = !m.length;
-  document.getElementById('status').textContent = title + ': ' + m.length + ' of ' + posts.length + ' posts match' + (m.length > 100 ? ' (showing 100)' : '') + '.';
-  render.m = m;
+var limit = pdLimit('hnjobs', 10, 3600e3), posts = [], title = '', matches = [], shown = 12, threads = [], curId = '';
+var st = document.getElementById('status'), run = document.getElementById('run'), kw = document.getElementById('kw'), sel = document.getElementById('month');
+var TAGS = [['Remote', /\bremote\b/i, 'r'], ['Hybrid', /\bhybrid\b/i], ['Onsite', /\bon-?site\b/i], ['Visa', /\bvisa\b/i], ['Python', /\bpython\b/i], ['Rust', /\brust\b/i], ['Go', /\bgolang\b|\bgo\b(?=[,\/ ]*(?:and|or|\||,|\/|developer|engineer))/i], ['TypeScript', /\btypescript\b/i], ['React', /\breact\b/i], ['Java', /\bjava\b(?!script)/i], ['AI/ML', /\b(?:ai|ml|llm|machine learning)\b/i], ['Junior', /\b(?:junior|new grads?|entry[- ]level)\b/i]];
+function strip(h) {
+  var s = String(h || '').replace(/<p>/g, '\n\n').replace(/<br\s*\/?>/g, '\n').replace(/<\/?(pre|code)>/g, '');
+  var d = new DOMParser().parseFromString(s, 'text/html'); return d.body.textContent.replace(/\n{3,}/g, '\n\n').trim();
 }
-document.getElementById('run').onclick = function () {
-  var st = document.getElementById('status'), btn = this;
-  if (!limit.use(1)) { st.textContent = 'Free limit reached (10 loads per hour in this browser). Try again later or use the bulk version below.'; return; }
-  btn.disabled = true; st.textContent = 'Finding the latest thread...';
-  fetch('https://hn.algolia.com/api/v1/search_by_date?tags=story,author_whoishiring&hitsPerPage=10')
-    .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-    .then(function (d) {
-      var h = (d.hits || []).filter(function (x) { return /who is hiring/i.test(x.title); })[0];
-      if (!h) throw new Error('no thread found');
-      title = h.title; threadId = h.objectID; st.textContent = 'Loading "' + title + '"...';
-      return fetch('https://hn.algolia.com/api/v1/items/' + h.objectID).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
-    })
-    .then(function (t) {
-      posts = (t.children || []).filter(function (c) { return c.text; }).map(function (c) { return { id: c.id, text: strip(c.text), date: (c.created_at || '').slice(0, 10) }; });
-      render();
-    })
-    .catch(function (e) { st.textContent = 'Could not load the thread: ' + e.message; })
-    .then(function () { btn.disabled = false; });
-};
-document.getElementById('kw').oninput = function () { if (posts.length) render(); };
-document.getElementById('kw').onkeydown = function (e) { if (e.key === 'Enter') document.getElementById('run').click(); };
+function terms() {
+  var out = [], re = /"([^"]+)"|(\S+)/g, m, q = kw.value.toLowerCase();
+  while ((m = re.exec(q))) { var t = (m[1] || m[2]).replace(/^"+|"+$/g, '').trim(); if (t) out.push(t); }
+  return out;
+}
+function rx(t) { return new RegExp('(^|[^a-z0-9])(' + t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')(?![a-z0-9])', 'i'); }
+function split(p) {
+  var first = p.text.split('\n')[0].trim(), rest = p.text.slice(first.length).trim();
+  var segs = first.split(/\s*\|\s*/);
+  if (segs.length > 1 && segs[0].length <= 70) return { head: segs[0], sub: segs.slice(1).join(' | '), rest: rest };
+  if (first.length > 90) { var cut = first.slice(0, 90).replace(/\s\S*$/, ''); return { head: cut + '...', sub: '', rest: p.text }; }
+  return { head: first, sub: '', rest: rest };
+}
+function hl(s, res) {
+  var out = pdEsc(s);
+  res.forEach(function (r) { out = out.replace(new RegExp(r.source.replace(/^\(\^\|\[\^a-z0-9\]\)\(/, '(?<![a-z0-9])(').replace(/\)\(\?!\[a-z0-9\]\)$/, ')(?![a-z0-9])'), 'gi'), '<mark>$1</mark>'); });
+  return out;
+}
+function link(p) { return 'https://news.ycombinator.com/item?id=' + Number(p.id); }
+function render() {
+  var res = terms().map(rx);
+  matches = posts.filter(function (p) { return res.every(function (r) { return r.test(p.text); }); });
+  document.getElementById('res').hidden = false;
+  var hits = [];
+  try { hits = terms().map(function (t) { return new RegExp('(?<![a-z0-9])(' + t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')(?![a-z0-9])', 'gi'); }); } catch (e) {}
+  var box = document.getElementById('jobs');
+  if (!matches.length) {
+    box.innerHTML = '<div class="hn-empty"><b>No posts match' + (kw.value.trim() ? ' &ldquo;' + pdEsc(kw.value.trim()) + '&rdquo;' : '') + '</b>Try fewer words, or a different month. Words must match whole words, so &ldquo;pythonic&rdquo; will not find &ldquo;python&rdquo;.</div>';
+  } else {
+    box.innerHTML = matches.slice(0, shown).map(function (p) {
+      var s = split(p), tags = TAGS.filter(function (t) { return t[1].test(p.text); }).map(function (t) { return '<span class="hn-tag' + (t[2] ? ' ' + t[2] : '') + '">' + t[0] + '</span>'; }).join('');
+      return '<article class="hn-job"><h3>' + hl(s.head, hits) + '</h3>' + (s.sub ? '<p class="sub">' + hl(s.sub, hits) + '</p>' : '') + (tags ? '<div class="tags">' + tags + '</div>' : '') +
+        (s.rest ? '<div class="full clamp">' + hl(s.rest, hits) + '</div><button type="button" class="hn-x" aria-expanded="false">Read more</button>' : '') +
+        '<div class="foot2"><span>Posted ' + pdEsc(p.date) + '</span><a href="' + link(p) + '" target="_blank" rel="noopener noreferrer">Open on Hacker News &rarr;</a></div></article>';
+    }).join('');
+  }
+  box.querySelectorAll('.hn-job').forEach(function (j) { var f = j.querySelector('.full'), b = j.querySelector('.hn-x'); if (f && b && f.scrollHeight <= f.clientHeight + 2) b.hidden = true; });
+  var mb = document.getElementById('more'); mb.hidden = matches.length <= shown; mb.textContent = 'Show ' + Math.min(25, matches.length - shown) + ' more (showing ' + Math.min(shown, matches.length) + ' of ' + matches.length + ')'; var sc = document.getElementById('sumcount'); if (sc) sc.textContent = matches.length + ' match' + (matches.length === 1 ? '' : 'es') + ', showing ' + Math.min(shown, matches.length);
+  document.getElementById('csv').disabled = document.getElementById('copy').disabled = !matches.length;
+  document.getElementById('meta').textContent = matches.length + ' of ' + posts.length + ' posts' + (matches.length > shown ? ', showing ' + shown : '') + '. Fetched live from the Hacker News API when this page loaded. CSV and copy include all matches.';
+  pdStatus(st, title + ': ' + matches.length + ' of ' + posts.length + ' posts match.', matches.length ? 'ok' : 'err');
+}
+function skeleton() {
+  document.getElementById('res').hidden = false; document.getElementById('meta').textContent = '';
+  document.getElementById('jobs').innerHTML = '<div class="hn-skel"></div><div class="hn-skel"></div><div class="hn-skel"></div>';
+  document.getElementById('more').hidden = true;
+}
+function api(u) { return fetch(u).then(function (r) { if (!r.ok) throw new Error('Hacker News answered HTTP ' + r.status); return r.json(); }); }
+function loadThread(id, ttl, fromCache) {
+  title = ttl; curId = id; shown = 12;
+  var key = 'pd-hn-' + id, c = null;
+  try { c = JSON.parse(sessionStorage.getItem(key) || 'null'); } catch (e) {}
+  if (c && Date.now() - c.t < 9e5) { posts = c.p; render(); return Promise.resolve(); }
+  if (!limit.use(1)) { pdStatus(st, pdLimitMsg(limit, 1, 'thread loads'), 'err'); return Promise.resolve(); }
+  pdBusy(run, true); pdStatus(st, 'Loading "' + ttl + '"... a big thread can take a few seconds.', 'work'); skeleton();
+  return api('https://hn.algolia.com/api/v1/items/' + encodeURIComponent(id)).then(function (t) {
+    posts = (t.children || []).filter(function (c) { return c.text; }).map(function (c) { return { id: c.id, text: strip(c.text), date: (c.created_at || '').slice(0, 10) }; });
+    try { sessionStorage.setItem(key, JSON.stringify({ t: Date.now(), p: posts })); } catch (e) {}
+    render();
+  }).catch(function (e) {
+    document.getElementById('res').hidden = !posts.length;
+    pdStatus(st, 'Could not load the thread: ' + (e.message === 'Failed to fetch' ? 'the network request failed (offline, or blocked by an extension)' : e.message) + '. Press Load thread to try again.' + (posts.length ? ' Earlier results are still shown.' : ''), 'err');
+    if (posts.length) render0();
+  }).then(function () { pdBusy(run, false); });
+}
+function render0() { document.getElementById('jobs').hidden = false; }
+function findThreads() {
+  if (threads.length) return Promise.resolve(threads);
+  pdStatus(st, 'Finding the latest thread...', 'work'); skeleton();
+  return api('https://hn.algolia.com/api/v1/search_by_date?tags=story,author_whoishiring&hitsPerPage=30').then(function (d) {
+    threads = (d.hits || []).filter(function (x) { return /who is hiring/i.test(x.title); }).map(function (x) { return { id: x.objectID, title: x.title }; }).slice(0, 8);
+    if (!threads.length) throw new Error('no Who is hiring thread found');
+    sel.innerHTML = threads.map(function (t, i) { var m = /\(([^)]+)\)/.exec(t.title); return '<option value="' + pdEsc(t.id) + '">' + pdEsc((m ? m[1] : t.title) + (i ? '' : ' (latest)')) + '</option>'; }).join('');
+    return threads;
+  });
+}
+function go() {
+  pdBusy(run, true);
+  findThreads().then(function (ts) {
+    var t = ts.filter(function (x) { return x.id === sel.value; })[0] || ts[0];
+    return loadThread(t.id, t.title.replace(/^Ask HN:\s*/i, ''));
+  }).catch(function (e) {
+    document.getElementById('res').hidden = true;
+    pdStatus(st, 'Could not reach Hacker News: ' + (e.message === 'Failed to fetch' ? 'the network request failed' : e.message) + '. Press Load thread to try again.', 'err');
+  }).then(function () { pdBusy(run, false); });
+}
+function setKw(v) { kw.value = v; shown = 12; if (posts.length) render(); else go(); }
+document.getElementById('ex').onclick = function () { setKw('remote python'); };
+document.querySelectorAll('[data-add]').forEach(function (b) {
+  b.onclick = function () {
+    var w = b.dataset.add, ts = terms(), i = ts.indexOf(w.toLowerCase());
+    if (i > -1) ts.splice(i, 1); else ts.push(w.toLowerCase());
+    setKw(ts.map(function (t) { return /\s/.test(t) ? '"' + t + '"' : t; }).join(' '));
+  };
+});
+run.onclick = go;
+sel.onchange = go;
+kw.oninput = function () { shown = 12; if (posts.length) render(); };
+kw.onkeydown = function (e) { if (e.key === 'Enter') { if (posts.length) render(); else go(); } };
+document.getElementById('more').onclick = function () { shown += 25; render(); };
+document.getElementById('jobs').addEventListener('click', function (e) {
+  var b = e.target.closest ? e.target.closest('.hn-x') : null; if (!b) return;
+  var f = b.previousElementSibling, open = f.classList.toggle('clamp') === false;
+  b.textContent = open ? 'Show less' : 'Read more'; b.setAttribute('aria-expanded', open ? 'true' : 'false');
+});
 document.getElementById('csv').onclick = function () {
-  pdDownload('hn-who-is-hiring.csv', pdCsv([['post', 'posted', 'link']].concat((render.m || []).map(function (p) { return [p.text, p.date, 'https://news.ycombinator.com/item?id=' + p.id]; }))));
+  pdDownload('hn-who-is-hiring.csv', pdCsv([['company', 'details', 'posted', 'link', 'full_text']].concat(matches.map(function (p) { var s = split(p); return [s.head, s.sub, p.date, link(p), p.text]; }))));
 };
+document.getElementById('copy').onclick = function () { pdCopy(matches.map(link).join('\n'), matches.length + ' links copied'); };
+go();
 </script>
-</body>
-</html>
+</body></html>

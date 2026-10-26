@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Meta tag and Open Graph previewer | PennyData</title>
+<meta name="description" content="Paste a page's HTML to preview its Google result and social share cards, check title, description and Open Graph tags, and list every link. Free, runs in your browser.">
+<link rel="canonical" href="https://penny-data.github.io/pennydata-site/meta-tag-previewer/">
+<meta name="theme-color" content="#C8692B">
+<meta property="og:type" content="website"><meta property="og:site_name" content="PennyData"><meta property="og:title" content="Meta tag and Open Graph previewer | PennyData"><meta property="og:description" content="Paste a page&#x27;s HTML to preview its Google result and social share cards, check title, description and Open Graph tags, and list every link. Free, runs in your browser."><meta property="og:url" content="https://penny-data.github.io/pennydata-site/meta-tag-previewer/"><meta property="og:image" content="https://penny-data.github.io/pennydata-site/og/meta-tag-previewer.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Meta tag previewer, a free PennyData tool">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Meta tag and Open Graph previewer | PennyData"><meta name="twitter:description" content="Paste a page&#x27;s HTML to preview its Google result and social share cards, check title, description and Open Graph tags, and list every link. Free, runs in your browser."><meta name="twitter:image" content="https://penny-data.github.io/pennydata-site/og/meta-tag-previewer.png">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+
+
+<link rel="stylesheet" href="../style.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "sameAs": ["https://apify.com/pennydata"], "@id": "https://penny-data.github.io/pennydata-site/#org", "name": "PennyData", "url": "https://penny-data.github.io/pennydata-site/", "logo": "https://penny-data.github.io/pennydata-site/favicon.svg"}, {"@type": "WebSite", "@id": "https://penny-data.github.io/pennydata-site/#website", "url": "https://penny-data.github.io/pennydata-site/", "name": "PennyData", "publisher": {"@id": "https://penny-data.github.io/pennydata-site/#org"}}, {"@type": "WebApplication", "dateModified": "2026-10-26", "name": "Meta tag and Open Graph previewer", "url": "https://penny-data.github.io/pennydata-site/meta-tag-previewer/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (runs in a web browser)", "description": "Paste a page's HTML to preview its Google result and social share cards, check title, description and Open Graph tags, and list every link. Free, runs in your browser.", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "isAccessibleForFree": true, "@id": "https://penny-data.github.io/pennydata-site/meta-tag-previewer/#app", "isPartOf": {"@id": "https://penny-data.github.io/pennydata-site/#website"}, "publisher": {"@id": "https://penny-data.github.io/pennydata-site/#org"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Tools", "item": "https://penny-data.github.io/pennydata-site/"}, {"@type": "ListItem", "position": 2, "name": "Meta tag previewer", "item": "https://penny-data.github.io/pennydata-site/meta-tag-previewer/"}]}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Why do I have to paste HTML instead of typing a URL?", "acceptedAnswer": {"@type": "Answer", "text": "A web page in your browser is not allowed to read another site's HTML (the browser blocks it, a rule called CORS). Fetching a URL would mean sending it through a server, and this site has none. Pasting the source keeps everything on your device. Press Ctrl+U on the page, select all, copy, paste."}}, {"@type": "Question", "name": "Does this show exactly how Google will display my page?", "acceptedAnswer": {"@type": "Answer", "text": "No. It shows a close approximation. Google decides the final title and description itself, and it often rewrites them. We cut the title at about 60 characters and the description at about 160, which are common rules of thumb. Google actually limits by pixel width, so the real cut-off varies."}}, {"@type": "Question", "name": "What is the difference between og: tags and twitter: tags?", "acceptedAnswer": {"@type": "Answer", "text": "Open Graph (og:) tags were created by Facebook and are read by most chat apps and by LinkedIn. X reads its own twitter: tags first and falls back to the og: tags when they are missing, so a page with good og: tags and only a twitter:card tag usually looks fine on X."}}, {"@type": "Question", "name": "What size should my og:image be?", "acceptedAnswer": {"@type": "Answer", "text": "A common choice is 1200 by 630 pixels, a ratio of about 1.91 to 1, as a JPG or PNG. Use a full address starting with https://, not a relative path. This tool cannot measure image sizes, so check the file yourself."}}, {"@type": "Question", "name": "Why is my preview image missing here?", "acceptedAnswer": {"@type": "Answer", "text": "Either the page has no og:image, the address is relative and you did not fill in the Page URL box, or the image could not be loaded from where it is hosted. Previews load the image straight from its host, so that host sees a request from your browser. The tool itself uploads nothing."}}]}]}</script>
+<style>/* meta-tag-previewer page styles (namespaced .mt-) */
+.mt-summary{font-weight:700;margin:6px 0 4px;color:var(--muted)}
+.mt-summary b{color:var(--fg)}
+.mt-h{font-size:1.35rem;margin:30px 0 14px}
+.mt-prev{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.mt-card{border:1.5px solid var(--edge);border-radius:var(--r-s);background:var(--surface);overflow:hidden;min-width:0}
+.mt-card>h4{margin:0;padding:9px 14px;font:800 .72rem/1 var(--mono);text-transform:uppercase;letter-spacing:.08em;background:var(--sunk);border-bottom:2px solid var(--soft);color:var(--muted)}
+.mt-card.wide{grid-column:1/-1}
+.mt-g{padding:16px 18px 18px;max-width:640px}
+.mt-g .u{display:flex;align-items:center;gap:10px;font-size:.85rem;color:var(--muted);margin-bottom:6px;min-width:0}
+.mt-g .u i{flex:none;width:26px;height:26px;border-radius:50%;background:var(--cu-wash2);border:1.5px solid var(--edge);display:grid;place-items:center;font:800 .8rem/1 var(--font);color:var(--ctext);font-style:normal;overflow:hidden}
+.mt-g .u i img{width:16px;height:16px}
+.mt-g .u span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mt-g .t{font-size:1.28rem;line-height:1.3;color:#1a0dab;font-weight:500;margin:0 0 4px;overflow-wrap:anywhere}
+.mt-g .d{font-size:.92rem;line-height:1.55;color:var(--muted);margin:0;overflow-wrap:anywhere}
+@media (prefers-color-scheme:dark){.mt-g .t{color:#8ab4f8}}
+.mt-cut{opacity:.55;text-decoration:line-through;text-decoration-color:var(--bad)}
+.mt-img{aspect-ratio:1.91/1;background:var(--sunk);display:grid;place-items:center;overflow:hidden;border-bottom:2px solid var(--soft);position:relative}
+.mt-img img{width:100%;height:100%;object-fit:cover;display:block}
+.mt-img .ph{font:700 .8rem/1.4 var(--mono);color:var(--muted);text-align:center;padding:12px;overflow-wrap:anywhere}
+.mt-img.sq{aspect-ratio:1/1}
+.mt-soc{padding:12px 14px 14px}
+.mt-soc .h{font:700 .72rem/1.2 var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mt-soc .t{font-weight:800;font-size:1.02rem;line-height:1.3;margin:4px 0 2px;overflow-wrap:anywhere}
+.mt-soc .d{font-size:.88rem;color:var(--muted);margin:0;line-height:1.45;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mt-x .mt-img{border-radius:0}
+.mt-x .mt-soc{background:var(--surface)}
+.mt-miss{padding:18px;color:var(--muted);font-weight:600;font-size:.95rem}
+.mt-checks{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
+.mt-checks li{border:1.5px solid var(--edge);border-radius:var(--r-s);background:var(--surface);padding:12px 14px;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:start;min-width:0}
+.mt-checks li b{font-size:.98rem;overflow-wrap:anywhere}
+.mt-checks li p{grid-column:2;margin:0;color:var(--muted);font-size:.9rem;overflow-wrap:anywhere}
+.mt-checks .pill{min-width:58px;justify-content:center}
+.pill-info{background:var(--sunk);color:var(--muted)}
+.mt-tagv{font-family:var(--mono);font-size:.82rem}
+#tagtab tbody td:first-child,#ltab tbody td:first-child{white-space:nowrap}
+.mt-act{margin-top:-12px;margin-bottom:28px}
+.mt-lf{margin:10px 0 0}
+.mt-lf .seg{flex-wrap:wrap;border-radius:18px}
+.mt-links{margin-top:14px}
+.mt-links td.u{font-family:var(--mono);font-size:.8rem;word-break:break-all;min-width:220px}
+.mt-links td.u a{color:var(--ctext)}
+.mt-more{padding:24px 0 8px}
+.mt-more-l{list-style:none;margin:0 0 20px;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.mt-more-l a{display:block;height:100%;border:1.5px solid var(--edge);border-radius:var(--r-s);background:var(--surface);padding:16px 18px;text-decoration:none;color:var(--fg);transition:transform .14s,box-shadow .14s}
+.mt-more-l a:hover{transform:translate(-2px,-2px);box-shadow:var(--sh)}
+.mt-more-l b{display:block;font-size:1.1rem}.mt-more-l span{color:var(--muted);font-size:.92rem}
+@media (max-width:640px){
+  #tagtab,#tagtab tbody,#tagtab tr,#tagtab td{display:block;width:100%}#tagtab thead{display:none}#tagtab tr{padding:10px 14px;border-bottom:2px solid var(--soft)}#tagtab td{border:0;padding:1px 0}#tagtab td:first-child{font-weight:800;color:var(--ctext)}#tagtab td:last-child{color:var(--muted);font-size:.75rem}#tagtab td:last-child::before{content:'length ';}
+  .mt-prev{grid-template-columns:1fr}
+  .mt-checks{grid-template-columns:1fr}
+  .mt-links table,.mt-links tbody,.mt-links tr,.mt-links td{display:block;width:100%}
+  .mt-links thead{display:none}
+  .mt-links tr{padding:12px 14px;border-bottom:2px solid var(--soft)}
+  .mt-links td{border:0;padding:2px 0;white-space:normal!important;min-width:0!important}
+  .mt-links td[data-l]::before{content:attr(data-l) ": ";font:700 .68rem/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  .mt-links td.u::before{display:block;margin-bottom:3px}
+  .mt-lf .seg button{padding:9px 12px}
+}
+.mt-sum .mt-xrow{display:grid;grid-template-columns:112px 1fr;align-items:stretch}
+.mt-sum .mt-img{aspect-ratio:auto;border-bottom:0;border-right:2px solid var(--soft);min-height:112px}
+.mt-sum .mt-soc{align-self:center}
+.mt-note{margin:0;padding:8px 14px 12px;font-size:.84rem;color:var(--muted);border-top:2px dashed var(--soft)}
+.mt-note.warn{color:var(--warn)}
+
+.srcdet{margin:4px 0 18px}.srcdet:first-of-type{border-top:0}
+.srcbody{padding:0 0 12px;color:var(--muted)}.srcbody p{padding:0 0 10px;margin:0}
+.state{margin:14px 0 0;display:flex;gap:12px;align-items:flex-start;justify-content:space-between;font-size:.95rem;font-weight:600;padding:10px 14px;border-radius:10px;background:var(--warn-bg);color:var(--warn)}
+.state.unreg{background:var(--cu-wash);color:var(--fg)}.state.fail{background:var(--bad-bg);color:var(--bad)}
+.state button{font:700 .88rem var(--font);border:1.5px solid currentColor;background:transparent;color:inherit;border-radius:999px;padding:6px 14px;min-height:38px;cursor:pointer;white-space:nowrap}
+.chk-pass{display:block!important;padding:0!important;border:0!important;background:none!important}.chk-pass summary{cursor:pointer;font-weight:800;color:var(--ctext);min-height:44px;display:flex;align-items:center}.chk-pass ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}.chk-pass li{display:grid;gap:4px}
+</style>
+</head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><filter id="wob" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter></defs></svg>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="wrap hbar"><a class="brand" href="../" aria-label="PennyData home"><svg class="logo-m" viewBox="62 0 136 146" aria-hidden="true"><path d="M66 150 Q130 120 194 150 Z" fill="#111"/><path d="M104 62 C96 40 104 22 116 18 C114 30 120 34 124 36 C126 18 140 10 154 18 C146 24 146 32 150 40 C162 34 176 38 178 46 C164 46 158 52 154 60 Z" fill="#111" stroke="#111" stroke-width="4"/><circle cx="130" cy="100" r="46" fill="#fff" stroke="#111" stroke-width="6"/><ellipse cx="114" cy="96" rx="4.5" ry="6.5" fill="#111"/><ellipse cx="146" cy="96" rx="4.5" ry="6.5" fill="#111"/><path d="M104 80 Q114 72 124 79 M138 79 Q148 72 158 80" fill="none" stroke="#111" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M108 118 Q130 138 154 116" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="98" cy="114" r="6" fill="#C8692B" opacity=".55"/><circle cx="162" cy="114" r="6" fill="#C8692B" opacity=".55"/></svg><span>Penny<b>Data</b></span></a><button class="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav"><i aria-hidden="true"></i><span>Menu</span></button><nav aria-label="Tools" class="nav" id="site-nav"><a href="../whois-dns-lookup/">WHOIS &amp; DNS</a><a href="../image-extractor/">Images</a><a href="../contact-finder/">Contacts</a><a href="../polymarket-odds-viewer/">Polymarket</a><a href="../hn-who-is-hiring-search/">Hiring</a><a href="../email-domain-checker/">Email check</a><a href="../meta-tag-previewer/" aria-current="page">Meta tags</a></nav></div><noscript><style>.menu-btn{display:none}.nav{display:flex!important;position:static!important;flex-wrap:wrap;box-shadow:none!important;padding:0 20px 10px!important;flex-direction:row!important}</style></noscript></header><main id="main"><section class="thero"><div class="wrap thero-grid"><div class="thero-txt"><p class="crumb"><a href="../">Tools</a> / Meta tags</p><h1>Meta tag and Open Graph previewer</h1><p class="lead">Paste a page's HTML and see how it looks in Google and when shared on Facebook, LinkedIn and X. It flags missing or too-long tags and lists every link on the page.</p><ul class="facts-line"><li>30 checks per hour</li><li>HTML never leaves your browser</li><li>CSV export</li></ul></div><div class="thero-art" aria-hidden="true"><svg class="mascot hero-fig" viewBox="20 4 240 322" aria-hidden="true"><g filter="url(#wob)"><path d="M108 156 L102 304 M150 156 L158 304" stroke="#111" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M86 306 Q104 294 118 306 L118 318 L82 318 Z" fill="#C8692B" stroke="#111" stroke-width="4" stroke-linejoin="round"/><path d="M146 306 Q164 294 180 306 L182 318 L146 318 Z" fill="#C8692B" stroke="#111" stroke-width="4" stroke-linejoin="round"/><path d="M82 176 Q130 150 178 176 L192 276 Q130 296 68 276 Z" fill="#111" stroke="#111" stroke-width="6" stroke-linejoin="round"/><path d="M94 170 Q130 204 166 170" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/><path d="M118 192 L116 226 M142 192 L144 226" stroke="#C8692B" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M96 252 Q130 240 164 252" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/><path d="M88 190 Q60 222 46 252" stroke="#111" stroke-width="22" fill="none" stroke-linecap="round"/><circle cx="44" cy="262" r="15" fill="#111"/><circle cx="36" cy="251" r="7" fill="#111"/><path d="M172 190 Q198 198 201 166" stroke="#111" stroke-width="22" fill="none" stroke-linecap="round"/><g transform="translate(214 128)"><rect x="-30" y="-24" width="60" height="48" rx="6" fill="#fff" stroke="#111" stroke-width="4.5"/><path d="M-30 -10 H30" stroke="#111" stroke-width="4"/><circle cx="-22" cy="-17" r="2.5" fill="#C8692B"/><circle cx="-14" cy="-17" r="2.5" fill="#C8692B"/><rect x="-22" y="-3" width="26" height="20" rx="3" fill="#C8692B" stroke="#111" stroke-width="3.5"/><path d="M10 0 H24 M10 8 H24 M10 16 H20" stroke="#111" stroke-width="3.5" stroke-linecap="round"/></g><circle cx="201" cy="158" r="15" fill="#111"/><circle cx="191" cy="149" r="7" fill="#111"/><path d="M104 62 C96 40 104 22 116 18 C114 30 120 34 124 36 C126 18 140 10 154 18 C146 24 146 32 150 40 C162 34 176 38 178 46 C164 46 158 52 154 60 Z" fill="#111" stroke="#111" stroke-width="4"/><circle cx="130" cy="100" r="46" fill="#fff" stroke="#111" stroke-width="6"/><ellipse cx="114" cy="96" rx="4.5" ry="7" fill="#111"/><ellipse cx="146" cy="96" rx="4.5" ry="7" fill="#111"/><path d="M102 82 L124 76" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M138 72 Q148 66 158 76" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M114 120 Q132 136 150 118" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="98" cy="114" r="6" fill="#C8692B" opacity=".55"/><circle cx="162" cy="114" r="6" fill="#C8692B" opacity=".55"/></g></svg></div></div></section>
+<div class="wrap">
+<div class="panel"><div class="panel-head"><div class="pal" data-mood="idle" aria-hidden="true"><svg viewBox="58 4 144 150"><g filter="url(#wob)"><path d="M60 156 Q130 118 200 156 Z" fill="#111"/><path d="M104 62 C96 40 104 22 116 18 C114 30 120 34 124 36 C126 18 140 10 154 18 C146 24 146 32 150 40 C162 34 176 38 178 46 C164 46 158 52 154 60 Z" fill="#111" stroke="#111" stroke-width="4"/><circle cx="130" cy="100" r="46" fill="#fff" stroke="#111" stroke-width="6"/><g class="f f-idle"><ellipse cx="114" cy="96" rx="4.5" ry="6.5" fill="#111"/><ellipse cx="146" cy="96" rx="4.5" ry="6.5" fill="#111"/><path d="M104 80 Q114 72 124 79 M138 79 Q148 72 158 80" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M108 118 Q130 138 154 116" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g><g class="f f-work"><ellipse cx="114" cy="96" rx="4.5" ry="7" fill="#111"/><ellipse cx="146" cy="96" rx="4.5" ry="7" fill="#111"/><path d="M102 82 L124 76" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M138 72 Q148 66 158 76" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M114 120 Q132 136 150 118" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g><g class="f f-ok"><path d="M103 99 Q114 85 125 99 M135 99 Q146 85 157 99" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M106 114 Q130 148 156 112 Z" fill="#fff" stroke="#111" stroke-width="4.5" stroke-linejoin="round"/><path d="M118 126 Q130 134 144 126" fill="none" stroke="#C8692B" stroke-width="3.5" stroke-linecap="round"/></g><g class="f f-err"><ellipse cx="114" cy="96" rx="5.5" ry="8" fill="#111"/><ellipse cx="146" cy="96" rx="5.5" ry="8" fill="#111"/><path d="M104 76 Q114 66 124 74 M138 74 Q148 66 158 76" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="130" cy="125" rx="8" ry="10" fill="#fff" stroke="#111" stroke-width="4.5"/></g><circle cx="98" cy="114" r="6" fill="#C8692B" opacity=".55"/><circle cx="162" cy="114" r="6" fill="#C8692B" opacity=".55"/></g></svg></div><div class="t"><b>Meta tag previewer</b><span>Paste page HTML, check the tags</span></div></div><div class="actions quick"><button type="button" class="btn" id="sample">Try an example</button><button type="button" class="btn ghost" id="paste">Paste from clipboard</button><button type="button" class="btn ghost sm" id="clear">Clear</button></div><p class="keyhint">Or open any page, press <kbd>Ctrl</kbd>+<kbd>U</kbd>, select all, copy, then paste below. The example is a made-up coffee shop with a few deliberate flaws, so the checklist has something to find.</p><details class="how srcdet"><summary>How do I get the page HTML?</summary><div class="srcbody"><p>Open the page, press <kbd>Ctrl</kbd>+<kbd>U</kbd> (<kbd>Cmd</kbd>+<kbd>Option</kbd>+<kbd>U</kbd> on a Mac), select all and copy.</p><p>Paste it below. Add the page address so relative image and link paths turn into full URLs.</p></div></details><div class="field"><label for="base">Page URL <span class="hint">optional, resolves relative links like /img/a.jpg</span></label><input id="base" type="url" placeholder="https://example.com/blog/post" spellcheck="false" autocomplete="off"></div>
+<div class="field"><label for="html">Page HTML</label><textarea id="html" spellcheck="false" placeholder="Paste the page HTML here"></textarea></div>
+
+<div class="actions"><button class="btn big" id="run" type="button">Check this page</button></div>
+<p id="status" class="status" role="status" aria-live="polite"></p></div>
+
+<div id="empty" class="ix-empty"><b>Your previews will show up here</b>Press &ldquo;Try an example&rdquo; to see the Google result, social cards and checklist.<div class="sample-prev" aria-hidden="true"><p class="exlabel">What a result looks like (made-up sample)</p><div class="sp-serp"><i>harborpine.example &rsaquo; shop</i><b>Harbor &amp; Pine Coffee Roasters | Small-batch beans&hellip;</b><span>Beans roasted to order and shipped fresh to your door.</span></div><ul class="sp-checks"><li class="g">Title length is fine</li><li class="w">Description is a bit long</li><li class="b">No twitter:card tag</li></ul></div></div>
+<div id="res" hidden>
+<div class="rbar"><h2 id="rtitle">Results</h2><div class="seg" role="group" aria-label="Result view"><button type="button" id="tab-tags" aria-pressed="true">Tags &amp; previews</button><button type="button" id="tab-links" aria-pressed="false">Links <span id="lcount"></span></button></div></div>
+<div id="view-tags">
+<p id="summary" class="mt-summary"></p>
+<h3 class="mt-h">Previews <span class="hint">approximations, each service has the final say</span></h3>
+<div class="mt-prev" id="prev"></div>
+<h3 class="mt-h">Checklist</h3>
+<ul class="mt-checks" id="checks"></ul>
+<h3 class="mt-h">Every tag we read</h3>
+<div class="table-wrap" id="tagwrap" tabindex="0" role="region" aria-label="All meta tags found, scrollable"><table id="tagtab"></table></div>
+<div class="actions mt-act"><button class="btn ghost sm" id="copytags" type="button">Copy tags as text</button><button class="btn ghost sm" id="csvtags" type="button">Download tags CSV</button></div>
+</div>
+<div id="view-links" hidden>
+<p id="lsum" class="mt-summary"></p>
+<div class="row mt-lf"><div class="seg" role="group" aria-label="Filter links" id="lfilter"></div></div>
+<div class="table-wrap mt-links" id="lwrap" tabindex="0" role="region" aria-label="Links found, scrollable"><table id="ltab"></table></div>
+<div class="actions mt-act"><button class="btn ghost sm" id="copylinks" type="button">Copy link URLs</button><button class="btn ghost sm" id="csvlinks" type="button">Download links CSV</button></div>
+</div>
+</div>
+
+<p class="apify-line"><span>This one has no bulk version.</span> <a href="https://apify.com/pennydata?utm_source=pennydata-site&amp;utm_medium=referral&amp;utm_campaign=meta-tag-previewer" rel="noopener">See the other PennyData tools on Apify <span aria-hidden="true">&rarr;</span></a> <span class="al-note">(paid, PennyData earns a little)</span></p><section class="about-tool"><h2 class="sec-h">What this tool does, and its limits</h2><p>You paste a page's HTML and the tool reads its title, description, canonical, Open Graph and Twitter tags. It then draws an approximate Google result and social share cards, runs a checklist for missing or too-long tags and lists every link on the page. It all happens in your browser, and the HTML is never uploaded; only preview images load from their own hosts. The previews are approximations: Google often rewrites titles and descriptions, and its real limits are measured in pixels, not characters. The tool cannot measure image dimensions or fetch a page by itself, because browsers do not let one site read another. It has no bulk version, but the other PennyData tools do.</p></section><section style="padding-top:24px"><h2 class="sec-h faq-h" id="faq-h">Questions</h2><details class="how"><summary>Why do I have to paste HTML instead of typing a URL?</summary><p>A web page in your browser is not allowed to read another site's HTML (the browser blocks it, a rule called CORS). Fetching a URL would mean sending it through a server, and this site has none. Pasting the source keeps everything on your device. Press Ctrl+U on the page, select all, copy, paste.</p></details><details class="how"><summary>Does this show exactly how Google will display my page?</summary><p>No. It shows a close approximation. Google decides the final title and description itself, and it often rewrites them. We cut the title at about 60 characters and the description at about 160, which are common rules of thumb. Google actually limits by pixel width, so the real cut-off varies.</p></details><details class="how"><summary>What is the difference between og: tags and twitter: tags?</summary><p>Open Graph (og:) tags were created by Facebook and are read by most chat apps and by LinkedIn. X reads its own twitter: tags first and falls back to the og: tags when they are missing, so a page with good og: tags and only a twitter:card tag usually looks fine on X.</p></details><details class="how"><summary>What size should my og:image be?</summary><p>A common choice is 1200 by 630 pixels, a ratio of about 1.91 to 1, as a JPG or PNG. Use a full address starting with https://, not a relative path. This tool cannot measure image sizes, so check the file yourself.</p></details><details class="how"><summary>Why is my preview image missing here?</summary><p>Either the page has no og:image, the address is relative and you did not fill in the Page URL box, or the image could not be loaded from where it is hosted. Previews load the image straight from its host, so that host sees a request from your browser. The tool itself uploads nothing.</p></details></section>
+<nav class="more" aria-label="More free tools"><h2>More free tools</h2><ul><li><a href="../whois-dns-lookup/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><circle cx="8" cy="-10" r="20" fill="#FBEBDD" stroke="#111" stroke-width="5"/><path d="M-6 5 L-18 26" stroke="#111" stroke-width="8" stroke-linecap="round"/><path d="M-2 -18 Q4 -24 12 -21" fill="none" stroke="#C8692B" stroke-width="3.5" stroke-linecap="round"/></svg></span><span><b>Domain WHOIS &amp; DNS lookup</b><span class="d">Expiry date, registrar and A, MX, NS, TXT records for up to 10 domains.</span></span></a></li><li><a href="../image-extractor/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><g transform="rotate(8)"><rect x="-27" y="-24" width="54" height="44" rx="5" fill="#fff" stroke="#111" stroke-width="4.5"/><circle cx="-10" cy="-10" r="5" fill="#C8692B"/><path d="M-23 16 L-8 2 L2 11 L10 4 L23 16 Z" fill="#C8692B"/></g></svg></span><span><b>Image extractor</b><span class="d">Every image URL a page references, from pasted HTML.</span></span></a></li><li><a href="../contact-finder/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><g transform="rotate(-8)"><rect x="-28" y="-20" width="56" height="40" rx="5" fill="#fff" stroke="#111" stroke-width="4.5"/><path d="M-24 -15 L0 3 L24 -15" fill="none" stroke="#C8692B" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/></g></svg></span><span><b>Contact finder</b><span class="d">A site&#x27;s contact page and the public emails it lists.</span></span></a></li><li><a href="../polymarket-odds-viewer/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><rect x="-24" y="-2" width="14" height="26" fill="#C8692B" stroke="#111" stroke-width="4"/><rect x="-6" y="-16" width="14" height="40" fill="#fff" stroke="#111" stroke-width="4"/><rect x="12" y="-30" width="14" height="54" fill="#C8692B" stroke="#111" stroke-width="4"/></svg></span><span><b>Polymarket odds viewer</b><span class="d">Search open markets and read the odds as percentages.</span></span></a></li><li><a href="../hn-who-is-hiring-search/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><g transform="rotate(6)"><path d="M-9 -18 v-8 h18 v8" fill="none" stroke="#111" stroke-width="4.5" stroke-linejoin="round"/><rect x="-28" y="-18" width="56" height="40" rx="6" fill="#C8692B" stroke="#111" stroke-width="4.5"/><path d="M-28 0 H28" stroke="#111" stroke-width="4"/><rect x="-5" y="-4" width="10" height="9" rx="2" fill="#fff" stroke="#111" stroke-width="3"/></g></svg></span><span><b>Hacker News Who is hiring search</b><span class="d">Filter the latest monthly thread by keyword.</span></span></a></li><li><a href="../email-domain-checker/"><span class="mi"><svg viewBox="-38 -38 76 76" aria-hidden="true"><g transform="rotate(-6)"><rect x="-27" y="-20" width="54" height="38" rx="5" fill="#fff" stroke="#111" stroke-width="4.5"/><path d="M-23 -15 L0 3 L23 -15" fill="none" stroke="#C8692B" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/></g><circle cx="18" cy="16" r="14" fill="#C8692B" stroke="#111" stroke-width="4.5"/><path d="M11 16 L16 21 L26 10" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><b>Email domain checker</b><span class="d">Plain-English SPF, DKIM, DMARC and MX verdicts.</span></span></a></li></ul></nav></div></main>
+<footer class="foot"><div class="wrap"><div class="foot-grid"><div class="foot-brand"><svg class="logo-m" viewBox="62 0 136 146" aria-hidden="true"><path d="M66 150 Q130 120 194 150 Z" fill="#111"/><path d="M104 62 C96 40 104 22 116 18 C114 30 120 34 124 36 C126 18 140 10 154 18 C146 24 146 32 150 40 C162 34 176 38 178 46 C164 46 158 52 154 60 Z" fill="#111" stroke="#111" stroke-width="4"/><circle cx="130" cy="100" r="46" fill="#fff" stroke="#111" stroke-width="6"/><ellipse cx="114" cy="96" rx="4.5" ry="6.5" fill="#111"/><ellipse cx="146" cy="96" rx="4.5" ry="6.5" fill="#111"/><path d="M104 80 Q114 72 124 79 M138 79 Q148 72 158 80" fill="none" stroke="#111" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M108 118 Q130 138 154 116" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="98" cy="114" r="6" fill="#C8692B" opacity=".55"/><circle cx="162" cy="114" r="6" fill="#C8692B" opacity=".55"/></svg></div><ul class="foot-notes"><li><b>Built with AI assistance</b> (Claude). No analytics, cookies or accounts.</li><li><b>Honest money note.</b> Some other tools here have bulk versions on Apify, and PennyData earns a little from those runs. This one has no bulk version, and it stays free.</li></ul></div><nav class="foot-links" aria-label="All tools"><a href="../whois-dns-lookup/">WHOIS &amp; DNS</a><a href="../image-extractor/">Images</a><a href="../contact-finder/">Contacts</a><a href="../polymarket-odds-viewer/">Polymarket</a><a href="../hn-who-is-hiring-search/">Hiring</a><a href="../email-domain-checker/">Email check</a><a href="../meta-tag-previewer/">Meta tags</a><a href="../#about">About</a></nav></div></footer>
+<script src="../common.js"></script>
+<script>
+var limit = pdLimit('meta-tags', 30, 3600e3);
+var $ = function (id) { return document.getElementById(id); };
+var st = $('status'), run = $('run');
+var cur = null, linkFilter = 'all';
+var SAMPLE_IMG = 'https://harborpine.example/img/share.png';
+var SAMPLE_SVG = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630"><rect width="1200" height="630" fill="#FBEBDD"/><circle cx="930" cy="320" r="210" fill="#C8692B"/><circle cx="930" cy="320" r="150" fill="none" stroke="#111" stroke-width="14"/><rect x="90" y="190" width="520" height="40" rx="12" fill="#111"/><rect x="90" y="262" width="400" height="40" rx="12" fill="#111" opacity=".55"/><rect x="90" y="410" width="240" height="64" rx="32" fill="#111"/></svg>');
+var SAMPLE = '<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>Harbor & Pine Coffee Roasters | Small-batch beans roasted to order and shipped fresh to your door</title>\n<meta name="description" content="Small-batch coffee roasted to order in Portland, Maine. Pick a roast, choose a grind, and we ship within 48 hours of roasting.">\n<link rel="canonical" href="https://harborpine.example/shop/">\n<link rel="icon" href="/favicon.png">\n<meta property="og:type" content="website">\n<meta property="og:title" content="Harbor & Pine Coffee Roasters">\n<meta property="og:description" content="Fresh coffee, roasted to order.">\n<meta property="og:url" content="https://harborpine.example/shop/">\n<meta property="og:image" content="/img/share.png">\n</head>\n<body>\n<nav><a href="/">Home</a> <a href="/shop/roasts/">Roasts</a> <a href="/about/">About</a></nav>\n<h1>Roasted to order</h1>\n<h1>Free shipping over $40</h1>\n<p><a href="https://harborpine.example/subscribe/">Subscribe</a>, <a href="https://www.instagram.com/harborpine" rel="nofollow noopener" target="_blank">Instagram</a>, <a href="https://partner-farm.example/beans" rel="sponsored">Our partner farm</a>, <a href="mailto:hello@harborpine.example">hello@harborpine.example</a>, <a href="#top">Back to top</a></p>\n</body>\n</html>';
+function clean(s) { return (s || '').replace(/\s+/g, ' ').trim(); }
+function absUrl(u, base) {
+  u = clean(u); if (!u) return '';
+  try { return new URL(u, base || undefined).href; } catch (e) { return ''; }
+}
+function safeImg(u) {
+  return /^https?:\/\//i.test(u) ? u : '';
+}
+function hostOf(u) { try { return new URL(u).hostname.replace(/^www\./, ''); } catch (e) { return ''; } }
+function parsePage(html, base) {
+  var doc = new DOMParser().parseFromString(html, 'text/html'), P = { tags: [], links: [], base: base };
+  var meta = {};
+  doc.querySelectorAll('meta').forEach(function (m) {
+    var key = (m.getAttribute('property') || m.getAttribute('name') || '').toLowerCase().trim(), c = m.getAttribute('content');
+    if (m.getAttribute('charset') != null) { meta.charset = m.getAttribute('charset'); P.tags.push(['charset', clean(m.getAttribute('charset'))]); return; }
+    var he = m.getAttribute('http-equiv');
+    if (!key && he) { key = 'http-equiv:' + he.toLowerCase(); if (key === 'http-equiv:content-type' && !meta.charset) meta.charset = c; }
+    if (!key || c == null) return;
+    if (!(key in meta)) meta[key] = clean(c);
+    P.tags.push([key, clean(c)]);
+  });
+  var te = doc.querySelector('title');
+  P.title = te ? clean(te.textContent) : '';
+  if (P.title) P.tags.unshift(['title', P.title]);
+  var lang = doc.documentElement.getAttribute('lang'); P.lang = lang ? clean(lang) : '';
+  if (P.lang) P.tags.unshift(['html lang', P.lang]);
+  var can = doc.querySelector('link[rel~="canonical"]'); P.canonical = can ? clean(can.getAttribute('href')) : '';
+  if (P.canonical) P.tags.push(['canonical', P.canonical]);
+  var ic = doc.querySelector('link[rel~="icon"],link[rel="shortcut icon"],link[rel="apple-touch-icon"]'); P.icon = ic ? clean(ic.getAttribute('href')) : '';
+  if (P.icon) P.tags.push(['icon', P.icon]);
+  P.meta = meta; P.desc = meta.description || ''; P.h1 = doc.querySelectorAll('h1').length;
+  P.hasHead = !!(te || doc.querySelector('meta') || can);
+  doc.querySelectorAll('a[href]').forEach(function (a) {
+    var raw = (a.getAttribute('href') || '').trim(), rel = (a.getAttribute('rel') || '').toLowerCase().split(/\s+/);
+    var text = clean(a.textContent);
+    if (!text) { var im = a.querySelector('img[alt]'); text = clean(a.getAttribute('aria-label') || (im ? im.getAttribute('alt') : '')); if (text && im) text = '[image] ' + text; }
+    var type, url = raw, m = raw.match(/^([a-z][a-z0-9+.-]*):/i), sch = m ? m[1].toLowerCase() : '';
+    if (!raw) return;
+    if (raw.charAt(0) === '#') type = 'anchor';
+    else if (sch === 'mailto' || sch === 'tel') type = 'mailto/tel';
+    else if (sch && sch !== 'http' && sch !== 'https') type = 'other';
+    else {
+      var full = absUrl(raw, base || 'https://pd-no-base.invalid/');
+      if (!full) { type = 'other'; }
+      else if (base) { url = full; type = hostOf(full) === hostOf(base) ? 'internal' : 'external'; }
+      else if (/^https?:|^\/\//i.test(raw)) { url = full; type = 'external'; }
+      else { type = 'internal'; url = raw; }
+    }
+    P.links.push({ url: url, text: text, type: type, nofollow: rel.indexOf('nofollow') >= 0 || rel.indexOf('sponsored') >= 0 || rel.indexOf('ugc') >= 0, rel: rel.join(' ').trim() });
+  });
+  return P;
+}
+function buildChecks(P) {
+  var C = [], M = P.meta;
+  function add(s, name, msg) { C.push({ s: s, name: name, msg: msg }); }
+  var tl = P.title.length;
+  if (!tl) add('bad', 'Title', 'No <title> tag. Search engines will invent a title for you.');
+  else if (tl > 60) add('warn', 'Title', tl + ' characters. Google usually cuts titles after about 60, so the end may be lost.');
+  else if (tl < 15) add('warn', 'Title', tl + ' characters. Quite short, there is room to say more.');
+  else add('ok', 'Title', tl + ' characters, a good length.');
+  var dl = P.desc.length;
+  if (!dl) add('bad', 'Description', 'No meta description. Google will pick text from the page instead.');
+  else if (dl > 160) add('warn', 'Description', dl + ' characters. Google usually cuts after about 160.');
+  else if (dl < 70) add('warn', 'Description', dl + ' characters. Short, you could use more of the space.');
+  else add('ok', 'Description', dl + ' characters, a good length.');
+  if (!P.canonical) add('warn', 'Canonical URL', 'No canonical link. Duplicate versions of this page may compete with each other.');
+  else if (!/^https?:\/\//i.test(P.canonical)) add('warn', 'Canonical URL', 'Relative canonical (' + P.canonical + '). Use a full https:// address.');
+  else add('ok', 'Canonical URL', P.canonical);
+  var rb = M.robots || '';
+  if (/noindex/i.test(rb)) add('warn', 'Robots', 'Set to "' + rb + '". This tells search engines to leave the page out of results.');
+  else add('ok', 'Robots', rb ? 'Set to "' + rb + '".' : 'No robots tag, so search engines may index the page (the default).');
+  add(M.viewport ? 'ok' : 'warn', 'Viewport', M.viewport ? 'Set, the page can scale on phones.' : 'No viewport tag. The page may render zoomed out on phones.');
+  add(P.lang ? 'ok' : 'warn', 'Language', P.lang ? 'html lang="' + P.lang + '".' : 'No lang attribute on <html>.');
+  add(M.charset ? 'ok' : 'warn', 'Character set', M.charset ? M.charset : 'No charset declared. Add <meta charset="utf-8">.');
+  add(P.h1 === 1 ? 'ok' : 'warn', 'H1 heading', P.h1 === 1 ? 'Exactly one H1.' : (P.h1 ? P.h1 + ' H1 headings. One is the usual advice.' : 'No H1 heading found.'));
+  [['og:title', 'Share title'], ['og:description', 'Share description'], ['og:url', 'Share URL'], ['og:type', 'Share type']].forEach(function (k) {
+    add(M[k[0]] ? 'ok' : 'warn', k[0], M[k[0]] ? (M[k[0]].length > 90 && k[0] === 'og:title' ? M[k[0]].length + ' characters, long for a share card.' : 'Set: ' + M[k[0]].slice(0, 90)) : 'Missing. Other sites fall back to the title tag, or show nothing.');
+  });
+  var oi = M['og:image'];
+  if (!oi) add('warn', 'og:image', 'Missing. Shared links will have no picture.');
+  else if (!/^https?:\/\//i.test(oi)) add('bad', 'og:image', 'Relative path (' + oi.slice(0, 80) + '). Sites that read the tag need a full https:// address.');
+  else if (/^http:\/\//i.test(oi)) add('warn', 'og:image', 'Uses http://. Prefer https://.');
+  else add('ok', 'og:image', 'Full address set.');
+  add(M['twitter:card'] ? 'ok' : 'warn', 'twitter:card', M['twitter:card'] ? 'Set to ' + M['twitter:card'] + '.' : 'Missing. X needs this tag to show a card.');
+  add(P.icon ? 'ok' : 'info', 'Favicon', P.icon ? 'Linked.' : 'No icon link. Browsers will look for /favicon.ico.');
+  return C;
+}
+function imgBox(u, label, cls) {
+  var ok = safeImg(u);
+  if (!ok) return '<div class="mt-img ' + (cls || '') + '"><div class="ph">' + pdEsc(label) + '</div></div>';
+  return '<div class="mt-img ' + (cls || '') + '"><img src="' + pdEsc(ok === SAMPLE_IMG ? SAMPLE_SVG : ok) + '" alt="Preview image" loading="lazy" referrerpolicy="no-referrer" data-u="' + pdEsc(ok) + '"></div>';
+}
+function cutHtml(s, n) {
+  if (s.length <= n) return pdEsc(s);
+  return pdEsc(s.slice(0, n)).replace(/\s+$/, '') + '&hellip;<span class="mt-cut">' + pdEsc(s.slice(n)) + '</span>';
+}
+function previews(P) {
+  var M = P.meta, base = P.base;
+  var title = P.title || M['og:title'] || '', desc = P.desc || M['og:description'] || '';
+  var pageUrl = (/^https?:\/\//i.test(P.canonical) ? P.canonical : '') || M['og:url'] || base || '';
+  var host = hostOf(pageUrl), path = '';
+  try { path = new URL(pageUrl).pathname.replace(/\/$/, '').split('/').filter(Boolean).join(' › '); } catch (e) {}
+  var crumb = host ? host + (path ? ' › ' + path : '') : 'example.com (add the Page URL)';
+  var g = '<div class="mt-card wide"><h4>Google search result</h4><div class="mt-g"><div class="u"><i>' + pdEsc((host || 'e').charAt(0).toUpperCase()) + '</i><span>' + pdEsc(crumb) + '</span></div>' +
+    '<p class="t">' + (title ? cutHtml(title, 60) : '<span class="dim">No title found</span>') + '</p><p class="d">' + (desc ? cutHtml(desc, 160) : '<span class="dim">No description found. Google will choose text from the page.</span>') + '</p></div>' +
+    ((title.length > 60 || desc.length > 160) ? '<p class="mt-note warn">Struck-through text is likely to be cut off. Google measures width in pixels, so the real cut-off varies.</p>' : '') + '</div>';
+  var ogImg = M['og:image'] ? absUrl(M['og:image'], base) : '';
+  var imgMsg = M['og:image'] ? (ogImg ? 'Image could not be shown' : 'og:image is relative. Fill in the Page URL to resolve it.') : 'No og:image set';
+  var ftitle = M['og:title'] || P.title || '', fdesc = M['og:description'] || P.desc || '';
+  var fh = hostOf(M['og:url'] || pageUrl) || 'your-site.example';
+  var fb = '<div class="mt-card"><h4>Facebook &amp; LinkedIn</h4>' + imgBox(ogImg, imgMsg) + '<div class="mt-soc"><div class="h">' + pdEsc(fh) + '</div><div class="t">' + pdEsc(ftitle || 'No title') + '</div><p class="d">' + pdEsc(fdesc || '') + '</p></div>' +
+    (M['og:title'] && M['og:image'] ? '' : '<p class="mt-note warn">' + (M['og:image'] ? 'No og:title, so the title tag is used.' : 'No og:image, so these sites show a bare link or guess a picture.') + '</p>') + '</div>';
+  var tc = (M['twitter:card'] || '').toLowerCase(), tImg = M['twitter:image'] || M['og:image'] || '', tAbs = tImg ? absUrl(tImg, base) : '';
+  var tt = M['twitter:title'] || M['og:title'] || P.title || '', td = M['twitter:description'] || M['og:description'] || P.desc || '';
+  var tmsg = tImg ? (tAbs ? 'Image could not be shown' : 'Image path is relative') : 'No twitter:image or og:image';
+  var soc = '<div class="mt-soc"><div class="h">' + pdEsc(fh) + '</div><div class="t">' + pdEsc(tt || 'No title') + '</div><p class="d">' + pdEsc(td) + '</p></div>';
+  var xb = tc === 'summary' ? '<div class="mt-xrow">' + imgBox(tAbs, tmsg, 'sq') + soc + '</div>' : imgBox(tAbs, tmsg) + soc;
+  var x = '<div class="mt-card mt-x' + (tc === 'summary' ? ' mt-sum' : '') + '"><h4>X (Twitter)</h4>' + xb +
+    '<p class="mt-note' + (tc ? '' : ' warn') + '">' + (tc ? 'twitter:card is "' + pdEsc(tc) + '".' : 'No twitter:card tag. This preview assumes a large image card; X may show a plain link instead.') + '</p></div>';
+  return g + fb + x;
+}
+function tagsTable(P) {
+  return '<thead><tr><th scope="col">Tag</th><th scope="col">Value</th><th scope="col">Length</th></tr></thead><tbody>' +
+    (P.tags.length ? P.tags.map(function (t) { return '<tr><td class="mt-tagv">' + pdEsc(t[0]) + '</td><td class="mt-tagv">' + pdEsc(t[1]) + '</td><td>' + t[1].length + '</td></tr>'; }).join('') : '<tr><td colspan="3">No tags found.</td></tr>') + '</tbody>';
+}
+var LABELS = { all: 'All', internal: 'Internal', external: 'External', nofollow: 'nofollow / sponsored', 'mailto/tel': 'Email & phone', anchor: 'On-page (#)', other: 'Other' };
+function filtered() {
+  return cur.links.filter(function (l) { return linkFilter === 'all' ? true : linkFilter === 'nofollow' ? l.nofollow : l.type === linkFilter; });
+}
+function renderLinks() {
+  var L = cur.links, counts = { all: L.length, nofollow: 0 };
+  L.forEach(function (l) { counts[l.type] = (counts[l.type] || 0) + 1; if (l.nofollow) counts.nofollow++; });
+  if (!counts[linkFilter]) linkFilter = 'all';
+  var keys = ['all', 'internal', 'external', 'nofollow', 'mailto/tel', 'anchor', 'other'].filter(function (k) { return k === 'all' || counts[k]; });
+  $('lfilter').innerHTML = keys.map(function (k) { return '<button type="button" data-k="' + pdEsc(k) + '" aria-pressed="' + (k === linkFilter) + '">' + pdEsc(LABELS[k]) + ' ' + (counts[k] || 0) + '</button>'; }).join('');
+  var rows = filtered(), uniq = {}; rows.forEach(function (l) { uniq[l.url] = 1; });
+  $('lsum').innerHTML = L.length ? '<b>' + rows.length + '</b> link' + (rows.length === 1 ? '' : 's') + ' shown, ' + Object.keys(uniq).length + ' unique.' + (cur.base ? '' : ' Add the Page URL for an exact internal/external split.') + (rows.length > 500 ? ' Showing the first 500, the CSV has all ' + rows.length + '.' : '') : 'No links (<a href>) found in this HTML.';
+  $('lwrap').hidden = !L.length; document.querySelector('#view-links .mt-act').hidden = !L.length;
+  $('ltab').innerHTML = '<thead><tr><th scope="col">Link text</th><th scope="col">URL</th><th scope="col">Type</th><th scope="col">Flags</th></tr></thead><tbody>' +
+    rows.slice(0, 500).map(function (l) {
+      var web = /^https?:\/\//i.test(l.url);
+      return '<tr><td data-l="Text">' + (l.text ? pdEsc(l.text.slice(0, 120)) : '<span class="dim">(no text)</span>') + '</td><td class="u" data-l="URL">' + (web ? '<a href="' + pdEsc(l.url) + '" target="_blank" rel="noopener noreferrer nofollow">' + pdEsc(l.url) + '</a>' : pdEsc(l.url)) + '</td><td data-l="Type">' + pdEsc(l.type) + '</td><td data-l="Flags">' + (l.nofollow ? '<span class="pill pill-warn">' + pdEsc(l.rel.replace(/\s*(noopener|noreferrer)\s*/g, ' ').trim() || 'nofollow') + '</span>' : '') + '</td></tr>';
+    }).join('') + '</tbody>';
+}
+function render() {
+  var P = cur, C = buildChecks(P), n = { ok: 0, warn: 0, bad: 0 };
+  C.forEach(function (c) { if (n[c.s] != null) n[c.s]++; });
+  $('summary').innerHTML = '<b>' + n.ok + '</b> passed, <b>' + n.warn + '</b> to review, <b>' + n.bad + '</b> missing or broken.';
+  $('prev').innerHTML = previews(P);
+  document.querySelectorAll('#prev img').forEach(function (im) {
+    im.addEventListener('error', function () { var d = document.createElement('div'); d.className = 'ph'; d.textContent = 'Image could not be loaded from ' + hostOf(im.getAttribute('data-u')); im.replaceWith(d); });
+  });
+  var lab = { ok: 'OK', warn: 'Review', bad: 'Fix', info: 'Info' };
+  function chkLi(c) { return '<li><span class="pill pill-' + c.s + '">' + lab[c.s] + '</span><b>' + pdEsc(c.name) + '</b><p>' + pdEsc(c.msg) + '</p></li>'; }
+  var passed = C.filter(function (c) { return c.s === 'ok'; }), rest = C.filter(function (c) { return c.s !== 'ok'; });
+  $('checks').innerHTML = rest.map(chkLi).join('') + (passed.length ? '<li class="chk-pass"><details><summary>' + passed.length + ' passed, show them</summary><ul>' + passed.map(chkLi).join('') + '</ul></details></li>' : '');
+  $('tagtab').innerHTML = tagsTable(P);
+  $('lcount').textContent = '(' + P.links.length + ')';
+  linkFilter = 'all'; renderLinks();
+}
+function showTab(which) {
+  var t = which === 'tags';
+  $('view-tags').hidden = !t; $('view-links').hidden = t;
+  $('tab-tags').setAttribute('aria-pressed', t); $('tab-links').setAttribute('aria-pressed', !t);
+}
+function fail(msg) { $('res').hidden = true; $('empty').hidden = false; cur = null; pdStatus(st, msg, 'err'); }
+run.onclick = function () {
+  var html = $('html').value, base = $('base').value.trim();
+  if (!html.trim()) return (function(){ $('html').focus(); return fail('Paste the page HTML first.'); })();
+  if (html.length > 3e6) return fail('That is over 3 MB of text. Paste just the <head> section, plus the body if you want links.');
+  if (!/<[a-z!][^>]*>/i.test(html)) return fail('That does not look like HTML. Open the page, press Ctrl+U to view its source, copy everything and paste it here.');
+  if (base) {
+    if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(base)) base = 'https://' + base;
+    var ok = false; try { var u = new URL(base); ok = /^https?:$/.test(u.protocol) && (u.hostname.indexOf('.') > 0 || u.hostname === 'localhost'); } catch (e) {}
+    if (!ok) return fail('The Page URL is not a valid web address. Use a full address like https://example.com/page, or leave it empty.');
+  }
+  if (!limit.use(1)) return fail(pdLimitMsg(limit, 1, 'checks'));
+  pdBusy(run, true); pdStatus(st, 'Reading the page...', 'work');
+  setTimeout(function () {
+    try {
+      cur = parsePage(html, base);
+      $('res').hidden = false; $('empty').hidden = true; render(); showTab('tags');
+      var msg = cur.hasHead ? 'Checked. ' : 'Checked, but no <title>, meta or canonical tags were found. Did you paste the whole page source? ';
+      pdStatus(st, msg + limit.left() + ' free checks left this hour.', cur.hasHead ? 'ok' : 'err');
+      $('rtitle').textContent = cur.title ? cur.title.slice(0, 70) : 'Results';
+      $('res').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+    } catch (e) { fail('Something went wrong reading that HTML: ' + e.message); }
+    pdBusy(run, false);
+  }, 30);
+};
+$('sample').onclick = function () { $('html').value = SAMPLE; $('base').value = 'https://harborpine.example/shop/'; run.click(); };
+$('clear').onclick = function () { $('html').value = ''; $('base').value = ''; $('res').hidden = true; $('empty').hidden = false; pdStatus(st, '', ''); };
+if (navigator.clipboard && navigator.clipboard.readText) {
+  $('paste').onclick = function () {
+    navigator.clipboard.readText().then(function (t) { $('html').value = t; pdStatus(st, t ? 'Pasted ' + t.length.toLocaleString('en-US') + ' characters.' : 'The clipboard is empty.', t ? 'ok' : 'err'); },
+      function () { pdStatus(st, 'Your browser blocked clipboard access. Click in the box and press Ctrl+V (Cmd+V on a Mac) instead.', 'err'); });
+  };
+} else $('paste').hidden = true;
+$('tab-tags').onclick = function () { showTab('tags'); };
+$('tab-links').onclick = function () { showTab('links'); };
+$('lfilter').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || !cur) return; linkFilter = b.getAttribute('data-k'); renderLinks(); });
+$('copytags').onclick = function () { if (cur) pdCopy(cur.tags.map(function (t) { return t[0] + ': ' + t[1]; }).join('\n'), 'Copied ' + cur.tags.length + ' tags'); };
+$('csvtags').onclick = function () { if (cur) pdDownload('meta-tags.csv', pdCsv([['tag', 'value', 'length']].concat(cur.tags.map(function (t) { return [t[0], t[1], t[1].length]; })))); };
+$('copylinks').onclick = function () { if (cur) { var r = filtered(); pdCopy(r.map(function (l) { return l.url; }).join('\n'), 'Copied ' + r.length + ' link(s)'); } };
+$('csvlinks').onclick = function () { if (cur) pdDownload('links.csv', pdCsv([['url', 'text', 'type', 'nofollow']].concat(filtered().map(function (l) { return [l.url, l.text, l.type, l.nofollow ? 'yes' : '']; })))); };
+
+</script>
+</body></html>
