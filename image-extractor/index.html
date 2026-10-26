@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Extract all images from a web page (free, in your browser) | PennyData</title>
+<meta name="description" content="Paste a web page's HTML and list every image URL: img src, srcset, lazy-load data attributes, og:image and CSS background images. Download as CSV.">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header><a class="brand" href="../">PennyData</a><nav aria-label="Tools"><a href="../whois-dns-lookup/">WHOIS/DNS</a><a href="./" aria-current="page">Images</a><a href="../contact-finder/">Contacts</a></nav></header>
+<main id="main">
+<h1>Extract all images from a web page</h1>
+<p class="lead">Get every image URL a page references, including the ones a right-click "save" misses: srcset sizes, lazy-loaded images, social preview images and CSS backgrounds.</p>
+<ol>
+<li>Open the page, press <kbd>Ctrl</kbd>+<kbd>U</kbd> (<kbd>Cmd</kbd>+<kbd>Option</kbd>+<kbd>U</kbd> on a Mac) to view its source.</li>
+<li>Select all, copy, and paste it below. Add the page address so relative links become full URLs.</li>
+</ol>
+<label for="base">Page URL</label>
+<input id="base" type="url" placeholder="https://example.com/products/blue-chair" spellcheck="false">
+<label for="html">Page HTML</label>
+<textarea id="html" spellcheck="false" placeholder="&lt;!doctype html&gt;..."></textarea>
+<button id="run">Extract images</button><button id="csv" class="secondary" disabled>Download CSV</button><button id="copy" class="secondary" disabled>Copy URLs</button>
+<p id="status" class="status" role="status" aria-live="polite"></p>
+<div id="grid" class="grid"></div>
+<h2>How it works</h2>
+<p>The HTML is parsed inside your browser; nothing is uploaded. The tool reads <code>img</code> src and srcset, <code>picture</code> sources, common lazy-load attributes (data-src, data-srcset, data-lazy, data-original), <code>og:image</code> and <code>twitter:image</code> tags, link icons and <code>url(...)</code> in inline styles. Pages that build their images with JavaScript after loading may show fewer images in the source. Free use is limited to 30 pages per hour per browser.</p>
+<div class="bulk"><strong>Need images from many pages or a whole site?</strong> The bulk version fetches a list of pages for you and returns every image URL with alt text, size and type, with an optional ZIP download: <a href="https://apify.com/pennydata/website-image-extractor">Website Image Extractor on Apify</a>.</div>
+</main>
+<footer>
+<p><strong>Privacy:</strong> no analytics, no cookies. The HTML you paste stays in your browser. Preview thumbnails load from the sites that host the images.</p>
+<p>I built this and earn from runs of the bulk version. Written with AI assistance (Claude).</p>
+</footer>
+<script src="../common.js"></script>
+<script>
+var limit = pdLimit('images', 30, 3600e3), found = [];
+function extract(html, base) {
+  var doc = new DOMParser().parseFromString(html, 'text/html'), out = [], seen = {};
+  function add(u, kind) {
+    u = (u || '').trim();
+    if (!u || /^data:/i.test(u)) return;
+    try { u = new URL(u, base || undefined).href; } catch (e) { if (!/^\/\//.test(u)) return; u = 'https:' + u; }
+    if (!seen[u]) { seen[u] = 1; out.push([u, kind]); }
+  }
+  function srcset(s, kind) { (s || '').split(',').forEach(function (p) { add(p.trim().split(/\s+/)[0], kind); }); }
+  doc.querySelectorAll('img').forEach(function (el) {
+    add(el.getAttribute('src'), 'img');
+    srcset(el.getAttribute('srcset'), 'srcset');
+    ['data-src', 'data-lazy', 'data-original', 'data-lazy-src'].forEach(function (a) { add(el.getAttribute(a), 'lazy'); });
+    srcset(el.getAttribute('data-srcset'), 'lazy');
+  });
+  doc.querySelectorAll('picture source').forEach(function (el) { srcset(el.getAttribute('srcset') || el.getAttribute('data-srcset'), 'picture'); });
+  doc.querySelectorAll('meta[property="og:image"],meta[name="og:image"],meta[name="twitter:image"],meta[property="twitter:image"]').forEach(function (el) { add(el.getAttribute('content'), 'social'); });
+  doc.querySelectorAll('link[rel~="icon"],link[rel="apple-touch-icon"],link[rel="image_src"]').forEach(function (el) { add(el.getAttribute('href'), 'icon'); });
+  doc.querySelectorAll('[style*="url("]').forEach(function (el) {
+    (el.getAttribute('style').match(/url\(\s*['"]?([^'")]+)['"]?\s*\)/g) || []).forEach(function (m) { add(m.replace(/^url\(\s*['"]?|['"]?\s*\)$/g, ''), 'css'); });
+  });
+  return out;
+}
+document.getElementById('run').onclick = function () {
+  var st = document.getElementById('status'), html = document.getElementById('html').value, base = document.getElementById('base').value.trim();
+  if (base && !/^https?:\/\//i.test(base)) base = 'https://' + base;
+  if (!html.trim()) { st.textContent = 'Paste the page HTML first.'; return; }
+  if (!limit.use(1)) { st.textContent = 'Free limit reached (30 pages per hour in this browser). Try again later or use the bulk version below.'; return; }
+  found = extract(html, base);
+  document.getElementById('grid').innerHTML = found.map(function (f) {
+    return '<figure><a href="' + pdEsc(f[0]) + '" target="_blank" rel="noopener noreferrer"><img loading="lazy" referrerpolicy="no-referrer" src="' + pdEsc(f[0]) + '" alt="Image ' + pdEsc(f[1]) + ' from the page"></a><figcaption>' + pdEsc(f[1]) + ': ' + pdEsc(f[0]) + '</figcaption></figure>';
+  }).join('');
+  document.getElementById('csv').disabled = document.getElementById('copy').disabled = !found.length;
+  st.textContent = found.length + ' unique image URL(s) found.' + (base ? '' : ' Tip: add the page URL to turn relative paths into full links.');
+};
+document.getElementById('csv').onclick = function () { pdDownload('images.csv', pdCsv([['url', 'found_in']].concat(found))); };
+document.getElementById('copy').onclick = function () {
+  navigator.clipboard.writeText(found.map(function (f) { return f[0]; }).join('\n')).then(function () { document.getElementById('status').textContent = 'Copied ' + found.length + ' URL(s).'; });
+};
+</script>
+</body>
+</html>
