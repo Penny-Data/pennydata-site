@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hacker News Who is Hiring: search the latest thread (free) | PennyData</title>
+<meta name="description" content="Search the latest Hacker News Who is Hiring thread by keyword, remote or location. Loads the thread in your browser, filters job posts, downloads CSV.">
+<link rel="canonical" href="https://project1dev.github.io/pennydata-site/hn-who-is-hiring-search/">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header><a class="brand" href="../">PennyData</a><nav aria-label="Tools"><a href="../whois-dns-lookup/">WHOIS/DNS</a><a href="../image-extractor/">Images</a><a href="../contact-finder/">Contacts</a><a href="../polymarket-odds-viewer/">Odds</a><a href="../hn-who-is-hiring-search/" aria-current="page">Jobs</a></nav></header>
+<main id="main">
+<h1>Hacker News "Who is hiring?": search the latest thread</h1>
+<p class="lead">The monthly thread has hundreds of job posts and no search box. Load the newest one, filter by keyword (python, remote, Berlin, Rust) and open the posts that match.</p>
+<label for="kw">Keywords (all must match, separated by spaces)</label>
+<input id="kw" type="text" placeholder="remote python" spellcheck="false">
+<button id="run">Load latest thread</button><button id="csv" class="secondary" disabled>Download CSV</button>
+<p id="status" class="status" role="status" aria-live="polite"></p>
+<div class="table-wrap"><table id="jobs" hidden><thead><tr><th scope="col">Post (start)</th><th scope="col">Posted</th><th scope="col">Link</th></tr></thead><tbody></tbody></table></div>
+<h2>How it works</h2>
+<p>Your browser downloads the thread from the public Hacker News Algolia API, strips the HTML and filters the posts locally, so you can change keywords without reloading. The table shows the first 100 matches; the CSV has them all with the full text. Free use is limited to 10 thread loads per hour per browser.</p>
+<div class="bulk"><strong>Want every post as clean rows (company, role, location, remote, salary, links) across months?</strong> The bulk version parses the thread into structured data: <a href="https://apify.com/pennydata/hn-whoishiring-parser">HN Who Is Hiring Parser on Apify</a>.</div>
+</main>
+<footer>
+<p><strong>Privacy:</strong> no analytics, no cookies; the free-use counter stays in your browser's local storage. The thread is fetched from hn.algolia.com; your keywords never leave your browser.</p>
+<p>I built this and earn from runs of the bulk version. Written with AI assistance (Claude).</p>
+</footer>
+<script src="../common.js"></script>
+<script>
+var limit = pdLimit('hnjobs', 10, 3600e3), posts = [], title = '', threadId = 0;
+function strip(h) { var d = new DOMParser().parseFromString(String(h || '').replace(/<p>/g, '\n').replace(/<br\s*\/?>/g, '\n'), 'text/html'); return d.body.textContent.trim(); }
+function render() {
+  var words = document.getElementById('kw').value.toLowerCase().split(/\s+/).filter(Boolean);
+  var m = posts.filter(function (p) { return words.every(function (w) { return p.text.toLowerCase().indexOf(w) > -1; }); });
+  document.querySelector('#jobs tbody').innerHTML = m.slice(0, 100).map(function (p) {
+    return '<tr><td>' + pdEsc(p.text.slice(0, 220)) + (p.text.length > 220 ? '...' : '') + '</td><td>' + pdEsc(p.date) + '</td><td><a href="https://news.ycombinator.com/item?id=' + p.id + '" rel="noopener noreferrer">open</a></td></tr>';
+  }).join('');
+  document.getElementById('jobs').hidden = !m.length;
+  document.getElementById('csv').disabled = !m.length;
+  document.getElementById('status').textContent = title + ': ' + m.length + ' of ' + posts.length + ' posts match' + (m.length > 100 ? ' (showing 100)' : '') + '.';
+  render.m = m;
+}
+document.getElementById('run').onclick = function () {
+  var st = document.getElementById('status'), btn = this;
+  if (!limit.use(1)) { st.textContent = 'Free limit reached (10 loads per hour in this browser). Try again later or use the bulk version below.'; return; }
+  btn.disabled = true; st.textContent = 'Finding the latest thread...';
+  fetch('https://hn.algolia.com/api/v1/search_by_date?tags=story,author_whoishiring&hitsPerPage=10')
+    .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function (d) {
+      var h = (d.hits || []).filter(function (x) { return /who is hiring/i.test(x.title); })[0];
+      if (!h) throw new Error('no thread found');
+      title = h.title; threadId = h.objectID; st.textContent = 'Loading "' + title + '"...';
+      return fetch('https://hn.algolia.com/api/v1/items/' + h.objectID).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+    })
+    .then(function (t) {
+      posts = (t.children || []).filter(function (c) { return c.text; }).map(function (c) { return { id: c.id, text: strip(c.text), date: (c.created_at || '').slice(0, 10) }; });
+      render();
+    })
+    .catch(function (e) { st.textContent = 'Could not load the thread: ' + e.message; })
+    .then(function () { btn.disabled = false; });
+};
+document.getElementById('kw').oninput = function () { if (posts.length) render(); };
+document.getElementById('kw').onkeydown = function (e) { if (e.key === 'Enter') document.getElementById('run').click(); };
+document.getElementById('csv').onclick = function () {
+  pdDownload('hn-who-is-hiring.csv', pdCsv([['post', 'posted', 'link']].concat((render.m || []).map(function (p) { return [p.text, p.date, 'https://news.ycombinator.com/item?id=' + p.id]; }))));
+};
+</script>
+</body>
+</html>
