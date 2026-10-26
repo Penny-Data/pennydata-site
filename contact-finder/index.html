@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Website contact finder: contact page, emails, phones (free) | PennyData</title>
-<meta name="description" content="Enter a company domain and get its contact page, public business emails, phone numbers and social profile links. Free single-site tool.">
+<title>Website contact finder: contact page and emails (free) | PennyData</title>
+<meta name="description" content="Enter a company website and get its contact page and the public emails it lists. Free single-site tool.">
 <link rel="stylesheet" href="../style.css">
 </head>
 <body>
@@ -12,12 +12,12 @@
 <header><a class="brand" href="../">PennyData</a><nav aria-label="Tools"><a href="../whois-dns-lookup/">WHOIS/DNS</a><a href="../image-extractor/">Images</a><a href="./" aria-current="page">Contacts</a></nav></header>
 <main id="main">
 <h1>Website contact finder</h1>
-<p class="lead">Type a company's website (for example <code>stripe.com</code>) and get its contact page, the business emails and phone numbers published on the site, and its social profile links.</p>
+<p class="lead">Type a company's website (for example <code>https://www.python.org</code>) and get its contact page and the public email addresses published on it.</p>
 <iframe src="https://pennydata-website-contact-finder-demo.hf.space/" title="Website contact finder tool" loading="lazy" allow="clipboard-write"></iframe>
 <p>If the tool does not load above, <a href="https://huggingface.co/spaces/pennydata/website-contact-finder-demo">open it on Hugging Face</a>. The first run after a quiet period can take up to a minute while the Space wakes up.</p>
 <h2>How it works</h2>
-<p>The tool runs on a free Hugging Face Space. It fetches the home page and the contact page of the site you enter, honors robots.txt, and lists what those pages publish. It only reads public pages and does not guess or generate addresses. One site per run; Hugging Face applies its own fair-use limits.</p>
-<div class="bulk"><strong>Need contacts for a whole list of websites?</strong> The bulk version takes a list of domains and exports CSV or JSON with one row per site, including contact form detection: <a href="https://apify.com/pennydata/website-contact-extractor">Website Contact Extractor on Apify</a>.</div>
+<p>The tool runs on a free Hugging Face Space. It reads the page you enter, finds the site's contact page, and lists the email addresses those pages publish. It only reads public pages and does not guess or generate addresses. One site per run; Hugging Face applies its own fair-use limits.</p>
+<div class="bulk"><strong>Need contacts for a whole list of websites?</strong> The bulk version takes a list of domains and exports CSV or JSON with one row per site: contact page, contact form, emails, phone numbers and social links: <a href="https://apify.com/pennydata/website-contact-extractor">Website Contact Extractor on Apify</a>.</div>
 </main>
 <footer>
 <p><strong>Privacy:</strong> this page has no analytics or cookies of its own. The embedded Hugging Face Space receives the domain you enter; see Hugging Face's privacy policy.</p>
