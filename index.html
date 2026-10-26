@@ -4,12 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PennyData: free website and domain data tools</title>
-<meta name="description" content="Free browser tools: domain WHOIS and DNS lookup, extract all images from a web page, find a website's contact page and emails.">
+<meta name="description" content="Free browser tools: domain WHOIS and DNS lookup, extract all images from a web page, find a website's contact page and emails, search Polymarket odds, search the Hacker News Who is Hiring thread.">
+<link rel="canonical" href="https://project1dev.github.io/pennydata-site/">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<header><a class="brand" href="./">PennyData</a><nav aria-label="Tools"><a href="whois-dns-lookup/">WHOIS/DNS</a><a href="image-extractor/">Images</a><a href="contact-finder/">Contacts</a></nav></header>
+<header><a class="brand" href="./">PennyData</a><nav aria-label="Tools"><a href="whois-dns-lookup/">WHOIS/DNS</a><a href="image-extractor/">Images</a><a href="contact-finder/">Contacts</a><a href="polymarket-odds-viewer/">Odds</a><a href="hn-who-is-hiring-search/">Jobs</a></nav></header>
 <main id="main">
 <h1>Free tools for website and domain data</h1>
 <p class="lead">Small tools that do one job in your browser. Use them free for a handful of sites. If you need the same thing for a long list, each tool links to a bulk version you can run on Apify.</p>
@@ -23,9 +24,15 @@
 <li class="card"><h2><a href="contact-finder/">Website contact finder</a></h2>
 <p>Give a company website, get its contact page and the public emails it lists.</p>
 <a href="contact-finder/">Open the tool</a></li>
+<li class="card"><h2><a href="polymarket-odds-viewer/">Polymarket odds viewer</a></h2>
+<p>Search any topic, such as the 2026 midterms, and see live prediction market odds, volume and end dates. Download as CSV.</p>
+<a href="polymarket-odds-viewer/">Open the tool</a></li>
+<li class="card"><h2><a href="hn-who-is-hiring-search/">Hacker News Who is Hiring search</a></h2>
+<p>Load the latest monthly thread and filter its job posts by keyword, remote or location. Download as CSV.</p>
+<a href="hn-who-is-hiring-search/">Open the tool</a></li>
 </ul>
 <h2>How the free use works</h2>
-<p>The WHOIS/DNS and image tools run entirely in your browser. The contact finder runs on a free Hugging Face Space. The two browser tools have a small per-browser hourly limit so the free services they call stay usable for everyone; the contact finder follows Hugging Face's own fair-use limits.</p>
+<p>The WHOIS/DNS, image, Polymarket and Hacker News tools run entirely in your browser. The contact finder runs on a free Hugging Face Space. The browser tools have a small per-browser hourly limit so the free services they call stay usable for everyone; the contact finder follows Hugging Face's own fair-use limits.</p>
 </main>
 <footer>
 <p><strong>Privacy:</strong> this site has no analytics, no cookies and no account. The hourly free-use counter is kept only in your browser's local storage. Domains you look up go straight from your browser to public DNS (dns.google) and registry RDAP services (rdap.org). Pasted HTML never leaves your browser. The contact finder page embeds a Hugging Face Space, which receives the domain you enter.</p>
