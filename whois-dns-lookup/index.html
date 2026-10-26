@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Free domain WHOIS and DNS lookup (up to 10 domains) | PennyData</title>
+<meta name="description" content="Look up domain registration date, expiry date, registrar and A, MX, NS, TXT records for up to 10 domains at once. Free, in your browser.">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header><a class="brand" href="../">PennyData</a><nav aria-label="Tools"><a href="./" aria-current="page">WHOIS/DNS</a><a href="../image-extractor/">Images</a><a href="../contact-finder/">Contacts</a></nav></header>
+<main id="main">
+<h1>Domain WHOIS and DNS lookup</h1>
+<p class="lead">Paste up to 10 domains, one per line. You get the registration, expiry and last-changed dates and the registrar from RDAP (the modern replacement for WHOIS), plus the domain's A, MX, NS and TXT records.</p>
+<label for="domains">Domains (one per line, max 10)</label>
+<textarea id="domains" spellcheck="false" placeholder="example.com&#10;wikipedia.org"></textarea>
+<button id="run">Look up</button><button id="csv" class="secondary" disabled>Download CSV</button>
+<p id="status" class="status" role="status" aria-live="polite"></p>
+<div class="table-wrap"><table id="out" hidden>
+<thead><tr><th scope="col">Domain</th><th scope="col">Registered</th><th scope="col">Expires</th><th scope="col">Updated</th><th scope="col">Registrar</th><th scope="col">A</th><th scope="col">MX</th><th scope="col">NS</th><th scope="col">TXT</th></tr></thead>
+<tbody></tbody></table></div>
+<h2>How it works</h2>
+<p>Your browser asks Google Public DNS (dns.google, DNS-over-HTTPS) for the records and rdap.org for the registration data. rdap.org forwards the query to the registry for that domain's ending. Some country-code endings (for example .de or .co.uk) do not publish RDAP, so their dates show as "not published". Free use is limited to 50 domains per hour per browser.</p>
+<div class="bulk"><strong>Need hundreds or thousands of domains?</strong> The bulk version checks up to 1,000 domains per run (registrar, expiry, domain age, nameservers, plus an MX/SPF/DMARC mode) and exports CSV or JSON: <a href="https://apify.com/pennydata/bulk-domain-whois-dns-lookup">Bulk Domain WHOIS and DNS Lookup on Apify</a>.</div>
+</main>
+<footer>
+<p><strong>Privacy:</strong> no analytics, no cookies. The domains you enter are sent from your browser to dns.google and rdap.org only.</p>
+<p>I built this and earn from runs of the bulk version. Written with AI assistance (Claude).</p>
+</footer>
+<script src="../common.js"></script>
+<script>
+var limit = pdLimit('whois', 50, 3600e3), rows = [];
+function dateOf(r, action) {
+  var e = (r.events || []).filter(function (x) { return x.eventAction === action; })[0];
+  return e ? e.eventDate.slice(0, 10) : '';
+}
+function registrar(r) {
+  var e = (r.entities || []).filter(function (x) { return (x.roles || []).indexOf('registrar') >= 0; })[0];
+  if (!e) return '';
+  var fn = ((e.vcardArray || [])[1] || []).filter(function (v) { return v[0] === 'fn'; })[0];
+  return fn ? fn[3] : (e.handle || '');
+}
+function dns(name, type) {
+  return fetch('https://dns.google/resolve?name=' + encodeURIComponent(name) + '&type=' + type)
+    .then(function (r) { return r.json(); })
+    .then(function (j) { return (j.Answer || []).filter(function (a) { return a.type === { A: 1, NS: 2, MX: 15, TXT: 16 }[type]; }).map(function (a) { return a.data.replace(/^"|"$/g, ''); }); })
+    .catch(function () { return ['(lookup failed)']; });
+}
+function rdap(name) {
+  return fetch('https://rdap.org/domain/' + encodeURIComponent(name))
+    .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+    .then(function (r) { return [dateOf(r, 'registration'), dateOf(r, 'expiration'), dateOf(r, 'last changed'), registrar(r)]; })
+    .catch(function () { return ['not published', '', '', '']; });
+}
+function clean(s) {
+  s = s.trim().toLowerCase().replace(/^[a-z]+:\/\//, '').split(/[\/?#]/)[0].replace(/^www\./, '');
+  return /^[a-z0-9.-]+\.[a-z0-9-]{2,}$/.test(s) ? s : '';
+}
+document.getElementById('run').onclick = function () {
+  var btn = this, st = document.getElementById('status');
+  var list = document.getElementById('domains').value.split(/[\s,]+/).map(clean).filter(Boolean);
+  list = list.filter(function (d, i) { return list.indexOf(d) === i; });
+  if (!list.length) { st.textContent = 'Enter at least one domain, like example.com.'; return; }
+  if (list.length > 10) { st.textContent = 'Only the first 10 domains are checked. Use the bulk version below for longer lists.'; list = list.slice(0, 10); }
+  else st.textContent = '';
+  if (!limit.use(list.length)) { st.textContent = 'Free limit reached (50 domains per hour in this browser, ' + limit.left() + ' left). Try again later or use the bulk version below.'; return; }
+  btn.disabled = true; st.textContent += ' Looking up ' + list.length + ' domain(s)...';
+  Promise.all(list.map(function (d) {
+    return Promise.all([rdap(d), dns(d, 'A'), dns(d, 'MX'), dns(d, 'NS'), dns(d, 'TXT')]).then(function (x) {
+      return [d].concat(x[0], [x[1].join(' '), x[2].join('; '), x[3].join(' '), x[4].join(' | ')]);
+    });
+  })).then(function (res) {
+    rows = res;
+    var tb = document.querySelector('#out tbody');
+    tb.innerHTML = res.map(function (r) { return '<tr>' + r.map(function (v, i) { return (i ? '<td>' : '<th scope="row">') + pdEsc(v || '-') + (i ? '</td>' : '</th>'); }).join('') + '</tr>'; }).join('');
+    document.getElementById('out').hidden = false;
+    document.getElementById('csv').disabled = false;
+    st.textContent = 'Done: ' + res.length + ' domain(s). ' + limit.left() + ' free lookups left this hour.';
+    btn.disabled = false;
+  });
+};
+document.getElementById('csv').onclick = function () {
+  pdDownload('whois-dns.csv', pdCsv([['domain', 'registered', 'expires', 'updated', 'registrar', 'a', 'mx', 'ns', 'txt']].concat(rows)));
+};
+</script>
+</body>
+</html>
