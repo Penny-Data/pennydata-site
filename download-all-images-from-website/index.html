@@ -6,13 +6,47 @@
 <link rel="canonical" href="https://penny-data.github.io/pennydata-site/download-all-images-from-website/">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "HowTo", "name": "Download All Images From a Website", "description": "Three ways to download all images from a website: browser save, a wget one-liner, or an Apify actor.", "step": [{"@type": "HowToStep", "name": "Browser method (one page)", "text": "Open the page, press Ctrl+S (Cmd+S on Mac) and choose 'Webpage, Complete'. The browser saves an _files folder with every image the page loaded. Lazy-loaded images that never scrolled into view are missing, so scroll to the bottom first."}, {"@type": "HowToStep", "name": "wget (whole site, command line)", "text": "Run: wget -r -l 2 -nd -A jpg,jpeg,png,gif,webp,svg -P images https://example.com/  . This crawls two levels deep and keeps only image files in the images folder. Add --wait=1 to be polite and check robots.txt first; wget obeys it by default."}, {"@type": "HowToStep", "name": "Apify website-image-extractor (many pages, no code)", "text": "Paste page URLs into the Website Image Extractor actor, run it, and export the list of image URLs or the files from the dataset. It has a free tier on Apify; you pay Apify usage only."}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"PennyData","item":"https://penny-data.github.io/pennydata-site/"},{"@type":"ListItem","position":2,"name":"Download all images from a website","item":"https://penny-data.github.io/pennydata-site/download-all-images-from-website/"}]}</script>
-<style>body{font:16px/1.6 system-ui,sans-serif;max-width:720px;margin:2rem auto;padding:0 1rem;color:#222}code{background:#f2f2f2;padding:2px 5px}a{color:#0b5fff}footer{margin-top:3rem;font-size:14px;color:#555}</style>
+<style>body{font:16px/1.6 system-ui,sans-serif;max-width:720px;margin:2rem auto;padding:0 1rem;color:#222}code{background:#f2f2f2;padding:2px 5px}pre{background:#f2f2f2;padding:12px;overflow:auto;font-size:13px}pre code{padding:0}a{color:#0b5fff}footer{margin-top:3rem;font-size:14px;color:#555}</style>
 </head><body>
 <p><a href="../">PennyData</a> &rsaquo; Download all images from a website</p>
 <h1>Download All Images From a Website</h1>
 <p>You want every image from a site without right-clicking one by one. Here are three working ways, from simplest to most scalable. Only download images you have the right to use, and respect each site's robots.txt and terms.</p>
 <ol><li><h3>Browser method (one page)</h3><p>Open the page, press Ctrl+S (Cmd+S on Mac) and choose 'Webpage, Complete'. The browser saves an _files folder with every image the page loaded. Lazy-loaded images that never scrolled into view are missing, so scroll to the bottom first.</p></li><li><h3>wget (whole site, command line)</h3><p>Run: wget -r -l 2 -nd -A jpg,jpeg,png,gif,webp,svg -P images https://example.com/  . This crawls two levels deep and keeps only image files in the images folder. Add --wait=1 to be polite and check robots.txt first; wget obeys it by default.</p></li><li><h3>Apify website-image-extractor (many pages, no code)</h3><p>Paste page URLs into the Website Image Extractor actor, run it, and export the list of image URLs or the files from the dataset. It has a free tier on Apify; you pay Apify usage only.</p></li></ol>
 <p><a href="https://apify.com/pennydata/website-image-extractor?utm_source=pennydata-site&amp;utm_medium=referral&amp;utm_campaign=download-all-images" rel="noopener">Open Website Image Extractor on Apify</a></p>
+<h2>Bulk image downloader for a whole website</h2>
+<p>To download images in bulk from many pages, let the Website Image Extractor list every image URL (about 0.002 USD per image, failed pages free) and download the files yourself. Save this as <code>download-images.mjs</code>, run <code>npm i apify-client</code>, set your Apify token in the <code>APIFY_TOKEN</code> environment variable and run <code>node download-images.mjs https://books.toscrape.com/</code>. Node 18 or newer.</p>
+<pre><code>// npm i apify-client  |  node download-images.mjs https://books.toscrape.com/
+import { ApifyClient } from 'apify-client';
+import { mkdir, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+
+const pageUrl = process.argv[2];
+const outDir = 'images';
+
+const client = new ApifyClient({ token: process.env.APIFY_TOKEN });
+const run = await client.actor('pennydata/website-image-extractor').call({
+  startUrls: [{ url: pageUrl }],
+  maxImages: 100,
+});
+const { items } = await client.dataset(run.defaultDatasetId).listItems();
+
+await mkdir(outDir, { recursive: true });
+let saved = 0;
+for (const [i, row] of items.entries()) {
+  if (!row.imageUrl) continue;
+  try {
+    const res = await fetch(row.imageUrl);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const ext = path.extname(new URL(row.imageUrl).pathname) || '.jpg';
+    await writeFile(path.join(outDir, `${String(i).padStart(4, '0')}${ext}`), Buffer.from(await res.arrayBuffer()));
+    saved++;
+  } catch (err) {
+    console.error(`skip ${row.imageUrl}: ${err.message}`);
+  }
+}
+console.log(`saved ${saved} of ${items.length} images to ./${outDir}`);
+</code></pre>
+<p>Each dataset row has <code>imageUrl</code>, <code>altText</code>, <code>width</code>, <code>height</code> and <code>contentType</code>; add <code>maxPagesPerStart</code> to follow same-site links, or <code>minWidth</code> to skip icons. I ran the download half of this script against the public practice site books.toscrape.com (8 of 8 images saved); the actor call uses the documented <code>apify-client</code> API.</p>
 <h2>Done for you (optional, 12 USD)</h2>
 <p>If you would rather not run anything: send a store or catalog URL and we run the extraction and return a zip of the images for 12 USD. Public pages only; no login-gated or personal-data pages. Refund if we cannot deliver. <a href="https://buy.stripe.com/eVq6ozal37vqf2D6UQ7EQ04">Order the image pack (12 USD)</a>.</p>
 <footer>I built this and earn from its runs and orders. Written with AI assistance (Claude). The methods above are free.</footer>
