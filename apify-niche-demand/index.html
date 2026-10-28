@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Which Apify Store niches have demand and few actors? Data from the top 1,000 | PennyData</title>
+<meta name="description" content="Users per actor and top-actor share for 16 Apify Store categories, computed from a public CC0 snapshot of the 1,000 most-used actors (2026-10-27).">
+<link rel="canonical" href="https://penny-data.github.io/pennydata-site/apify-niche-demand/">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header><a class="brand" href="../">PennyData</a></header>
+<main id="main">
+<h1>Which Apify Store niches have demand and few actors?</h1>
+<p class="lead">If you are about to build an Apify actor, the useful question is not "which category is biggest" but "how many users does each actor get, and does one actor take most of them". Below is that, per category, from the 1,000 most-used public actors in the Apify Store (snapshot 2026-10-27).</p>
+<h2>Demand per actor, by category</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">Category</th><th scope="col">Actors in top 1,000</th><th scope="col">Users, last 30 days (summed)</th><th scope="col">Users per actor</th><th scope="col">Biggest actor</th><th scope="col">Its share of the category</th></tr></thead>
+<tbody>
+<tr><th scope="row">TRAVEL</th><td>49</td><td>64,566</td><td>1,318</td><td>compass/crawler-google-places</td><td>70.8%</td></tr>
+<tr><th scope="row">VIDEOS</th><td>113</td><td>139,767</td><td>1,237</td><td>clockworks/tiktok-scraper</td><td>23.7%</td></tr>
+<tr><th scope="row">AI</th><td>90</td><td>110,041</td><td>1,223</td><td>apify/rag-web-browser</td><td>30.2%</td></tr>
+<tr><th scope="row">SOCIAL_MEDIA</th><td>479</td><td>551,724</td><td>1,152</td><td>apify/instagram-scraper</td><td>10.8%</td></tr>
+<tr><th scope="row">LEAD_GENERATION</th><td>491</td><td>379,459</td><td>773</td><td>compass/crawler-google-places</td><td>12.0%</td></tr>
+<tr><th scope="row">JOBS</th><td>99</td><td>61,168</td><td>618</td><td>curious_coder/linkedin-jobs-scraper</td><td>25.2%</td></tr>
+<tr><th scope="row">NEWS</th><td>32</td><td>16,798</td><td>525</td><td>trudax/reddit-scraper-lite</td><td>50.5%</td></tr>
+<tr><th scope="row">SEO_TOOLS</th><td>92</td><td>47,032</td><td>511</td><td>apify/google-search-scraper</td><td>54.7%</td></tr>
+<tr><th scope="row">AUTOMATION</th><td>397</td><td>185,653</td><td>468</td><td>harvestapi/linkedin-profile-scraper</td><td>8.1%</td></tr>
+<tr><th scope="row">ECOMMERCE</th><td>111</td><td>42,504</td><td>383</td><td>apify/facebook-ads-scraper</td><td>23.8%</td></tr>
+<tr><th scope="row">AGENTS</th><td>42</td><td>15,863</td><td>378</td><td>starvibe/youtube-video-transcript</td><td>25.0%</td></tr>
+<tr><th scope="row">DEVELOPER_TOOLS</th><td>201</td><td>69,693</td><td>347</td><td>apify/website-content-crawler</td><td>19.8%</td></tr>
+<tr><th scope="row">INTEGRATIONS</th><td>41</td><td>7,402</td><td>181</td><td>data_xplorer/google-trends-fast-scraper</td><td>13.1%</td></tr>
+<tr><th scope="row">REAL_ESTATE</th><td>65</td><td>9,940</td><td>153</td><td>maxcopell/zillow-detail-scraper</td><td>12.4%</td></tr>
+<tr><th scope="row">OTHER</th><td>48</td><td>6,873</td><td>143</td><td>sones/instagram-posts-scraper-lowcost</td><td>19.6%</td></tr>
+<tr><th scope="row">MCP_SERVERS</th><td>30</td><td>3,954</td><td>132</td><td>memo23/trustpilot-scraper-ppe</td><td>18.3%</td></tr>
+</tbody></table></div>
+<p>Every category with 30 or more actors in the file is shown; those with fewer are left out (small samples). An actor with several categories counts in each, so category totals overlap.</p>
+<h2>How to read it</h2>
+<ul>
+<li><strong>High users per actor and a small leader share</strong> is the friendly case. JOBS (618 users per actor, leader holds 25%) fits; the demand is spread over many actors.</li>
+<li><strong>High users per actor and a big leader share</strong> means one actor is the niche. TRAVEL looks rich at 1,318 users per actor, but compass/crawler-google-places alone has 70.8% of its users. SEO_TOOLS (54.7%) and NEWS (50.5%) are similar.</li>
+<li><strong>Large categories with low users per actor</strong> are crowded. AUTOMATION has 397 actors in the file at 468 each, and the biggest holds only 8.1%; LEAD_GENERATION and SOCIAL_MEDIA are the largest by total users, with 491 and 479 actors splitting them.</li>
+</ul>
+<h2>Limits of this data</h2>
+<p>The file holds only the top 1,000 actors by 30-day users out of roughly 100,000 in the Store, so it shows where established demand is, not the long tail. Categories are the Store's own, which are broad; a real niche (for example "Google Maps reviews" or "Greenhouse jobs") sits inside one. The numbers are a point-in-time snapshot.</p>
+<p>The data: <a href="https://huggingface.co/datasets/pennydata/apify-store-catalog-2026-10">Apify Store catalog snapshot on Hugging Face</a> (CC0, CSV, one row per actor with users, runs, pricing and rating). Every figure above is a sum or ratio of its <code>total_users_30d</code> and <code>categories</code> columns.</p>
+<div class="bulk"><strong>Need the same for a specific niche?</strong> Name it and get a rival table (actors, 30-day users, price per event, rating, last update) plus 3 concrete gaps, as CSV and a one-page summary within 24 hours. 19 USD one-off, full refund if it is late or not useful: <a href="https://buy.stripe.com/14A8wH78ReXS5s3dje7EQ0a">order a niche report</a>.</div>
+</main>
+<footer>
+<p>I built this and earn from the report and from my Apify actors. Written with AI assistance (Claude).</p>
+</footer>
+</body>
+</html>
