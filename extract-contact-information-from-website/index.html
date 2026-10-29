@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Extract Contact Information From a Website: Emails, Phones, Socials</title>
+<meta name="description" content="Run the Website Contact Extractor on the site&#x27;s URL: it crawls the home page and contact pages and returns emails, phone numbers and social profile links p">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://penny-data.github.io/pennydata-site/extract-contact-information-from-website/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do I extract contact information from a website?","acceptedAnswer":{"@type":"Answer","text":"Run the Website Contact Extractor on the site's URL: it crawls the home page and contact pages and returns emails, phone numbers and social profile links per site. Export the dataset as CSV or JSON and respect each site's robots.txt and privacy law when you use the data."}}]}</script>
+<style>body{font:16px/1.6 system-ui,sans-serif;max-width:720px;margin:2rem auto;padding:0 1rem;color:#222}code{background:#f2f2f2;padding:2px 5px}pre{background:#f2f2f2;padding:12px;overflow:auto;font-size:13px}pre code{padding:0}a{color:#0b5fff}footer{margin-top:3rem;font-size:14px;color:#555}</style>
+</head><body>
+<p><a href="../">PennyData</a> &rsaquo; Extract Contact Information From a Website: Emails, Phones, Socials</p>
+<h1>Extract Contact Information From a Website: Emails, Phones, Socials</h1>
+<h2>How do I extract contact information from a website?</h2>
+<p>Run the Website Contact Extractor on the site&#x27;s URL: it crawls the home page and contact pages and returns emails, phone numbers and social profile links per site. Export the dataset as CSV or JSON and respect each site&#x27;s robots.txt and privacy law when you use the data.</p>
+<h2>Example: curl</h2>
+<p>Set <code>APIFY_TOKEN</code> to your Apify API token (a free account works), then run (contact extraction from two sites):</p>
+<pre><code>curl -s -X POST &quot;https://api.apify.com/v2/acts/pennydata~website-contact-extractor/run-sync-get-dataset-items?token=$APIFY_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#x27;{&quot;urls&quot;:[{&quot;url&quot;:&quot;https://www.eff.org&quot;},{&quot;url&quot;:&quot;https://www.gnu.org&quot;}]}&#x27;</code></pre>
+<h2>Example: Node.js</h2>
+<pre><code>import { ApifyClient } from &#x27;apify-client&#x27;;
+const client = new ApifyClient({ token: process.env.APIFY_TOKEN });
+const run = await client.actor(&#x27;pennydata/website-contact-extractor&#x27;).call({&quot;urls&quot;:[{&quot;url&quot;:&quot;https://www.eff.org&quot;},{&quot;url&quot;:&quot;https://www.gnu.org&quot;}]});
+const { items } = await client.dataset(run.defaultDatasetId).listItems();
+console.log(items);</code></pre>
+<p>Pricing: pay per event; the free Apify plan covers small tests. <a href="https://apify.com/pennydata/website-contact-extractor?utm_source=pennydata-site&amp;utm_medium=referral&amp;utm_campaign=extract-contact-information-from-website" rel="noopener">Open the actor on Apify</a>.</p>
+<footer><p>I built this and earn from its runs. Written with AI assistance (Claude).</p></footer>
+</body></html>

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Bulk WHOIS Domain Lookup: Check Many Domains at Once</title>
+<meta name="description" content="Paste your domains into the Bulk WHOIS and DNS Lookup actor and run it: you get registrar, creation and expiry dates, nameservers and DNS records for each ">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://penny-data.github.io/pennydata-site/bulk-whois-domain-lookup/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do I run a bulk WHOIS lookup for a list of domains?","acceptedAnswer":{"@type":"Answer","text":"Paste your domains into the Bulk WHOIS and DNS Lookup actor and run it: you get registrar, creation and expiry dates, nameservers and DNS records for each domain as JSON or CSV. No account with a WHOIS provider is needed; it uses public RDAP data."}}]}</script>
+<style>body{font:16px/1.6 system-ui,sans-serif;max-width:720px;margin:2rem auto;padding:0 1rem;color:#222}code{background:#f2f2f2;padding:2px 5px}pre{background:#f2f2f2;padding:12px;overflow:auto;font-size:13px}pre code{padding:0}a{color:#0b5fff}footer{margin-top:3rem;font-size:14px;color:#555}</style>
+</head><body>
+<p><a href="../">PennyData</a> &rsaquo; Bulk WHOIS Domain Lookup: Check Many Domains at Once</p>
+<h1>Bulk WHOIS Domain Lookup: Check Many Domains at Once</h1>
+<h2>How do I run a bulk WHOIS lookup for a list of domains?</h2>
+<p>Paste your domains into the Bulk WHOIS and DNS Lookup actor and run it: you get registrar, creation and expiry dates, nameservers and DNS records for each domain as JSON or CSV. No account with a WHOIS provider is needed; it uses public RDAP data.</p>
+<h2>Example: curl</h2>
+<p>Set <code>APIFY_TOKEN</code> to your Apify API token (a free account works), then run (WHOIS lookup of three domains):</p>
+<pre><code>curl -s -X POST &quot;https://api.apify.com/v2/acts/pennydata~bulk-domain-whois-dns-lookup/run-sync-get-dataset-items?token=$APIFY_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#x27;{&quot;domains&quot;:[&quot;python.org&quot;,&quot;github.com&quot;,&quot;wikipedia.org&quot;]}&#x27;</code></pre>
+<h2>Example: Node.js</h2>
+<pre><code>import { ApifyClient } from &#x27;apify-client&#x27;;
+const client = new ApifyClient({ token: process.env.APIFY_TOKEN });
+const run = await client.actor(&#x27;pennydata/bulk-domain-whois-dns-lookup&#x27;).call({&quot;domains&quot;:[&quot;python.org&quot;,&quot;github.com&quot;,&quot;wikipedia.org&quot;]});
+const { items } = await client.dataset(run.defaultDatasetId).listItems();
+console.log(items);</code></pre>
+<p>Pricing: 0.0025 USD per domain looked up (lookups that fail are not charged). <a href="https://apify.com/pennydata/bulk-domain-whois-dns-lookup?utm_source=pennydata-site&amp;utm_medium=referral&amp;utm_campaign=bulk-whois-domain-lookup" rel="noopener">Open the actor on Apify</a>.</p>
+<footer><p>I built this and earn from its runs. Written with AI assistance (Claude).</p></footer>
+</body></html>
